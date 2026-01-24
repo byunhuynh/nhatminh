@@ -1,4 +1,4 @@
-const API = "https://backendnhatminh.onrender.com/";
+const API = "https://backendnhatminh.onrender.com";
 
 /* ================= AUTO LOGIN (LOGIN PAGE ONLY) ================= */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -173,4 +173,5 @@ function showToast(text, type = "error") {
     }
   }).showToast();
 }
+
 
