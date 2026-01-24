@@ -1,0 +1,310 @@
+<!-- layout.html -->
+<style>
+/* =====================================================
+   GLOBAL THEME VARIABLES
+===================================================== */
+:root {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f9fafb;
+  --bg-hover: #f1f5f9;
+
+  --border-main: #d1d5db;
+  --border-focus: #2563eb;
+
+  --text-main: #1f2937;
+  --text-soft: #374151;
+  --text-muted: #6b7280;
+  --text-title: #111827;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --danger: #dc2626;
+}
+
+.dark {
+  --bg-page: #0f172a;
+  --bg-card: #111827;
+  --bg-input: #1f2937;
+  --bg-hover: #1e293b;
+
+  --border-main: #374151;
+  --border-focus: #60a5fa;
+
+  --text-main: #e5e7eb;
+  --text-soft: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-title: #f9fafb;
+}
+
+/* =====================================================
+   BASE TEXT
+===================================================== */
+body {
+  background: var(--bg-page);
+  color: var(--text-main);
+}
+
+h1, h2, h3, h4 {
+  color: var(--text-title);
+}
+
+p, span, div {
+  color: var(--text-soft);
+}
+
+label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+.ui-card {
+  background: var(--bg-card);
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,.05);
+}
+
+/* =====================================================
+   INPUT / SELECT / TEXTAREA
+===================================================== */
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.ui-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+}
+
+/* =====================================================
+   BUTTON
+===================================================== */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all .15s ease;
+}
+
+.ui-btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.ui-btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.ui-btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.ui-btn-outline:hover {
+  background: var(--bg-hover);
+}
+
+.ui-btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ui-table th {
+  text-align: left;
+  padding: 0.6rem;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ui-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.ui-table tr:hover {
+  background: var(--bg-hover);
+}
+
+/* =====================================================
+   BADGE / STATUS
+===================================================== */
+.ui-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.ui-badge-success {
+  background: rgba(34,197,94,.15);
+  color: #16a34a;
+}
+
+.ui-badge-danger {
+  background: rgba(239,68,68,.15);
+  color: #dc2626;
+}
+
+
+.ui-dropdown {
+  position: relative;
+}
+
+.ui-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+}
+
+.ui-dropdown-panel.open {
+  display: block;
+}
+
+.ui-dropdown-panel li {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.ui-dropdown-panel li:hover {
+  background: var(--bg-hover);
+}
+
+
+.ui-input.error,
+.ui-select.error {
+  border-color: #ef4444 !important; /* red-500 */
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+.dark .ui-input.error,
+.dark .ui-select.error {
+  border-color: #f87171 !important; /* red-400 */
+  box-shadow: 0 0 0 1px #f87171;
+}
+
+</style>
+
+
+
+<div class="min-h-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-40
+         flex items-center justify-between px-4 py-3
+         bg-white/80 dark:bg-gray-900/80
+         backdrop-blur shadow-sm">
+
+    <a href="main.html" class="flex items-center gap-3">
+      <div class="bg-white dark:bg-gray-800 p-2 rounded-xl shadow">
+        <img
+          src="https://nhatminhhomecare.com/upload/photo/logo-8712.png"
+          class="h-10 w-auto object-contain"
+          alt="Nhật Minh">
+      </div>
+    </a>
+
+
+    <div class="flex items-center gap-4">
+      <!-- Dark mode -->
+      <button
+        id="themeToggle"
+        onclick="toggleDarkMode()"
+        class="text-xl p-2 rounded
+              hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+        <span id="themeIcon">🌙</span>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main id="page-content"
+        class="flex-1 p-4 pb-24 max-w-5xl mx-auto w-full">
+  </main>
+
+  <!-- 📱 BOTTOM NAV -->
+  <nav class="fixed bottom-0 left-0 right-0 z-50
+              bg-white/90 dark:bg-gray-900/90
+              border-t border-gray-200 dark:border-gray-700">
+
+    <div class="flex justify-around items-center h-16">
+
+      <button data-tab="home" class="flex flex-col items-center text-xs">
+        <span class="text-xl">🏠</span>
+        Trang chủ
+      </button>
+
+      <button data-tab="users"
+        class="admin-only hidden flex flex-col items-center text-xs">
+        <span class="text-xl">➕</span>
+        Thêm nhân viên
+      </button>
+
+      <button data-tab="profile" class="flex flex-col items-center text-xs">
+        <span class="text-xl">👤</span>
+        Tài khoản
+      </button>
+
+    </div>
+  </nav>
+<!-- GLOBAL LOADING -->
+<div id="globalLoading"
+     class="fixed inset-0 z-[9999]
+            bg-white/70 dark:bg-gray-900/70
+            backdrop-blur
+            flex items-center justify-center
+            text-gray-700 dark:text-gray-200
+            hidden">
+
+  <div class="flex flex-col items-center gap-3">
+    <div class="animate-spin rounded-full h-10 w-10
+                border-4 border-blue-500 border-t-transparent"></div>
+    <div class="text-sm font-medium">Đang tải dữ liệu…</div>
+  </div>
+</div>
+
+</div>

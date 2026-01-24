@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trang chính</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- Toastify -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- SHARED JS -->
+  <script src="auth.js"></script>
+  <script src="ui.js"></script>
+  <script src="guard.js"></script>
+  <script src="layout.js"></script>
+</head>
+
+<body class="h-full
+  bg-gradient-to-br
+  from-slate-100 via-blue-100 to-indigo-200
+  dark:from-gray-900 dark:to-gray-800
+  transition-colors duration-500">
+
+<!-- 🔴 ROOT DUY NHẤT -->
+<div id="root" class="h-full"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+  if (!(await requireLogin())) return;
+  
+  await loadLayout("home", `
+    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 mb-6
+                text-gray-800 dark:text-gray-200">
+
+      <h2 class="text-lg font-semibold mb-3
+                 text-gray-900 dark:text-gray-100">
+        👤 Thông tin người dùng
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+
+        <div>
+          <span class="text-gray-500 dark:text-gray-400">Tài khoản:</span>
+          <div id="me_username" class="font-medium"></div>
+        </div>
+
+        <div>
+          <span class="text-gray-500 dark:text-gray-400">Họ tên:</span>
+          <div id="me_fullname" class="font-medium"></div>
+        </div>
+
+        <div>
+          <span class="text-gray-500 dark:text-gray-400">Chức vụ:</span>
+          <div id="me_role"></div>
+        </div>
+
+      </div>
+    </div>
+  `);
+  updateThemeIcon();
+  // 🔥 LOAD USER INFO
+  const res = await authFetch(API + "/me");
+  if (!res) return;
+
+  const me = await res.json();
+
+  me_username.textContent = me.username;
+  me_fullname.textContent = me.full_name || "—";
+
+  // ✅ ÁP DỤNG ROLE TIẾNG VIỆT + MÀU
+  applyRoleBadge(me_role, me.role);
+});
+</script>
+
+
+</body>
+</html>

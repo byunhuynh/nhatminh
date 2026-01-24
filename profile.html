@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hồ sơ cá nhân</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { darkMode: 'class' }
+  </script>
+
+  <!-- Toast -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <!-- Shared -->
+  <script src="auth.js"></script>
+  <script src="ui.js"></script>
+  <script src="guard.js"></script>
+  <script src="layout.js"></script>
+</head>
+
+<body class="h-full
+  bg-gradient-to-br
+  from-slate-100 via-blue-100 to-indigo-200
+  dark:from-gray-900 dark:to-gray-800
+  transition-colors duration-500">
+
+<div id="root" class="h-full"></div>
+
+<script>
+
+/* ========================================================= */
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  if (!(await requireLogin())) return;
+  updateThemeIcon();
+
+  await loadLayout("profile", `
+    <div class="max-w-xl mx-auto space-y-6">
+
+      <div class="bg-white dark:bg-gray-900
+                  rounded-2xl shadow p-6
+                  text-gray-800 dark:text-gray-200">
+
+        <h2 class="text-lg font-semibold mb-4
+                   text-gray-900 dark:text-gray-100">
+          👤 Hồ sơ cá nhân
+        </h2>
+
+        <div class="space-y-3 text-sm">
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Tài khoản</span>
+            <div id="me_username" class="font-medium"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Họ tên</span>
+            <div id="me_fullname" class="font-medium"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Email</span>
+            <div id="me_email" class="font-medium"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Số điện thoại</span>
+            <div id="me_phone" class="font-medium"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Chức vụ</span>
+            <div id="me_role"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">
+              Cấp trên trực tiếp
+            </span>
+            <div id="me_manager" class="font-medium"></div>
+          </div>
+
+          <div>
+            <span class="text-gray-500 dark:text-gray-400">Ngày tạo</span>
+            <div id="me_created" class="font-medium"></div>
+          </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+
+          <button onclick="editProfile()"
+            class="ui-btn ui-btn-secondary">
+            ✏️ Đổi thông tin
+          </button>
+
+          <button onclick="changePassword()"
+            class="ui-btn ui-btn-secondary">
+            🔒 Đổi mật khẩu
+          </button>
+
+          <button onclick="logout()"
+            class="ui-btn ui-btn-danger">
+            🚪 Đăng xuất
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  `);
+  
+  await loadProfile();
+});
+
+/* ================= LOAD PROFILE ================= */
+async function loadProfile() {
+  const res = await authFetch(API + "/me");
+  if (!res) return;
+
+  const me = await res.json();
+
+  me_username.textContent = me.username;
+  me_fullname.textContent = me.full_name || "—";
+  me_email.textContent = me.email || "—";
+  me_phone.textContent = me.phone || "—";
+
+  applyRoleBadge(me_role, me.role);
+
+  if (me.created_at) {
+    const d = new Date(me.created_at);
+    me_created.textContent = d.toLocaleDateString("vi-VN");
+  } else {
+    me_created.textContent = "—";
+  }
+
+  await loadManagerInfo(me.manager_id);
+}
+
+/* ================= LOAD MANAGER ================= */
+async function loadManagerInfo(managerId) {
+  if (!managerId) {
+    me_manager.textContent = "—";
+    return;
+  }
+
+  const res = await authFetch(API + `/users/${managerId}`);
+  if (!res) {
+    me_manager.textContent = "—";
+    return;
+  }
+
+  const m = await res.json();
+
+  me_manager.innerHTML = `
+    ${m.full_name || m.username}
+    <span class="ml-2 px-2 py-0.5 rounded text-xs font-semibold
+      ${ROLE_BADGE_CLASS[m.role] || ""}">
+      ${roleToLabel(m.role)}
+    </span>
+  `;
+}
+
+/* ================= ACTIONS ================= */
+function editProfile() {
+  showToast("Chức năng đổi thông tin đang phát triển", "info");
+}
+
+function changePassword() {
+  showToast("Chức năng đổi mật khẩu đang phát triển", "info");
+}
+
+function logout() {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  location.replace("login.html");
+}
+</script>
+
+</body>
+</html>
