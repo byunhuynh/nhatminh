@@ -1,4 +1,4 @@
-const API = "https://backendnhatminh.onrender.com";
+const API = "https://backendnhatminh-ioim.onrender.com/";
 
 /* ================= AUTO LOGIN (LOGIN PAGE ONLY) ================= */
 document.addEventListener("DOMContentLoaded", async () => {
@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const res = await fetch(API + "/refresh", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refresh_token: rt })
+      body: JSON.stringify({ refresh_token: rt }),
     });
 
     if (!res.ok) return;
@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Auto login failed");
   }
 });
-
 
 /* ================= LOGIN ================= */
 async function login() {
@@ -46,7 +45,7 @@ async function login() {
   const res = await fetch(API + "/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: u, password: p })
+    body: JSON.stringify({ username: u, password: p }),
   });
 
   const data = await res.json();
@@ -72,7 +71,6 @@ async function login() {
   setTimeout(() => location.replace("main.html"), 600);
 }
 
-
 /* ================= REFRESH TOKEN ================= */
 async function refreshToken() {
   const rt = localStorage.getItem("refresh_token");
@@ -81,7 +79,7 @@ async function refreshToken() {
   const res = await fetch(API + "/refresh", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh_token: rt })
+    body: JSON.stringify({ refresh_token: rt }),
   });
 
   if (!res.ok) return false;
@@ -91,9 +89,7 @@ async function refreshToken() {
   return true;
 }
 
-
 /* ================= AUTH FETCH ================= */
-
 
 async function authFetch(url, options = {}) {
   apiLoadingStart();
@@ -109,8 +105,8 @@ async function authFetch(url, options = {}) {
       ...options,
       headers: {
         ...(options.headers || {}),
-        Authorization: "Bearer " + token
-      }
+        Authorization: "Bearer " + token,
+      },
     });
 
     if (res.status === 401) {
@@ -126,8 +122,8 @@ async function authFetch(url, options = {}) {
         ...options,
         headers: {
           ...(options.headers || {}),
-          Authorization: "Bearer " + token
-        }
+          Authorization: "Bearer " + token,
+        },
       });
     }
 
@@ -137,16 +133,12 @@ async function authFetch(url, options = {}) {
   }
 }
 
-
-
-
 /* ================= LOGOUT ================= */
 function logout() {
   localStorage.clear();
   showToast("Đã đăng xuất", "info");
   location.replace("login.html");
 }
-
 
 /* ================= TOAST ================= */
 function isMobile() {
@@ -157,7 +149,7 @@ function showToast(text, type = "error") {
   const colors = {
     success: "linear-gradient(to right, #22c55e, #16a34a)",
     error: "linear-gradient(to right, #ef4444, #dc2626)",
-    info: "linear-gradient(to right, #3b82f6, #2563eb)"
+    info: "linear-gradient(to right, #3b82f6, #2563eb)",
   };
 
   Toastify({
@@ -169,9 +161,7 @@ function showToast(text, type = "error") {
     style: {
       borderRadius: "12px",
       fontSize: "14px",
-      maxWidth: "90%"
-    }
+      maxWidth: "90%",
+    },
   }).showToast();
 }
-
-
