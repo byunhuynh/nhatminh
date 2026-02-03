@@ -149,6 +149,14 @@ function renderRoleOptions() {
 function bindEvents() {
   document.getElementById("role").addEventListener("change", onRoleChange);
   document.getElementById("username").addEventListener("blur", checkUsername);
+
+  // 🔥 auto format họ tên
+  document.getElementById("full_name").addEventListener("blur", (e) => {
+    if (e.target.value.trim()) {
+      e.target.value = formatFullName(e.target.value);
+    }
+  });
+
   document.getElementById("submitBtn").addEventListener("click", submitForm);
 }
 
@@ -243,6 +251,17 @@ async function submitForm() {
     manager_id: document.getElementById("manager_id")?.value || null,
   };
 
+  // chuẩn hoá họ tên trước khi submit
+  if (data.full_name) {
+    data.full_name = formatFullName(data.full_name);
+  }
+
+  if (!data.full_name) {
+    showToast("Họ tên là bắt buộc", "error");
+    document.getElementById("full_name").classList.add("error");
+    return;
+  }
+
   if (!data.username || !data.password || !data.role) {
     showToast("Vui lòng nhập đủ dữ liệu bắt buộc", "error");
     return;
@@ -268,8 +287,21 @@ async function submitForm() {
       .forEach((i) => (i.value = ""));
     document.getElementById("role").value = "";
     document.getElementById("managerWrapper").classList.add("hidden");
+    document.getElementById("full_name").classList.remove("error");
   } catch (err) {
     console.error(err);
     showToast(err.message, "error");
   }
+}
+
+// =====================================================
+// FORMAT FULL NAME (Viết hoa chữ cái đầu mỗi từ)
+// =====================================================
+function formatFullName(value) {
+  return value
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 }
