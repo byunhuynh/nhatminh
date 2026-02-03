@@ -114,35 +114,43 @@ function renderPage() {
 }
 
 // =====================================================
-// ROLE OPTIONS (THEO QUYỀN)
+// ROLE OPTIONS (THEO QUYỀN – MAP QUA ROLE_LABELS)
 // =====================================================
 function renderRoleOptions() {
   const role = currentUser.role;
 
+  // helper render option theo ROLE_LABELS
+  const opt = (value) =>
+    `<option value="${value}">${ROLE_LABELS[value]}</option>`;
+
+  // admin → tạo được director, supervisor, sales
   if (role === "admin") {
     return `
       <option value="">-- chọn --</option>
-      <option value="director">Director</option>
-      <option value="supervisor">Supervisor</option>
-      <option value="sales">Sales</option>
+      ${opt("director")}
+      ${opt("supervisor")}
+      ${opt("sales")}
     `;
   }
 
+  // director → tạo được supervisor, sales
   if (role === "director") {
     return `
       <option value="">-- chọn --</option>
-      <option value="supervisor">Supervisor</option>
-      <option value="sales">Sales</option>
+      ${opt("supervisor")}
+      ${opt("sales")}
     `;
   }
 
+  // supervisor → chỉ tạo được sales
   if (role === "supervisor") {
     return `
       <option value="">-- chọn --</option>
-      <option value="sales">Sales</option>
+      ${opt("sales")}
     `;
   }
 
+  // role thấp nhất → không có option
   return "";
 }
 
