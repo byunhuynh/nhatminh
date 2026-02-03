@@ -1,11 +1,16 @@
 // js/ui/theme.js
+// ==================================
+// Apply theme on load
+// Default: LIGHT if first visit
+// ==================================
 function applyTheme() {
-  if (
-    localStorage.theme === "dark" ||
-    (!("theme" in localStorage) &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches)
-  ) {
+  const theme = localStorage.getItem("theme");
+
+  if (theme === "dark") {
     document.documentElement.classList.add("dark");
+  } else {
+    // mặc định hoặc theme === "light"
+    document.documentElement.classList.remove("dark");
   }
 }
 
