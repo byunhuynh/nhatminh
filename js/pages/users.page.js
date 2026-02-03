@@ -63,13 +63,26 @@ function renderPage() {
 
           <div>
             <label>Số điện thoại</label>
-            <input id="phone" class="ui-input" />
+            <input
+              id="phone"
+              class="ui-input"
+              placeholder="Ví dụ: 0901234567"
+            />
+            <p id="phoneHint" class="text-xs mt-1"></p>
           </div>
 
           <div class="md:col-span-2">
             <label>Email</label>
-            <input id="email" type="email" class="ui-input" />
+            <input
+              id="email"
+              type="email"
+              class="ui-input"
+              placeholder="Ví dụ: ten@email.com"
+            />
+            <p id="emailHint" class="text-xs mt-1"></p>
           </div>
+
+
         </div>
       </div>
 
@@ -309,6 +322,7 @@ function bindEvents() {
       }
     });
   });
+  bindRealtimeValidation();
 
   // ===============================
   // 4️⃣ Submit form
@@ -422,6 +436,59 @@ async function checkUsername() {
   }
 }
 
+// ==================================
+// REALTIME VALIDATION: PHONE / EMAIL
+// ==================================
+function bindRealtimeValidation() {
+  const phoneInput = document.getElementById("phone");
+  const phoneHint = document.getElementById("phoneHint");
+
+  const emailInput = document.getElementById("email");
+  const emailHint = document.getElementById("emailHint");
+
+  // ---------- PHONE ----------
+  phoneInput.addEventListener("input", () => {
+    const value = phoneInput.value.trim();
+
+    if (!value) {
+      phoneHint.textContent = "";
+      phoneInput.classList.remove("error");
+      return;
+    }
+
+    if (!isValidPhone(value)) {
+      phoneHint.textContent = "❌ Số điện thoại không hợp lệ (0 + 9 số)";
+      phoneHint.className = "text-xs mt-1 text-red-500";
+      phoneInput.classList.add("error");
+    } else {
+      phoneHint.textContent = "✅ Số điện thoại hợp lệ";
+      phoneHint.className = "text-xs mt-1 text-green-600";
+      phoneInput.classList.remove("error");
+    }
+  });
+
+  // ---------- EMAIL ----------
+  emailInput.addEventListener("input", () => {
+    const value = emailInput.value.trim();
+
+    if (!value) {
+      emailHint.textContent = "";
+      emailInput.classList.remove("error");
+      return;
+    }
+
+    if (!isValidEmail(value)) {
+      emailHint.textContent = "❌ Email không đúng định dạng";
+      emailHint.className = "text-xs mt-1 text-red-500";
+      emailInput.classList.add("error");
+    } else {
+      emailHint.textContent = "✅ Email hợp lệ";
+      emailHint.className = "text-xs mt-1 text-green-600";
+      emailInput.classList.remove("error");
+    }
+  });
+}
+
 // =====================================================
 // SUBMIT FORM
 // =====================================================
@@ -467,6 +534,15 @@ async function submitForm() {
   // password strength
   if (passwordScore(evaluatePassword(data.password)) < 4) {
     showToast("Mật khẩu chưa đủ mạnh", "error");
+    return;
+  }
+
+  // ❌ chặn submit nếu đang có lỗi realtime
+  if (
+    document.getElementById("phone")?.classList.contains("error") ||
+    document.getElementById("email")?.classList.contains("error")
+  ) {
+    showToast("Vui lòng sửa lỗi email / số điện thoại", "error");
     return;
   }
 
