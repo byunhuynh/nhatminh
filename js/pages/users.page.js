@@ -248,7 +248,8 @@ async function onRoleChange(e) {
         .map(
           (m) =>
             `<option value="${m.id}">
-              ${m.full_name || m.username} (${m.role})
+              ${m.full_name || m.username} (${roleToLabel(m.role)})
+
             </option>`,
         )
         .join("")}
