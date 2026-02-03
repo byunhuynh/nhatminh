@@ -1,11 +1,17 @@
 // =====================================================
-// USERS PAGE – CREATE USER
+// USERS PAGE – CREATE USER (FIXED)
 // File: frontend/js/pages/users.page.js
 // =====================================================
 
-// 🔐 Guard
-requireLogin();
-requireAdmin();
+document.addEventListener("DOMContentLoaded", async () => {
+  // 🔐 chặn role thấp nhất (sales)
+  if (!(await requireNotLowestRole())) return;
+
+  // 🧱 load layout trước
+  await loadLayout("users", `<div id="usersPage"></div>`);
+
+  initUsersPage();
+});
 
 // =====================================================
 // STATE
@@ -16,34 +22,35 @@ let managersCache = [];
 // =====================================================
 // INIT
 // =====================================================
-(async function initUsersPage() {
+async function initUsersPage() {
   try {
     showLoading(true);
 
-    // Lấy user hiện tại
-    currentUser = await apiGet("/me");
+    const res = await authFetch(API + "/me");
+    if (!res) return;
+    currentUser = await res.json();
 
     renderPage();
     bindEvents();
   } catch (err) {
     console.error(err);
-    showToast("Không thể tải trang users", "error");
+    showToast("Không thể tải trang tạo nhân viên", "error");
   } finally {
     showLoading(false);
   }
-})();
+}
 
 // =====================================================
 // RENDER
 // =====================================================
 function renderPage() {
-  const page = document.getElementById("page-content");
+  const page = document.getElementById("usersPage");
 
   page.innerHTML = `
-    <div class="ui-card p-4 space-y-5">
-      <h1 class="text-xl font-bold">👥 Tạo nhân viên</h1>
+    <div class="ui-card p-5 space-y-5">
+      <h1 class="text-xl font-semibold">👥 Tạo nhân viên</h1>
 
-      <div class="grid grid-cols-1 gap-4">
+      <div class="grid grid-cols-1 gap-4 text-sm">
 
         <div>
           <label>Username *</label>
@@ -83,17 +90,16 @@ function renderPage() {
           <select id="manager_id" class="ui-select"></select>
         </div>
 
-        <button id="submitBtn" class="ui-btn ui-btn-primary">
+        <button id="submitBtn" class="ui-btn ui-btn-primary mt-2">
           ➕ Tạo tài khoản
         </button>
-
       </div>
     </div>
   `;
 }
 
 // =====================================================
-// ROLE OPTIONS
+// ROLE OPTIONS (THEO QUYỀN)
 // =====================================================
 function renderRoleOptions() {
   const role = currentUser.role;
@@ -130,14 +136,12 @@ function renderRoleOptions() {
 // =====================================================
 function bindEvents() {
   document.getElementById("role").addEventListener("change", onRoleChange);
-
   document.getElementById("username").addEventListener("blur", checkUsername);
-
   document.getElementById("submitBtn").addEventListener("click", submitForm);
 }
 
 // =====================================================
-// ROLE CHANGE → LOAD MANAGERS
+// ROLE CHANGE → LOAD MANAGER
 // =====================================================
 async function onRoleChange(e) {
   const role = e.target.value;
@@ -147,13 +151,7 @@ async function onRoleChange(e) {
   select.innerHTML = "";
   managersCache = [];
 
-  if (!role) {
-    wrapper.classList.add("hidden");
-    return;
-  }
-
-  // supervisor do admin tạo → không cần manager
-  if (role === "director") {
+  if (!role || role === "director") {
     wrapper.classList.add("hidden");
     return;
   }
@@ -162,7 +160,11 @@ async function onRoleChange(e) {
 
   try {
     showLoading(true);
-    managersCache = await apiGet(`/users/managers?role=${role}`);
+
+    const res = await authFetch(API + `/users/managers?role=${role}`);
+    if (!res) return;
+
+    managersCache = await res.json();
 
     select.innerHTML = `
       <option value="">-- chọn quản lý --</option>
@@ -170,7 +172,7 @@ async function onRoleChange(e) {
         .map(
           (m) =>
             `<option value="${m.id}">
-              ${m.full_name} (${m.role})
+              ${m.full_name || m.username} (${m.role})
             </option>`,
         )
         .join("")}
@@ -198,9 +200,14 @@ async function checkUsername() {
   }
 
   try {
-    const res = await apiGet(`/users/check-username?username=${username}`);
+    const res = await authFetch(
+      API + `/users/check-username?username=${username}`,
+    );
+    if (!res) return;
 
-    if (res.exists) {
+    const data = await res.json();
+
+    if (data.exists) {
       hint.textContent = "❌ Username đã tồn tại";
       hint.className = "text-xs mt-1 text-red-500";
       input.classList.add("error");
@@ -215,7 +222,7 @@ async function checkUsername() {
 }
 
 // =====================================================
-// SUBMIT
+// SUBMIT FORM
 // =====================================================
 async function submitForm() {
   const data = {
@@ -236,17 +243,28 @@ async function submitForm() {
   try {
     showLoading(true);
 
-    await apiPost("/users", data);
+    const res = await authFetch(API + "/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || "Lỗi tạo tài khoản");
+    }
 
     showToast("🎉 Tạo tài khoản thành công", "success");
 
-    // reset form
-    document.querySelectorAll("input").forEach((i) => (i.value = ""));
+    // reset
+    document
+      .querySelectorAll("#usersPage input")
+      .forEach((i) => (i.value = ""));
     document.getElementById("role").value = "";
     document.getElementById("managerWrapper").classList.add("hidden");
   } catch (err) {
     console.error(err);
-    showToast(err?.message || "Tạo tài khoản thất bại", "error");
+    showToast(err.message, "error");
   } finally {
     showLoading(false);
   }
