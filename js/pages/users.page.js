@@ -1,6 +1,6 @@
 // js/pages/users.page.js
 document.addEventListener("DOMContentLoaded", async () => {
-  if (!(await requireAdminPage())) return;
+  if (!(await requireNotLowestRole())) return;
 
   await loadLayout(
     "users",
