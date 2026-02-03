@@ -56,23 +56,45 @@ function renderPage() {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label>Họ tên *</label>
-            <input id="full_name" class="ui-input" />
+            <input
+              id="full_name"
+              class="ui-input"
+              placeholder="vd: Nguyễn Văn A"
+            />
+
           </div>
 
           <div>
             <label>Ngày sinh</label>
-            <input id="dob" type="date" class="ui-input" />
+            <input
+                id="dob"
+                type="date"
+                class="ui-input"
+                placeholder="vd: 11/11/1994"
+              />
+
           </div>
 
           <div>
             <label>Số điện thoại</label>
-            <input id="phone" class="ui-input" />
+            <input
+              id="phone"
+              class="ui-input"
+              placeholder="vd: 0901234567"
+            />
+
             <div id="phoneHint" class="ui-hint mt-1"></div>
           </div>
 
           <div>
             <label>Email</label>
-            <input id="email" type="email" class="ui-input" />
+            <input
+              id="email"
+              type="email"
+              class="ui-input"
+              placeholder="vd: ho_ten@example.com"
+            />
+
             <div id="emailHint" class="ui-hint mt-1"></div>
           </div>
         </div>
@@ -109,7 +131,13 @@ function renderPage() {
 
           <div>
             <label>Mật khẩu *</label>
-            <input id="password" type="password" class="ui-input" />
+            <input
+              id="password"
+              type="password"
+              class="ui-input"
+              placeholder="Ít nhất 8 ký tự, gồm hoa, thường, số, ký tự đặc biệt"
+            />
+
           </div>
 
           <!-- PASSWORD STRENGTH – FULL WIDTH -->
@@ -143,7 +171,13 @@ function renderPage() {
 
           <div>
             <label>Nhập lại mật khẩu *</label>
-            <input id="password_confirm" type="password" class="ui-input" />
+            <input
+              id="password_confirm"
+              type="password"
+              class="ui-input"
+              placeholder="Nhập lại đúng mật khẩu ở trên"
+            />
+
             <div id="passwordConfirmHint" class="ui-hint mt-1"></div>
           </div>
 

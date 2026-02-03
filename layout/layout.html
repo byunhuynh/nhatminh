@@ -199,6 +199,33 @@
       height: 48px;
     }
   }
+
+  /* ===============================
+ DATE INPUT – SYNC THEME
+=============================== */
+  input[type="date"] {
+    color-scheme: light;
+  }
+
+  .dark input[type="date"] {
+    color-scheme: dark;
+  }
+
+  /* ===============================
+ DATE PICKER ICON COLOR
+=============================== */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+  }
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
+  input[type="date"] {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-main);
+    color: var(--text-main);
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
