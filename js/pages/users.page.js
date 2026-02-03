@@ -96,9 +96,9 @@ function renderPage() {
             <!-- POPOVER -->
             <div
               id="passwordPopover"
-              class="hidden absolute z-20 w-full mt-2 bg-white dark:bg-gray-800
+              class="mt-2 w-full bg-white dark:bg-gray-800
                     border border-gray-200 dark:border-gray-700
-                    rounded-lg shadow-xl p-4"
+                    rounded-lg shadow p-4"
             >
               <!-- INDICATOR -->
               <div class="flex gap-1 mb-3">
@@ -286,14 +286,6 @@ function bindEvents() {
   const popover = document.getElementById("passwordPopover");
   const bars = popover.querySelectorAll("[data-bar]");
   const rules = popover.querySelectorAll("[data-rule]");
-
-  passwordInput.addEventListener("focus", () => {
-    popover.classList.remove("hidden");
-  });
-
-  passwordInput.addEventListener("blur", () => {
-    setTimeout(() => popover.classList.add("hidden"), 200);
-  });
 
   passwordInput.addEventListener("input", () => {
     const value = passwordInput.value;
