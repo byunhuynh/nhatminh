@@ -6,12 +6,22 @@ let layoutLoaded = false;
 // ==================================
 // Load layout duy nhất 1 lần
 // ==================================
+// ==================================
+// Load layout duy nhất 1 lần (SPA SAFE)
+// ==================================
 export async function loadLayoutOnce() {
   if (layoutLoaded) return;
 
-  const res = await fetch("/layout/layout.html");
-  const html = await res.text();
-  document.getElementById("root").innerHTML = html;
+  const root = document.getElementById("root");
+  if (!root) return;
+
+  const res = await fetch("./layout/layout.html");
+  if (!res.ok) {
+    console.error("Không load được layout.html");
+    return;
+  }
+
+  root.innerHTML = await res.text();
 
   bindNav();
   updateThemeIcon();
