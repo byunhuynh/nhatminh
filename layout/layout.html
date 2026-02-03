@@ -5,7 +5,6 @@
 ===================================================== */
   :root {
     --bg-page: #ffffff;
-
     --bg-card: #f8fafc;
     --bg-input: #ffffff;
     --bg-hover: #f1f5f9;
@@ -23,18 +22,9 @@
     --danger: #dc2626;
 
     --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-
-    --s-1: 4px;
-    --s-2: 8px;
-    --s-3: 12px;
-    --s-4: 16px;
-    --s-5: 24px;
-    --s-6: 32px;
   }
 
-  /* =====================================================
- DARK MODE
-===================================================== */
+  /* ================= DARK MODE ================= */
   .dark {
     --bg-page: #020617;
     --bg-card: #020617;
@@ -52,141 +42,107 @@
     --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
   }
 
-  /* =====================================================
- BASE
-===================================================== */
+  /* ================= BASE ================= */
   body {
     background: var(--bg-page);
     color: var(--text-main);
   }
 
-  /* =====================================================
- TYPOGRAPHY
-===================================================== */
-  .ui-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-title);
-  }
-
-  .ui-section {
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  .ui-text {
-    font-size: 0.875rem;
-    color: var(--text-soft);
-  }
-
-  .ui-hint {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-  }
-
-  /* =====================================================
- CARD
-===================================================== */
-  .ui-card {
-    background: var(--bg-card);
-    border-radius: 1.25rem;
-    border: 1px solid var(--border-main);
-    box-shadow: var(--card-shadow);
-    padding: var(--s-5);
-    transition: transform 0.15s ease;
-  }
-
-  .ui-card:hover {
-    transform: translateY(-2px);
-  }
-
-  /* =====================================================
- INPUT / SELECT
-===================================================== */
-  .ui-input,
-  .ui-select {
-    width: 100%;
-    padding: 0.65rem 0.75rem;
-    border-radius: 0.75rem;
-    border: 1px solid var(--border-main);
-    background: var(--bg-input);
-    color: var(--text-main);
-    font-size: 0.9rem;
-  }
-
-  .ui-input:focus,
-  .ui-select:focus {
-    outline: none;
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
-  }
-
-  /* =====================================================
- BUTTON
-===================================================== */
-  .ui-btn {
-    display: inline-flex;
+  /* ================= NAV DESKTOP ================= */
+  .nav__right {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 0.75rem;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    border: none;
+    justify-content: flex-end;
+    gap: 1.25rem;
   }
 
-  .ui-btn-primary {
-    background: var(--primary);
-    color: #fff;
-  }
-
-  .ui-btn-primary:hover {
-    background: var(--primary-hover);
-  }
-
-  /* =====================================================
- BADGE
-===================================================== */
-  .ui-badge {
-    padding: 0.25rem 0.65rem;
+  .nav__theme-btn {
+    font-size: 1.1rem;
+    padding: 0.5rem;
     border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 600;
   }
 
-  /* =====================================================
- MOBILE UX
-===================================================== */
-  @media (max-width: 640px) {
-    .ui-btn {
-      height: 44px;
-      font-size: 0.95rem;
+  .nav__theme-btn:hover {
+    background: var(--bg-hover);
+  }
+
+  /* ================= MOBILE FIX (CỰC KỲ QUAN TRỌNG) ================= */
+  /* 👉 CẮT HOÀN TOÀN NAV MENU TRÊN MOBILE */
+  @media (max-width: 767px) {
+    /* ❌ TẮT NAV MENU DESKTOP */
+    .header .nav__menu {
+      display: none !important;
+    }
+
+    /* Header chỉ giữ logo */
+    .header .nav {
+      justify-content: space-between;
+    }
+
+    /* 🌙 Theme toggle GHIM TRÊN */
+    #themeToggleHeader {
+      position: fixed;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 1100;
+      background: var(--bg-card);
+      box-shadow: var(--card-shadow);
+    }
+
+    /* ✅ BOTTOM NAV CĂN ĐỀU TUYỆT ĐỐI */
+    nav.fixed.bottom-0 ul {
+      display: flex !important;
+      justify-content: space-around !important;
+      align-items: center !important;
     }
   }
 </style>
 
 <div class="min-h-screen flex flex-col">
   <!-- ================= HEADER ================= -->
-  <header
-    class="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur border-b border-gray-200 dark:border-gray-800"
-  >
-    <a href="main.html" class="flex items-center gap-3">
-      <div class="bg-white dark:bg-gray-800 p-2 rounded-xl shadow">
-        <img
-          src="https://nhatminhhomecare.com/upload/photo/logo-8712.png"
-          class="h-10 w-auto object-contain"
-          alt="Nhật Minh"
-        />
-      </div>
-    </a>
+  <header class="header" id="header">
+    <nav class="nav container">
+      <!-- LOGO -->
+      <a href="javascript:void(0)" class="nav__logo"> Nhật Minh </a>
 
-    <button
-      id="themeToggle"
-      onclick="toggleDarkMode()"
-      class="text-xl p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-    >
-      <span id="themeIcon">🌙</span>
-    </button>
+      <!-- DESKTOP NAV + THEME -->
+      <div class="nav__menu" id="nav-menu">
+        <ul class="nav__list nav__right">
+          <li class="nav__item">
+            <a href="#/" data-tab="home" class="nav__link">
+              <i class="bx bx-home-alt nav__icon"></i>
+              <span class="nav__name">Trang chủ</span>
+            </a>
+          </li>
+
+          <li class="nav__item">
+            <a href="#/users" data-tab="users" class="nav__link">
+              <i class="bx bx-user-plus nav__icon"></i>
+              <span class="nav__name">Users</span>
+            </a>
+          </li>
+
+          <li class="nav__item">
+            <a href="#/profile" data-tab="profile" class="nav__link">
+              <i class="bx bx-user nav__icon"></i>
+              <span class="nav__name">Tài khoản</span>
+            </a>
+          </li>
+
+          <!-- 🌙 THEME -->
+          <li class="nav__item">
+            <button
+              id="themeToggleHeader"
+              onclick="toggleDarkMode()"
+              class="nav__link nav__theme-btn"
+              aria-label="Toggle dark mode"
+            >
+              🌙
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
   </header>
 
   <!-- ================= MAIN ================= -->
@@ -197,33 +153,44 @@
 
   <!-- ================= MOBILE BOTTOM NAV ================= -->
   <nav
-    class="fixed md:hidden bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 border-t border-gray-200 dark:border-gray-700"
+    class="fixed md:hidden bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-t border-gray-200 dark:border-gray-700"
   >
-    <div class="flex justify-around items-center h-16">
-      <button data-tab="home" class="flex flex-col items-center text-xs">
-        <span class="text-xl">🏠</span>
-        Trang chủ
-      </button>
+    <ul class="flex justify-around items-center h-16 text-xs">
+      <li>
+        <button
+          data-tab="home"
+          class="nav-item flex flex-col items-center gap-1"
+        >
+          <span class="text-xl">🏠</span>
+          <span>Trang chủ</span>
+        </button>
+      </li>
 
-      <button
-        data-tab="users"
-        class="flex flex-col items-center text-xs hidden"
-      >
-        <span class="text-xl">➕</span>
-        Thêm nhân viên
-      </button>
+      <li>
+        <button
+          id="fabAddUser"
+          class="nav-fab w-14 h-14 rounded-full bg-blue-600 text-white text-3xl flex items-center justify-center shadow-xl hidden"
+        >
+          ➕
+        </button>
+      </li>
 
-      <button data-tab="profile" class="flex flex-col items-center text-xs">
-        <span class="text-xl">👤</span>
-        Tài khoản
-      </button>
-    </div>
+      <li>
+        <button
+          data-tab="profile"
+          class="nav-item flex flex-col items-center gap-1"
+        >
+          <span class="text-xl">👤</span>
+          <span>Tài khoản</span>
+        </button>
+      </li>
+    </ul>
   </nav>
 
   <!-- ================= GLOBAL LOADING ================= -->
   <div
     id="globalLoading"
-    class="fixed inset-0 z-[9999] bg-white/70 dark:bg-gray-900/70 backdrop-blur flex items-center justify-center text-gray-700 dark:text-gray-200 hidden"
+    class="fixed inset-0 z-[9999] bg-white/70 dark:bg-gray-900/70 backdrop-blur flex items-center justify-center hidden"
   >
     <div class="flex flex-col items-center gap-3">
       <div

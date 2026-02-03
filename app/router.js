@@ -5,6 +5,7 @@
 import { renderHome } from "../pages/home.page.js";
 import { renderUsers } from "../pages/users.page.js";
 import { renderProfile } from "../pages/profile.page.js";
+import { updateActiveNav } from "../layout/layout.js";
 
 const routes = {
   "/": renderHome,
@@ -27,6 +28,7 @@ export function renderRoute() {
   }
 
   fn();
+  updateActiveNav(path);
 }
 
 window.addEventListener("hashchange", renderRoute);

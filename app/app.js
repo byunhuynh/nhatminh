@@ -16,6 +16,7 @@ async function bootstrap() {
   if (!res) return;
 
   store.setUser(await res.json());
+  // ✅ sau khi đã có user
 
   // ===============================
   // Show login success
