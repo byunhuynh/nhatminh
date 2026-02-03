@@ -2,22 +2,25 @@
 // USERS PAGE – CREATE USER (FIXED)
 // File: frontend/js/pages/users.page.js
 // =====================================================
-
-document.addEventListener("DOMContentLoaded", async () => {
-  // 🔐 chặn role thấp nhất (sales)
-  if (!(await requireNotLowestRole())) return;
-
-  // 🧱 load layout trước
-  await loadLayout("users", `<div id="usersPage"></div>`);
-
-  initUsersPage();
-});
-
 // =====================================================
 // STATE
 // =====================================================
+
 let currentUser = null;
 let managersCache = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+  bootstrapPage({
+    activeTab: "users",
+    requireRoleAboveSales: true,
+    html: `<div id="usersPage"></div>`,
+    onReady(me) {
+      currentUser = me;
+      renderPage();
+      bindEvents();
+    },
+  });
+});
 
 // =====================================================
 // INIT

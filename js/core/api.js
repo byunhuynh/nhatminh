@@ -21,7 +21,12 @@ async function authFetch(url, options = {}) {
 
   try {
     let token = storage.get("access_token");
-    if (!token) return null;
+
+    // ❌ không có token → logout
+    if (!token) {
+      logout();
+      return null;
+    }
 
     let res = await fetch(url, {
       ...options,
@@ -33,7 +38,10 @@ async function authFetch(url, options = {}) {
 
     if (res.status === 401) {
       const ok = await refreshToken();
-      if (!ok) return null;
+      if (!ok) {
+        logout(); // ⬅️ BẮT BUỘC
+        return null;
+      }
 
       token = storage.get("access_token");
       res = await fetch(url, {

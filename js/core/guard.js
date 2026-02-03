@@ -1,9 +1,17 @@
 // js/core/guard.js
 async function requireLogin() {
-  if (!storage.get("access_token")) {
+  const token = storage.get("access_token");
+  if (!token) {
     location.replace("login.html");
     return false;
   }
+
+  const res = await authFetch(API + "/me");
+  if (!res) {
+    // authFetch đã logout rồi
+    return false;
+  }
+
   return true;
 }
 
