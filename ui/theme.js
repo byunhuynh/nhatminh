@@ -10,7 +10,7 @@ function applyTheme() {
 }
 
 function updateThemeIcon() {
-  const btn = document.getElementById("themeToggleHeader");
+  const btn = document.getElementById("themeToggle");
 
   if (!btn) return;
   btn.textContent = document.documentElement.classList.contains("dark")
