@@ -3,7 +3,7 @@ import { showToast } from "../ui/toast.js";
 
 const root = document.getElementById("page-content");
 
-export async function renderUsersPage() {
+function render() {
   root.innerHTML = `
     <div class="ui-card p-4 space-y-4">
       <h2 class="text-lg font-bold">➕ Thêm nhân viên</h2>
@@ -29,28 +29,25 @@ export async function renderUsersPage() {
     </div>
   `;
 
-  document.getElementById("role").onchange = loadManagers;
-  document.getElementById("btnCreate").onclick = createUser;
+  role.onchange = loadManagers;
+  btnCreate.onclick = createUser;
 }
 
 async function loadManagers() {
-  const role = document.getElementById("role").value;
-  const managerSelect = document.getElementById("manager");
-  managerSelect.innerHTML = `<option value="">-- Quản lý --</option>`;
+  const roleValue = role.value;
+  manager.innerHTML = `<option value="">-- Quản lý --</option>`;
 
-  if (!role) return;
+  if (!roleValue) return;
 
-  const res = await apiFetch(`/users/managers?role=${role}`);
+  const res = await apiFetch(`/users/managers?role=${roleValue}`);
   res.forEach((m) => {
-    managerSelect.innerHTML += `
-      <option value="${m.id}">${m.full_name}</option>
-    `;
+    manager.innerHTML += `<option value="${m.id}">${m.full_name}</option>`;
   });
 }
 
 async function createUser() {
   const payload = {
-    username: username.value,
+    username: username.value.trim(),
     password: password.value,
     full_name: full_name.value,
     role: role.value,
@@ -64,3 +61,6 @@ async function createUser() {
 
   showToast(res.message || "Tạo thành công");
 }
+
+/* 🔥 DÒNG QUAN TRỌNG */
+render();
