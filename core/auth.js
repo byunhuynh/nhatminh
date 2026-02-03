@@ -7,5 +7,5 @@ function logout() {
   // đánh dấu vừa logout
   localStorage.setItem("logout_notice", "1");
 
-  location.replace("/login.html");
+  location.replace("./login.html");
 }

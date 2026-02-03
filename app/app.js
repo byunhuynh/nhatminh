@@ -6,7 +6,7 @@ import { store } from "./store.js";
 async function bootstrap() {
   const token = storage.get("access_token");
   if (!token) {
-    location.replace("/login.html");
+    location.replace("./login.html");
     return;
   }
 
