@@ -39,57 +39,73 @@ async function initUsersPage() {
 // =====================================================
 // RENDER
 // =====================================================
+// =====================================================
+// RENDER
+// =====================================================
 function renderPage() {
   const page = document.getElementById("usersPage");
 
   page.innerHTML = `
-    <div class="ui-card p-5 space-y-5">
-      <h1 class="text-xl font-semibold">👥 Tạo nhân viên</h1>
+    <div class="space-y-6">
 
-      <div class="grid grid-cols-1 gap-4 text-sm">
+      <!-- ================= THÔNG TIN CÁ NHÂN ================= -->
+      <div class="ui-card p-5">
+        <h2 class="text-lg font-semibold mb-4">🧾 Thông tin cá nhân</h2>
 
-        <div>
-          <label>Username *</label>
-          <input id="username" class="ui-input" />
-          <p id="usernameHint" class="text-xs mt-1"></p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <label>Họ tên</label>
+            <input id="full_name" class="ui-input" />
+          </div>
+
+          <div>
+            <label>Số điện thoại</label>
+            <input id="phone" class="ui-input" />
+          </div>
+
+          <div class="md:col-span-2">
+            <label>Email</label>
+            <input id="email" type="email" class="ui-input" />
+          </div>
         </div>
-
-        <div>
-          <label>Mật khẩu *</label>
-          <input id="password" type="password" class="ui-input" />
-        </div>
-
-        <div>
-          <label>Họ tên</label>
-          <input id="full_name" class="ui-input" />
-        </div>
-
-        <div>
-          <label>Số điện thoại</label>
-          <input id="phone" class="ui-input" />
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input id="email" type="email" class="ui-input" />
-        </div>
-
-        <div>
-          <label>Vai trò *</label>
-          <select id="role" class="ui-select">
-            ${renderRoleOptions()}
-          </select>
-        </div>
-
-        <div id="managerWrapper" class="hidden">
-          <label>Quản lý trực tiếp</label>
-          <select id="manager_id" class="ui-select"></select>
-        </div>
-
-        <button id="submitBtn" class="ui-btn ui-btn-primary mt-2">
-          ➕ Tạo tài khoản
-        </button>
       </div>
+
+      <!-- ================= THÔNG TIN TÀI KHOẢN ================= -->
+      <div class="ui-card p-5">
+        <h2 class="text-lg font-semibold mb-4">🔐 Thông tin tài khoản</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <label>Username *</label>
+            <input id="username" class="ui-input" />
+            <p id="usernameHint" class="text-xs mt-1"></p>
+          </div>
+
+          <div>
+            <label>Mật khẩu *</label>
+            <input id="password" type="password" class="ui-input" />
+          </div>
+
+          <div>
+            <label>Vai trò *</label>
+            <select id="role" class="ui-select">
+              ${renderRoleOptions()}
+            </select>
+          </div>
+
+          <div id="managerWrapper" class="hidden">
+            <label>Quản lý trực tiếp</label>
+            <select id="manager_id" class="ui-select"></select>
+          </div>
+        </div>
+
+        <div class="mt-5">
+          <button id="submitBtn" class="ui-btn ui-btn-primary w-full">
+            ➕ Tạo tài khoản
+          </button>
+        </div>
+      </div>
+
     </div>
   `;
 }
