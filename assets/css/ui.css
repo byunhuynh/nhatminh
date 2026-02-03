@@ -1,0 +1,258 @@
+/* =====================================================
+   🌈 THEME VARIABLES
+===================================================== */
+:root {
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #f9fafb;
+  --bg-hover: #f1f5f9;
+
+  --border-main: #d1d5db;
+  --border-focus: #2563eb;
+
+  --text-main: #1f2937;
+  --text-soft: #374151;
+  --text-muted: #6b7280;
+  --text-title: #111827;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --danger: #dc2626;
+}
+
+.dark {
+  --bg-page: #0f172a;
+  --bg-card: #111827;
+  --bg-input: #1f2937;
+  --bg-hover: #1e293b;
+
+  --border-main: #374151;
+  --border-focus: #60a5fa;
+
+  --text-main: #e5e7eb;
+  --text-soft: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-title: #f9fafb;
+}
+
+/* =====================================================
+   BASE
+===================================================== */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--bg-page);
+  color: var(--text-main);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--text-title);
+}
+
+label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+.ui-card {
+  background: var(--bg-card);
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* =====================================================
+   INPUT / SELECT / TEXTAREA
+===================================================== */
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.ui-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ERROR STATE */
+.ui-input.error,
+.ui-select.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+.dark .ui-input.error,
+.dark .ui-select.error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 1px #f87171;
+}
+
+/* =====================================================
+   BUTTON
+===================================================== */
+.ui-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s ease;
+}
+
+.ui-btn:active {
+  transform: scale(0.97);
+}
+
+.ui-btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.ui-btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.ui-btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-main);
+  color: var(--text-main);
+}
+
+.ui-btn-outline:hover {
+  background: var(--bg-hover);
+}
+
+.ui-btn-danger {
+  background: var(--danger);
+  color: white;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+.ui-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ui-table th {
+  text-align: left;
+  padding: 0.6rem;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.ui-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.ui-table tr:hover {
+  background: var(--bg-hover);
+}
+
+/* =====================================================
+   BADGE / STATUS
+===================================================== */
+.ui-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.ui-badge-success {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.ui-badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+}
+
+/* =====================================================
+   DROPDOWN (Province / District / Ward)
+===================================================== */
+.ui-dropdown {
+  position: relative;
+}
+
+.ui-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--bg-card);
+  border: 1px solid var(--border-main);
+  border-radius: 0.5rem;
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+}
+
+.ui-dropdown-panel.open {
+  display: block;
+}
+
+.ui-dropdown-panel li {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.ui-dropdown-panel li:hover {
+  background: var(--bg-hover);
+}
+
+/* =====================================================
+   GLOBAL LOADING
+===================================================== */
+#globalLoading {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark #globalLoading {
+  background: rgba(17, 24, 39, 0.7);
+}
+
+#globalLoading.hidden {
+  display: none;
+}
