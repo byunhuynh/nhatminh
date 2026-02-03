@@ -146,18 +146,64 @@ function renderRoleOptions() {
 // =====================================================
 // EVENTS
 // =====================================================
-function bindEvents() {
-  document.getElementById("role").addEventListener("change", onRoleChange);
-  document.getElementById("username").addEventListener("blur", checkUsername);
 
-  // 🔥 auto format họ tên
-  document.getElementById("full_name").addEventListener("blur", (e) => {
-    if (e.target.value.trim()) {
-      e.target.value = formatFullName(e.target.value);
+function bindEvents() {
+  const fullNameInput = document.getElementById("full_name");
+  const usernameInput = document.getElementById("username");
+  const roleSelect = document.getElementById("role");
+  const submitBtn = document.getElementById("submitBtn");
+
+  // ===============================
+  // 1️⃣ Thay đổi role → load manager
+  // ===============================
+  roleSelect.addEventListener("change", onRoleChange);
+
+  // ===============================
+  // 2️⃣ Blur username → check trùng
+  // ===============================
+  usernameInput.addEventListener("blur", checkUsername);
+
+  // ==================================================
+  // 3️⃣ Blur HỌ TÊN
+  // - Chuẩn hoá viết hoa
+  // - Gọi backend generate username
+  // - Auto fill username
+  // ==================================================
+  fullNameInput.addEventListener("blur", async (e) => {
+    let value = e.target.value.trim();
+    if (!value) return;
+
+    // ✨ chuẩn hoá họ tên (viết hoa)
+    const formattedName = formatFullName(value);
+    e.target.value = formattedName;
+
+    try {
+      // 🔥 generate username từ backend
+      const res = await authFetch(API + "/users/generate-username", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ full_name: formattedName }),
+      });
+
+      if (!res) return;
+
+      const data = await res.json();
+
+      // auto set username
+      usernameInput.value = data.username;
+
+      // check trùng lại lần nữa (an toàn)
+      await checkUsername();
+    } catch (err) {
+      console.error(err);
+      showToast("Không thể tạo username tự động", "error");
     }
   });
 
-  document.getElementById("submitBtn").addEventListener("click", submitForm);
+  // ===============================
+  // 4️⃣ Submit form
+  // ===============================
+  submitBtn.addEventListener("click", submitForm);
 }
 
 // =====================================================
@@ -176,14 +222,23 @@ async function onRoleChange(e) {
     return;
   }
 
-  wrapper.classList.remove("hidden");
-
   try {
     const res = await authFetch(API + `/users/managers?role=${role}`);
     if (!res) return;
 
     managersCache = await res.json();
 
+    // 🔥 chỉ có 0 hoặc 1 manager → auto set
+    if (managersCache.length <= 1) {
+      wrapper.classList.add("hidden");
+      if (managersCache[0]) {
+        select.innerHTML = `<option value="${managersCache[0].id}" selected></option>`;
+      }
+      return;
+    }
+
+    // nhiều hơn 1 → cho chọn
+    wrapper.classList.remove("hidden");
     select.innerHTML = `
       <option value="">-- chọn quản lý --</option>
       ${managersCache
@@ -304,4 +359,12 @@ function formatFullName(value) {
     .split(/\s+/)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function removeVietnameseTones(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
 }
