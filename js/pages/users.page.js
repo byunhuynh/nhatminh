@@ -304,6 +304,11 @@ function bindEvents() {
   const popover = document.getElementById("passwordPopover");
   const submitBtn = document.getElementById("submitBtn");
 
+  // ================= ADDRESS ELEMENTS =================
+  const province = document.getElementById("province");
+  const district = document.getElementById("district");
+  const ward = document.getElementById("ward");
+
   // role
   document.getElementById("role").addEventListener("change", onRoleChange);
 
@@ -326,6 +331,7 @@ function bindEvents() {
     username.value = data.username;
     checkUsername();
   });
+
   username.addEventListener("input", () => {
     lastCheckedUsername = null;
     clearHint(username, document.getElementById("usernameHint"));
@@ -351,7 +357,7 @@ function bindEvents() {
     );
   });
 
-  // ================= ADDRESS EVENTS =================
+  // ================= ADDRESS EVENTS (FIX) =================
   loadProvinces();
 
   province.addEventListener("change", (e) => {
@@ -367,6 +373,7 @@ function bindEvents() {
 
   submitBtn.addEventListener("click", submitForm);
 }
+
 // =====================================================
 // ROLE CHANGE → LOAD MANAGER (THEO ĐÚNG LOGIC BACKEND)
 // =====================================================
@@ -598,31 +605,38 @@ function resetForm() {
 }
 
 // =====================================================
-// LOAD PROVINCES API (VN)
+// LOAD PROVINCES (VN API v1)
 // =====================================================
 async function loadProvinces() {
   const provinceSelect = document.getElementById("province");
 
   const res = await fetch(`${API_PROVINCE}/p`);
+  if (!res.ok) throw new Error("LOAD_PROVINCES_FAILED");
+
   const data = await res.json();
 
   provinceSelect.innerHTML += data
     .map((p) => `<option value="${p.code}">${p.name}</option>`)
     .join("");
 }
-
+// =====================================================
+// LOAD DISTRICTS BY PROVINCE
+// =====================================================
 async function loadDistricts(provinceCode) {
   const district = document.getElementById("district");
   const ward = document.getElementById("ward");
 
   district.disabled = true;
   ward.disabled = true;
+
   district.innerHTML = `<option value="">-- chọn quận / huyện --</option>`;
   ward.innerHTML = `<option value="">-- chọn phường / xã --</option>`;
 
   if (!provinceCode) return;
 
   const res = await fetch(`${API_PROVINCE}/p/${provinceCode}?depth=2`);
+  if (!res.ok) throw new Error("LOAD_DISTRICTS_FAILED");
+
   const data = await res.json();
 
   district.innerHTML += data.districts
@@ -632,14 +646,20 @@ async function loadDistricts(provinceCode) {
   district.disabled = false;
 }
 
+// =====================================================
+// LOAD WARDS BY DISTRICT
+// =====================================================
 async function loadWards(districtCode) {
   const ward = document.getElementById("ward");
+
   ward.disabled = true;
   ward.innerHTML = `<option value="">-- chọn phường / xã --</option>`;
 
   if (!districtCode) return;
 
   const res = await fetch(`${API_PROVINCE}/d/${districtCode}?depth=2`);
+  if (!res.ok) throw new Error("LOAD_WARDS_FAILED");
+
   const data = await res.json();
 
   ward.innerHTML += data.wards
