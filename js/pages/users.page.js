@@ -84,10 +84,43 @@ function renderPage() {
             <p id="usernameHint" class="text-xs mt-1"></p>
           </div>
 
-          <div>
+          <div class="relative">
             <label>Mật khẩu *</label>
-            <input id="password" type="password" class="ui-input" />
+            <input
+              id="password"
+              type="password"
+              class="ui-input"
+              placeholder="Nhập mật khẩu mạnh"
+            />
+
+            <!-- POPOVER -->
+            <div
+              id="passwordPopover"
+              class="hidden absolute z-20 w-full mt-2 bg-white dark:bg-gray-800
+                    border border-gray-200 dark:border-gray-700
+                    rounded-lg shadow-xl p-4"
+            >
+              <!-- INDICATOR -->
+              <div class="flex gap-1 mb-3">
+                <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
+                <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
+                <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
+                <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
+                <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
+              </div>
+
+              <h4 class="text-sm font-semibold mb-2">Mật khẩu phải có:</h4>
+
+              <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                <li data-rule="length">• Tối thiểu 8 ký tự</li>
+                <li data-rule="lower">• Chữ thường (a-z)</li>
+                <li data-rule="upper">• Chữ hoa (A-Z)</li>
+                <li data-rule="number">• Số (0-9)</li>
+                <li data-rule="special">• Ký tự đặc biệt (!@#$…)</li>
+              </ul>
+            </div>
           </div>
+
 
           <div>
             <label>Vai trò *</label>
@@ -111,6 +144,35 @@ function renderPage() {
 
     </div>
   `;
+}
+
+// =====================================================
+// VALIDATION HELPERS
+// =====================================================
+function isValidPhone(phone) {
+  // VN: 0 + 9 số
+  return /^0\d{9}$/.test(phone);
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+// =====================================================
+// PASSWORD STRENGTH UI (POPOVER STYLE)
+// =====================================================
+function evaluatePassword(password) {
+  return {
+    length: password.length >= 8,
+    lower: /[a-z]/.test(password),
+    upper: /[A-Z]/.test(password),
+    number: /\d/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+}
+
+function passwordScore(result) {
+  return Object.values(result).filter(Boolean).length;
 }
 
 // =====================================================
@@ -152,6 +214,15 @@ function renderRoleOptions() {
 
   // role thấp nhất → không có option
   return "";
+}
+
+// =====================================================
+// PASSWORD BAR COLOR
+// =====================================================
+function getPasswordBarColor(score) {
+  if (score <= 1) return "bg-red-500";
+  if (score <= 3) return "bg-yellow-400";
+  return "bg-green-500";
 }
 
 // =====================================================
@@ -211,6 +282,42 @@ function bindEvents() {
     }
   });
 
+  const passwordInput = document.getElementById("password");
+  const popover = document.getElementById("passwordPopover");
+  const bars = popover.querySelectorAll("[data-bar]");
+  const rules = popover.querySelectorAll("[data-rule]");
+
+  passwordInput.addEventListener("focus", () => {
+    popover.classList.remove("hidden");
+  });
+
+  passwordInput.addEventListener("blur", () => {
+    setTimeout(() => popover.classList.add("hidden"), 200);
+  });
+
+  passwordInput.addEventListener("input", () => {
+    const value = passwordInput.value;
+    const result = evaluatePassword(value);
+    const score = passwordScore(result);
+    const colorClass = getPasswordBarColor(score);
+
+    // update bars
+    bars.forEach((bar, i) => {
+      bar.className =
+        "h-2 flex-1 rounded " + (i < score ? colorClass : "bg-gray-200");
+    });
+
+    // update rule text
+    rules.forEach((li) => {
+      const rule = li.dataset.rule;
+      if (result[rule]) {
+        li.classList.add("text-green-600");
+      } else {
+        li.classList.remove("text-green-600");
+      }
+    });
+  });
+
   // ===============================
   // 4️⃣ Submit form
   // ===============================
@@ -218,7 +325,7 @@ function bindEvents() {
 }
 
 // =====================================================
-// ROLE CHANGE → LOAD MANAGER
+// ROLE CHANGE → LOAD MANAGER (FIX 403 + MAP ERROR)
 // =====================================================
 async function onRoleChange(e) {
   const role = e.target.value;
@@ -228,18 +335,37 @@ async function onRoleChange(e) {
   select.innerHTML = "";
   managersCache = [];
 
+  // không cần manager
   if (!role || role === "director") {
     wrapper.classList.add("hidden");
     return;
   }
 
+  // supervisor tạo sales → manager mặc định = chính mình
+  if (currentUser.role === "supervisor" && role === "sales") {
+    wrapper.classList.add("hidden");
+    select.innerHTML = `<option value="${currentUser.id}" selected></option>`;
+    return;
+  }
+
   try {
     const res = await authFetch(API + `/users/managers?role=${role}`);
-    if (!res) return;
+    if (!res || !res.ok) {
+      wrapper.classList.add("hidden");
+      return;
+    }
 
-    managersCache = await res.json();
+    const data = await res.json();
 
-    // 🔥 chỉ có 0 hoặc 1 manager → auto set
+    // 🛡️ đảm bảo là array
+    if (!Array.isArray(data)) {
+      wrapper.classList.add("hidden");
+      return;
+    }
+
+    managersCache = data;
+
+    // 0 hoặc 1 manager → auto set
     if (managersCache.length <= 1) {
       wrapper.classList.add("hidden");
       if (managersCache[0]) {
@@ -254,11 +380,11 @@ async function onRoleChange(e) {
       <option value="">-- chọn quản lý --</option>
       ${managersCache
         .map(
-          (m) =>
-            `<option value="${m.id}">
-              ${m.full_name || m.username} (${roleToLabel(m.role)})
-
-            </option>`,
+          (m) => `
+            <option value="${m.id}">
+              ${m.full_name} (${roleToLabel(m.role)})
+            </option>
+          `,
         )
         .join("")}
     `;
@@ -334,6 +460,24 @@ async function submitForm() {
     return;
   }
 
+  // phone
+  if (data.phone && !isValidPhone(data.phone)) {
+    showToast("Số điện thoại không hợp lệ", "error");
+    return;
+  }
+
+  // email
+  if (data.email && !isValidEmail(data.email)) {
+    showToast("Email không hợp lệ", "error");
+    return;
+  }
+
+  // password strength
+  if (passwordScore(evaluatePassword(data.password)) < 4) {
+    showToast("Mật khẩu chưa đủ mạnh", "error");
+    return;
+  }
+
   try {
     const res = await authFetch(API + "/users", {
       method: "POST",
@@ -343,6 +487,12 @@ async function submitForm() {
 
     if (!res.ok) {
       const err = await res.json();
+
+      if (err.error === "WEAK_PASSWORD") {
+        showToast("❌ Mật khẩu chưa đủ mạnh", "error");
+        return;
+      }
+
       throw new Error(err.message || "Lỗi tạo tài khoản");
     }
 
