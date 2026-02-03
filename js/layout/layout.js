@@ -7,6 +7,7 @@ async function loadLayout(activeTab, pageHTML) {
     if (!res.ok) throw new Error("Không load được layout");
     __LAYOUT_CACHE__ = await res.text();
   }
+  await hideUsersForLowestRole();
 
   document.getElementById("root").innerHTML = __LAYOUT_CACHE__;
   document.getElementById("page-content").innerHTML = pageHTML;
@@ -30,4 +31,17 @@ function bindNav(activeTab) {
       btn.classList.add("text-blue-600", "font-semibold");
     }
   });
+}
+
+async function hideUsersForLowestRole() {
+  const res = await authFetch(API + "/me");
+  if (!res) return;
+
+  const me = await res.json();
+
+  if (me.role === "sales") {
+    document
+      .querySelectorAll('[data-tab="users"]')
+      .forEach((el) => el.classList.add("hidden"));
+  }
 }
