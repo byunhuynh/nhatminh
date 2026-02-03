@@ -7,22 +7,24 @@ async function loadLayout(activeTab, pageHTML) {
     if (!res.ok) throw new Error("Không load được layout");
     __LAYOUT_CACHE__ = await res.text();
   }
-  await hideUsersForLowestRole();
 
   document.getElementById("root").innerHTML = __LAYOUT_CACHE__;
   document.getElementById("page-content").innerHTML = pageHTML;
 
-  bindNav(activeTab);
+  await bindNav(activeTab);
   updateThemeIcon();
 }
 
-function bindNav(activeTab) {
+/* ================= NAV + ROLE ================= */
+
+async function bindNav(activeTab) {
   const map = {
     home: "main.html",
     users: "users.html",
     profile: "profile.html",
   };
 
+  // gắn click + active
   document.querySelectorAll("[data-tab]").forEach((btn) => {
     const tab = btn.dataset.tab;
     btn.onclick = () => (location.href = map[tab]);
@@ -31,17 +33,25 @@ function bindNav(activeTab) {
       btn.classList.add("text-blue-600", "font-semibold");
     }
   });
+
+  // 👉 PHÂN QUYỀN HIỂN THỊ TAB USERS
+  await applyUsersTabPermission();
 }
 
-async function hideUsersForLowestRole() {
+async function applyUsersTabPermission() {
   const res = await authFetch(API + "/me");
   if (!res) return;
 
   const me = await res.json();
 
+  const usersTabs = document.querySelectorAll('[data-tab="users"]');
+
+  // ❌ role thấp nhất → ẩn
   if (me.role === "sales") {
-    document
-      .querySelectorAll('[data-tab="users"]')
-      .forEach((el) => el.classList.add("hidden"));
+    usersTabs.forEach((el) => el.classList.add("hidden"));
+  }
+  // ✅ role cao hơn → hiện
+  else {
+    usersTabs.forEach((el) => el.classList.remove("hidden"));
   }
 }
