@@ -257,6 +257,78 @@ function bindEvents() {
 
   submitBtn.addEventListener("click", submitForm);
 }
+// =====================================================
+// ROLE CHANGE → LOAD MANAGER (THEO ĐÚNG LOGIC BACKEND)
+// =====================================================
+async function onRoleChange(e) {
+  const role = e.target.value;
+  const wrapper = document.getElementById("managerWrapper");
+  const select = document.getElementById("manager_id");
+
+  // reset
+  select.innerHTML = "";
+  managersCache = [];
+
+  // role không cần manager
+  if (!role || role === "director") {
+    wrapper.classList.add("hidden");
+    return;
+  }
+
+  // supervisor tạo sales → manager mặc định = chính mình
+  if (currentUser.role === "supervisor" && role === "sales") {
+    wrapper.classList.add("hidden");
+    select.innerHTML = `<option value="${currentUser.id}" selected></option>`;
+    return;
+  }
+
+  try {
+    const res = await authFetch(API + `/users/managers?role=${role}`);
+    if (!res || !res.ok) {
+      wrapper.classList.add("hidden");
+      return;
+    }
+
+    const data = await res.json();
+
+    // đảm bảo là array
+    if (!Array.isArray(data)) {
+      wrapper.classList.add("hidden");
+      return;
+    }
+
+    managersCache = data;
+
+    // 0 hoặc 1 manager → auto set
+    if (managersCache.length <= 1) {
+      wrapper.classList.add("hidden");
+      if (managersCache[0]) {
+        select.innerHTML = `
+          <option value="${managersCache[0].id}" selected></option>
+        `;
+      }
+      return;
+    }
+
+    // nhiều hơn 1 → cho chọn
+    wrapper.classList.remove("hidden");
+    select.innerHTML = `
+      <option value="">-- chọn quản lý --</option>
+      ${managersCache
+        .map(
+          (m) => `
+            <option value="${m.id}">
+              ${m.full_name} (${roleToLabel(m.role)})
+            </option>
+          `,
+        )
+        .join("")}
+    `;
+  } catch (err) {
+    console.error(err);
+    showToast("Không tải được danh sách quản lý", "error");
+  }
+}
 
 // =====================================================
 // REALTIME VALIDATION
