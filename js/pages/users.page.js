@@ -2,13 +2,16 @@
 // USERS PAGE – CREATE USER (FIXED)
 // File: frontend/js/pages/users.page.js
 // =====================================================
+
 // =====================================================
 // STATE
 // =====================================================
-
 let currentUser = null;
 let managersCache = [];
 
+// =====================================================
+// BOOTSTRAP
+// =====================================================
 document.addEventListener("DOMContentLoaded", () => {
   bootstrapPage({
     activeTab: "users",
@@ -22,26 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// =====================================================
-// INIT
-// =====================================================
-async function initUsersPage() {
-  try {
-    const res = await authFetch(API + "/me");
-    if (!res) return;
-    currentUser = await res.json();
-
-    renderPage();
-    bindEvents();
-  } catch (err) {
-    console.error(err);
-    showToast("Không thể tải trang tạo nhân viên", "error");
-  }
-}
-
-// =====================================================
-// RENDER
-// =====================================================
 // =====================================================
 // RENDER
 // =====================================================
@@ -57,17 +40,13 @@ function renderPage() {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
-            <label>Họ tên</label>
+            <label>Họ tên *</label>
             <input id="full_name" class="ui-input" />
           </div>
 
           <div>
             <label>Số điện thoại</label>
-            <input
-              id="phone"
-              class="ui-input"
-              placeholder="Ví dụ: 0901234567"
-            />
+            <input id="phone" class="ui-input" placeholder="Ví dụ: 0901234567" />
             <p id="phoneHint" class="text-xs mt-1"></p>
           </div>
 
@@ -81,8 +60,6 @@ function renderPage() {
             />
             <p id="emailHint" class="text-xs mt-1"></p>
           </div>
-
-
         </div>
       </div>
 
@@ -106,14 +83,12 @@ function renderPage() {
               placeholder="Nhập mật khẩu mạnh"
             />
 
-            <!-- POPOVER -->
             <div
               id="passwordPopover"
-              class="mt-2 w-full bg-white dark:bg-gray-800
-                    border border-gray-200 dark:border-gray-700
-                    rounded-lg shadow p-4"
+              class="hidden mt-2 w-full bg-white dark:bg-gray-800
+                     border border-gray-200 dark:border-gray-700
+                     rounded-lg shadow p-4"
             >
-              <!-- INDICATOR -->
               <div class="flex gap-1 mb-3">
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
@@ -122,18 +97,26 @@ function renderPage() {
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
               </div>
 
-              <h4 class="text-sm font-semibold mb-2">Mật khẩu phải có:</h4>
-
-              <ul class="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+              <ul class="space-y-1 text-sm">
                 <li data-rule="length">• Tối thiểu 8 ký tự</li>
-                <li data-rule="lower">• Chữ thường (a-z)</li>
-                <li data-rule="upper">• Chữ hoa (A-Z)</li>
-                <li data-rule="number">• Số (0-9)</li>
-                <li data-rule="special">• Ký tự đặc biệt (!@#$…)</li>
+                <li data-rule="lower">• Chữ thường</li>
+                <li data-rule="upper">• Chữ hoa</li>
+                <li data-rule="number">• Số</li>
+                <li data-rule="special">• Ký tự đặc biệt</li>
               </ul>
             </div>
           </div>
 
+          <div>
+            <label>Nhập lại mật khẩu *</label>
+            <input
+              id="password_confirm"
+              type="password"
+              class="ui-input"
+              placeholder="Nhập lại mật khẩu"
+            />
+            <p id="passwordConfirmHint" class="text-xs mt-1"></p>
+          </div>
 
           <div>
             <label>Vai trò *</label>
@@ -154,7 +137,6 @@ function renderPage() {
           </button>
         </div>
       </div>
-
     </div>
   `;
 }
@@ -163,7 +145,6 @@ function renderPage() {
 // VALIDATION HELPERS
 // =====================================================
 function isValidPhone(phone) {
-  // VN: 0 + 9 số
   return /^0\d{9}$/.test(phone);
 }
 
@@ -172,7 +153,7 @@ function isValidEmail(email) {
 }
 
 // =====================================================
-// PASSWORD STRENGTH UI (POPOVER STYLE)
+// PASSWORD STRENGTH
 // =====================================================
 function evaluatePassword(password) {
   return {
@@ -188,50 +169,6 @@ function passwordScore(result) {
   return Object.values(result).filter(Boolean).length;
 }
 
-// =====================================================
-// ROLE OPTIONS (THEO QUYỀN – MAP QUA ROLE_LABELS)
-// =====================================================
-function renderRoleOptions() {
-  const role = currentUser.role;
-
-  // helper render option theo ROLE_LABELS
-  const opt = (value) =>
-    `<option value="${value}">${ROLE_LABELS[value]}</option>`;
-
-  // admin → tạo được director, supervisor, sales
-  if (role === "admin") {
-    return `
-      <option value="">-- chọn --</option>
-      ${opt("director")}
-      ${opt("supervisor")}
-      ${opt("sales")}
-    `;
-  }
-
-  // director → tạo được supervisor, sales
-  if (role === "director") {
-    return `
-      <option value="">-- chọn --</option>
-      ${opt("supervisor")}
-      ${opt("sales")}
-    `;
-  }
-
-  // supervisor → chỉ tạo được sales
-  if (role === "supervisor") {
-    return `
-      <option value="">-- chọn --</option>
-      ${opt("sales")}
-    `;
-  }
-
-  // role thấp nhất → không có option
-  return "";
-}
-
-// =====================================================
-// PASSWORD BAR COLOR
-// =====================================================
 function getPasswordBarColor(score) {
   if (score <= 1) return "bg-red-500";
   if (score <= 3) return "bg-yellow-400";
@@ -239,362 +176,221 @@ function getPasswordBarColor(score) {
 }
 
 // =====================================================
+// ROLE OPTIONS
+// =====================================================
+function renderRoleOptions() {
+  const role = currentUser.role;
+  const opt = (v) => `<option value="${v}">${ROLE_LABELS[v]}</option>`;
+
+  if (role === "admin")
+    return `<option value="">-- chọn --</option>${opt("director")}${opt(
+      "supervisor",
+    )}${opt("sales")}`;
+
+  if (role === "director")
+    return `<option value="">-- chọn --</option>${opt("supervisor")}${opt(
+      "sales",
+    )}`;
+
+  if (role === "supervisor")
+    return `<option value="">-- chọn --</option>${opt("sales")}`;
+
+  return "";
+}
+
+// =====================================================
 // EVENTS
 // =====================================================
-
 function bindEvents() {
-  const fullNameInput = document.getElementById("full_name");
-  const usernameInput = document.getElementById("username");
-  const roleSelect = document.getElementById("role");
+  const fullName = document.getElementById("full_name");
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
+  const confirm = document.getElementById("password_confirm");
+  const popover = document.getElementById("passwordPopover");
   const submitBtn = document.getElementById("submitBtn");
 
-  // ===============================
-  // 1️⃣ Thay đổi role → load manager
-  // ===============================
-  roleSelect.addEventListener("change", onRoleChange);
+  // role
+  document.getElementById("role").addEventListener("change", onRoleChange);
 
-  // ===============================
-  // 2️⃣ Blur username → check trùng
-  // ===============================
-  usernameInput.addEventListener("blur", checkUsername);
+  // username
+  username.addEventListener("blur", checkUsername);
 
-  // ==================================================
-  // 3️⃣ Blur HỌ TÊN
-  // - Chuẩn hoá viết hoa
-  // - Gọi backend generate username
-  // - Auto fill username
-  // ==================================================
-  fullNameInput.addEventListener("blur", async (e) => {
-    let value = e.target.value.trim();
-    if (!value) return;
+  // fullname → generate username
+  fullName.addEventListener("blur", async () => {
+    if (!fullName.value.trim()) return;
+    fullName.value = formatFullName(fullName.value);
 
-    // ✨ chuẩn hoá họ tên (viết hoa)
-    const formattedName = formatFullName(value);
-    e.target.value = formattedName;
+    const res = await authFetch(API + "/users/generate-username", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ full_name: fullName.value }),
+    });
+    if (!res) return;
 
-    try {
-      // 🔥 generate username từ backend
-      const res = await authFetch(API + "/users/generate-username", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ full_name: formattedName }),
-      });
-
-      if (!res) return;
-
-      const data = await res.json();
-
-      // auto set username
-      usernameInput.value = data.username;
-
-      // check trùng lại lần nữa (an toàn)
-      await checkUsername();
-    } catch (err) {
-      console.error(err);
-      showToast("Không thể tạo username tự động", "error");
-    }
+    const data = await res.json();
+    username.value = data.username;
+    checkUsername();
   });
 
-  const passwordInput = document.getElementById("password");
-  const popover = document.getElementById("passwordPopover");
-  const bars = popover.querySelectorAll("[data-bar]");
-  const rules = popover.querySelectorAll("[data-rule]");
+  // password popover
+  password.addEventListener("focus", () => popover.classList.remove("hidden"));
+  password.addEventListener("blur", () => popover.classList.add("hidden"));
 
-  passwordInput.addEventListener("input", () => {
-    const value = passwordInput.value;
-    const result = evaluatePassword(value);
+  password.addEventListener("input", () => {
+    const bars = popover.querySelectorAll("[data-bar]");
+    const rules = popover.querySelectorAll("[data-rule]");
+    const result = evaluatePassword(password.value);
     const score = passwordScore(result);
-    const colorClass = getPasswordBarColor(score);
+    const color = getPasswordBarColor(score);
 
-    // update bars
-    bars.forEach((bar, i) => {
-      bar.className =
-        "h-2 flex-1 rounded " + (i < score ? colorClass : "bg-gray-200");
+    bars.forEach((b, i) => {
+      b.className = "h-2 flex-1 rounded " + (i < score ? color : "bg-gray-200");
     });
 
-    // update rule text
-    rules.forEach((li) => {
-      const rule = li.dataset.rule;
-      if (result[rule]) {
-        li.classList.add("text-green-600");
-      } else {
-        li.classList.remove("text-green-600");
-      }
-    });
+    rules.forEach((li) =>
+      li.classList.toggle("text-green-600", result[li.dataset.rule]),
+    );
   });
-  bindRealtimeValidation();
 
-  // ===============================
-  // 4️⃣ Submit form
-  // ===============================
+  bindRealtimeValidation();
+  bindPasswordConfirm();
+
   submitBtn.addEventListener("click", submitForm);
 }
 
 // =====================================================
-// ROLE CHANGE → LOAD MANAGER (FIX 403 + MAP ERROR)
+// REALTIME VALIDATION
 // =====================================================
-async function onRoleChange(e) {
-  const role = e.target.value;
-  const wrapper = document.getElementById("managerWrapper");
-  const select = document.getElementById("manager_id");
-
-  select.innerHTML = "";
-  managersCache = [];
-
-  // không cần manager
-  if (!role || role === "director") {
-    wrapper.classList.add("hidden");
-    return;
-  }
-
-  // supervisor tạo sales → manager mặc định = chính mình
-  if (currentUser.role === "supervisor" && role === "sales") {
-    wrapper.classList.add("hidden");
-    select.innerHTML = `<option value="${currentUser.id}" selected></option>`;
-    return;
-  }
-
-  try {
-    const res = await authFetch(API + `/users/managers?role=${role}`);
-    if (!res || !res.ok) {
-      wrapper.classList.add("hidden");
-      return;
-    }
-
-    const data = await res.json();
-
-    // 🛡️ đảm bảo là array
-    if (!Array.isArray(data)) {
-      wrapper.classList.add("hidden");
-      return;
-    }
-
-    managersCache = data;
-
-    // 0 hoặc 1 manager → auto set
-    if (managersCache.length <= 1) {
-      wrapper.classList.add("hidden");
-      if (managersCache[0]) {
-        select.innerHTML = `<option value="${managersCache[0].id}" selected></option>`;
-      }
-      return;
-    }
-
-    // nhiều hơn 1 → cho chọn
-    wrapper.classList.remove("hidden");
-    select.innerHTML = `
-      <option value="">-- chọn quản lý --</option>
-      ${managersCache
-        .map(
-          (m) => `
-            <option value="${m.id}">
-              ${m.full_name} (${roleToLabel(m.role)})
-            </option>
-          `,
-        )
-        .join("")}
-    `;
-  } catch (err) {
-    console.error(err);
-    showToast("Không tải được danh sách quản lý", "error");
-  }
-}
-
-// =====================================================
-// CHECK USERNAME
-// =====================================================
-async function checkUsername() {
-  const input = document.getElementById("username");
-  const hint = document.getElementById("usernameHint");
-  const username = input.value.trim().toLowerCase();
-
-  if (!username) {
-    hint.textContent = "";
-    input.classList.remove("error");
-    return;
-  }
-
-  try {
-    const res = await authFetch(
-      API + `/users/check-username?username=${username}`,
-    );
-    if (!res) return;
-
-    const data = await res.json();
-
-    if (data.exists) {
-      hint.textContent = "❌ Username đã tồn tại";
-      hint.className = "text-xs mt-1 text-red-500";
-      input.classList.add("error");
-    } else {
-      hint.textContent = "✅ Username hợp lệ";
-      hint.className = "text-xs mt-1 text-green-600";
-      input.classList.remove("error");
-    }
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// ==================================
-// REALTIME VALIDATION: PHONE / EMAIL
-// ==================================
 function bindRealtimeValidation() {
-  const phoneInput = document.getElementById("phone");
+  const phone = document.getElementById("phone");
   const phoneHint = document.getElementById("phoneHint");
-
-  const emailInput = document.getElementById("email");
+  const email = document.getElementById("email");
   const emailHint = document.getElementById("emailHint");
 
-  // ---------- PHONE ----------
-  phoneInput.addEventListener("input", () => {
-    const value = phoneInput.value.trim();
-
-    if (!value) {
-      phoneHint.textContent = "";
-      phoneInput.classList.remove("error");
-      return;
-    }
-
-    if (!isValidPhone(value)) {
-      phoneHint.textContent = "❌ Số điện thoại không hợp lệ (0 + 9 số)";
-      phoneHint.className = "text-xs mt-1 text-red-500";
-      phoneInput.classList.add("error");
-    } else {
-      phoneHint.textContent = "✅ Số điện thoại hợp lệ";
-      phoneHint.className = "text-xs mt-1 text-green-600";
-      phoneInput.classList.remove("error");
-    }
+  phone.addEventListener("input", () => {
+    if (!phone.value) return clearHint(phone, phoneHint);
+    if (!isValidPhone(phone.value))
+      return showError(phone, phoneHint, "❌ Số điện thoại không hợp lệ");
+    showOk(phone, phoneHint);
   });
 
-  // ---------- EMAIL ----------
-  emailInput.addEventListener("input", () => {
-    const value = emailInput.value.trim();
-
-    if (!value) {
-      emailHint.textContent = "";
-      emailInput.classList.remove("error");
-      return;
-    }
-
-    if (!isValidEmail(value)) {
-      emailHint.textContent = "❌ Email không đúng định dạng";
-      emailHint.className = "text-xs mt-1 text-red-500";
-      emailInput.classList.add("error");
-    } else {
-      emailHint.textContent = "✅ Email hợp lệ";
-      emailHint.className = "text-xs mt-1 text-green-600";
-      emailInput.classList.remove("error");
-    }
+  email.addEventListener("input", () => {
+    if (!email.value) return clearHint(email, emailHint);
+    if (!isValidEmail(email.value))
+      return showError(email, emailHint, "❌ Email không hợp lệ");
+    showOk(email, emailHint);
   });
 }
 
 // =====================================================
-// SUBMIT FORM
+// PASSWORD CONFIRM
 // =====================================================
+function bindPasswordConfirm() {
+  const pwd = document.getElementById("password");
+  const cf = document.getElementById("password_confirm");
+  const hint = document.getElementById("passwordConfirmHint");
+
+  cf.addEventListener("input", () => {
+    if (!cf.value) return clearHint(cf, hint);
+    if (cf.value !== pwd.value)
+      return showError(cf, hint, "❌ Mật khẩu không khớp");
+    showOk(cf, hint);
+  });
+}
+
+// =====================================================
+// SUBMIT
+// =====================================================
+function focusError(id) {
+  document.getElementById(id)?.focus();
+}
+
 async function submitForm() {
   const data = {
-    username: document.getElementById("username").value.trim(),
-    password: document.getElementById("password").value,
-    full_name: document.getElementById("full_name").value,
-    phone: document.getElementById("phone").value,
-    email: document.getElementById("email").value,
-    role: document.getElementById("role").value,
-    manager_id: document.getElementById("manager_id")?.value || null,
+    username: username.value.trim(),
+    password: password.value,
+    full_name: full_name.value,
+    phone: phone.value,
+    email: email.value,
+    role: role.value,
+    manager_id: manager_id?.value || null,
   };
 
-  // chuẩn hoá họ tên trước khi submit
-  if (data.full_name) {
-    data.full_name = formatFullName(data.full_name);
-  }
+  if (!data.full_name) return error("Họ tên là bắt buộc", "full_name");
+  if (!data.username) return error("Username là bắt buộc", "username");
+  if (!data.password) return error("Mật khẩu là bắt buộc", "password");
+  if (passwordScore(evaluatePassword(data.password)) < 4)
+    return error("Mật khẩu chưa đủ mạnh", "password");
 
-  if (!data.full_name) {
-    showToast("Họ tên là bắt buộc", "error");
-    document.getElementById("full_name").classList.add("error");
-    return;
-  }
+  if (password_confirm.value !== password.value)
+    return error("Mật khẩu nhập lại không khớp", "password_confirm");
 
-  if (!data.username || !data.password || !data.role) {
-    showToast("Vui lòng nhập đủ dữ liệu bắt buộc", "error");
-    return;
-  }
+  const res = await authFetch(API + "/users", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
-  // phone
-  if (data.phone && !isValidPhone(data.phone)) {
-    showToast("Số điện thoại không hợp lệ", "error");
-    return;
-  }
-
-  // email
-  if (data.email && !isValidEmail(data.email)) {
-    showToast("Email không hợp lệ", "error");
-    return;
-  }
-
-  // password strength
-  if (passwordScore(evaluatePassword(data.password)) < 4) {
-    showToast("Mật khẩu chưa đủ mạnh", "error");
-    return;
-  }
-
-  // ❌ chặn submit nếu đang có lỗi realtime
-  if (
-    document.getElementById("phone")?.classList.contains("error") ||
-    document.getElementById("email")?.classList.contains("error")
-  ) {
-    showToast("Vui lòng sửa lỗi email / số điện thoại", "error");
-    return;
-  }
-
-  try {
-    const res = await authFetch(API + "/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-
-      if (err.error === "WEAK_PASSWORD") {
-        showToast("❌ Mật khẩu chưa đủ mạnh", "error");
-        return;
-      }
-
-      throw new Error(err.message || "Lỗi tạo tài khoản");
-    }
-
-    showToast("🎉 Tạo tài khoản thành công", "success");
-
-    // reset
-    document
-      .querySelectorAll("#usersPage input")
-      .forEach((i) => (i.value = ""));
-    document.getElementById("role").value = "";
-    document.getElementById("managerWrapper").classList.add("hidden");
-    document.getElementById("full_name").classList.remove("error");
-  } catch (err) {
-    console.error(err);
+  if (!res.ok) {
+    const err = await res.json();
     showToast(err.message, "error");
+    return;
   }
+
+  showToast("🎉 Tạo tài khoản thành công", "success");
+  resetForm();
 }
 
 // =====================================================
-// FORMAT FULL NAME (Viết hoa chữ cái đầu mỗi từ)
+// UI HELPERS
+// =====================================================
+function showError(input, hint, msg) {
+  input.classList.add("error");
+  hint.textContent = msg;
+  hint.className = "text-xs mt-1 text-red-500";
+  input.focus();
+}
+
+function showOk(input, hint) {
+  input.classList.remove("error");
+  hint.textContent = "✅ Hợp lệ";
+  hint.className = "text-xs mt-1 text-green-600";
+  setTimeout(() => (hint.textContent = ""), 3000);
+}
+
+function clearHint(input, hint) {
+  input.classList.remove("error");
+  hint.textContent = "";
+}
+
+function error(msg, id) {
+  showToast(msg, "error");
+  focusError(id);
+}
+
+// =====================================================
+// RESET
+// =====================================================
+function resetForm() {
+  document
+    .querySelectorAll("#usersPage input")
+    .forEach((i) => ((i.value = ""), i.classList.remove("error")));
+  document
+    .querySelectorAll("#usersPage p")
+    .forEach((p) => (p.textContent = ""));
+  role.value = "";
+  managerWrapper.classList.add("hidden");
+  passwordPopover.classList.add("hidden");
+}
+
+// =====================================================
+// UTIL
 // =====================================================
 function formatFullName(value) {
   return value
     .trim()
     .toLowerCase()
     .split(/\s+/)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
-}
-
-function removeVietnameseTones(str) {
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D");
 }
