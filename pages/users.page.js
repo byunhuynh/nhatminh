@@ -3,6 +3,11 @@
 // File: Frontend/nhatminh/pages/users.page.js
 // =====================================================
 
+// =====================================================
+// REALTIME VALIDATION STATE
+// =====================================================
+let usernameTimer = null;
+
 import { store } from "../app/store.js";
 import { navigate } from "../app/router.js";
 
@@ -80,14 +85,61 @@ function renderPage() {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label>Username *</label>
-            <input id="username" class="ui-input" />
+
+            <div class="flex gap-2">
+              <input
+                id="username"
+                class="ui-input flex-1"
+                placeholder="vd: ten.ho"
+              />
+
+              <button
+                id="regenUsernameBtn"
+                type="button"
+                class="ui-btn ui-btn-primary px-3"
+                title="Tạo lại username"
+              >
+                ↻
+              </button>
+            </div>
+
             <div id="usernameHint" class="ui-hint mt-1"></div>
           </div>
+
 
           <div>
             <label>Mật khẩu *</label>
             <input id="password" type="password" class="ui-input" />
           </div>
+
+          <!-- PASSWORD STRENGTH – FULL WIDTH -->
+          <div id="passwordStrength" class="hidden md:col-span-2 mt-2">
+
+            <!-- Strength bar -->
+            <div class="flex gap-1">
+              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
+              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
+              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
+              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
+              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
+            </div>
+
+            <div class="mt-2 text-sm">
+              Level:
+              <span id="passwordLevel" class="font-semibold">Empty</span>
+            </div>
+
+            <ul class="mt-3 space-y-1 text-sm text-muted-foreground-1">
+              <li data-rule="length">❌ Ít nhất 8 ký tự</li>
+              <li data-rule="lower">❌ Có chữ thường</li>
+              <li data-rule="upper">❌ Có chữ hoa</li>
+              <li data-rule="number">❌ Có số</li>
+              <li data-rule="special">❌ Có ký tự đặc biệt</li>
+            </ul>
+          </div>
+
+
+
 
           <div>
             <label>Nhập lại mật khẩu *</label>
@@ -142,37 +194,278 @@ function renderRoleOptions() {
 // =====================================================
 // EVENTS
 // =====================================================
+// =====================================================
+// EVENTS
+// =====================================================
 function bindEvents() {
   const fullName = document.getElementById("full_name");
   const username = document.getElementById("username");
+  const password = document.getElementById("password");
+  const passwordConfirm = document.getElementById("password_confirm");
+  const email = document.getElementById("email");
+  const phone = document.getElementById("phone");
   const submitBtn = document.getElementById("submitBtn");
 
   document.getElementById("role").addEventListener("change", onRoleChange);
-  username.addEventListener("blur", checkUsername);
 
-  // ✨ UX: chỉ generate username khi full_name thay đổi
-  fullName.addEventListener("blur", async () => {
-    if (!fullName.value.trim()) return;
+  // ===============================
+  // FULL NAME – auto capitalize
+  // ===============================
 
-    fullName.value = formatFullName(fullName.value);
+  // ===============================
+  // MANUAL REGENERATE USERNAME BUTTON
+  // ===============================
+  const regenBtn = document.getElementById("regenUsernameBtn");
 
-    const res = await authFetch(API + "/users/generate-username", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ full_name: fullName.value }),
-    });
+  regenBtn.addEventListener("click", async () => {
+    if (!fullName.value.trim()) {
+      scrollToField(fullName, null, "Vui lòng nhập họ tên trước");
+      return;
+    }
 
-    if (!res) return;
-    const data = await res.json();
+    // reset flag để cho phép auto
+    usernameManuallyEdited = false;
 
-    if (username.value !== data.username) {
-      username.value = data.username;
-      lastCheckedUsername = null;
-      checkUsername();
+    const baseUsername = generateUsernameFromFullName(fullName.value);
+    if (!baseUsername) return;
+
+    username.value = "⏳ đang tạo username...";
+    username.disabled = true;
+
+    const finalUsername = await resolveUsernameAvailable(baseUsername);
+
+    username.disabled = false;
+
+    if (finalUsername) {
+      username.value = finalUsername;
+      showOk(username, document.getElementById("usernameHint"));
     }
   });
 
+  // ===============================
+  // FULL NAME → REGENERATE USERNAME
+  // ===============================
+  fullName.addEventListener("blur", async () => {
+    if (!fullName.value.trim()) {
+      showError(fullName, null, "Họ tên là bắt buộc");
+      return;
+    }
+
+    // format họ tên
+    fullName.value = formatFullName(fullName.value);
+
+    // nếu user đã sửa username tay → không auto
+    if (usernameManuallyEdited) return;
+
+    const baseUsername = generateUsernameFromFullName(fullName.value);
+    if (!baseUsername) return;
+
+    // UX: đang xử lý
+    username.value = "⏳ đang tạo username...";
+    username.disabled = true;
+
+    const finalUsername = await resolveUsernameAvailable(baseUsername);
+
+    username.disabled = false;
+
+    if (!finalUsername) return;
+
+    username.value = finalUsername;
+
+    // show OK ngay
+    showOk(username, document.getElementById("usernameHint"));
+  });
+
+  // nếu user xóa trắng username → cho phép auto lại
+  username.addEventListener("blur", () => {
+    if (!username.value.trim()) {
+      usernameManuallyEdited = false;
+    }
+  });
+
+  // ===============================
+  // USERNAME MANUAL EDIT FLAG
+  // ===============================
+  let usernameManuallyEdited = false;
+
+  username.addEventListener("input", () => {
+    usernameManuallyEdited = true;
+  });
+
+  // ===============================
+  // USERNAME – VALIDATE + CHECK (ON BLUR)
+  // ===============================
+  username.addEventListener("blur", async () => {
+    const value = username.value.trim().toLowerCase();
+    const hint = document.getElementById("usernameHint");
+
+    if (!value) {
+      clearHint(username, hint);
+      return;
+    }
+
+    // ===== BASIC VALIDATION (NO API)
+    const basicError = validateUsernameBasic(value);
+    if (basicError) {
+      showError(username, hint, basicError);
+      return;
+    }
+
+    // ===== BACKEND CHECK
+    const res = await authFetch(
+      API + "/users/check-username?username=" + encodeURIComponent(value),
+    );
+    if (!res) return;
+
+    const data = await res.json();
+
+    if (data.exists) {
+      showError(username, hint, "Username đã tồn tại");
+    } else {
+      showOk(username, hint);
+    }
+  });
+
+  // ===============================
+  // EMAIL
+  // ===============================
+  email.addEventListener("input", () => {
+    const hint = document.getElementById("emailHint");
+    if (!email.value) return clearHint(email, hint);
+
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value);
+    ok ? showOk(email, hint) : showError(email, hint, "Email không hợp lệ");
+  });
+
+  // ===============================
+  // PHONE
+  // ===============================
+  phone.addEventListener("input", () => {
+    const hint = document.getElementById("phoneHint");
+    if (!phone.value) return clearHint(phone, hint);
+
+    const ok = /^(0|\+84)[0-9]{9}$/.test(phone.value);
+    ok ? showOk(phone, hint) : showError(phone, hint, "SĐT không hợp lệ");
+  });
+
+  // ===============================
+  // PASSWORD STRENGTH – ONLY SHOW ON FOCUS
+  // ===============================
+  const strengthBox = document.getElementById("passwordStrength");
+
+  password.addEventListener("focus", () => {
+    strengthBox?.classList.remove("hidden");
+  });
+
+  password.addEventListener("blur", () => {
+    strengthBox?.classList.add("hidden");
+  });
+
+  // ===============================
+  // PASSWORD STRENGTH
+  // ===============================
+  password.addEventListener("input", () => {
+    updatePasswordStrength(password.value);
+
+    const hint = document.getElementById("passwordConfirmHint");
+    const ok = isStrongPassword(password.value);
+    ok ? clearHint(password) : showError(password, hint, "Mật khẩu yếu");
+  });
+
+  // ===============================
+  // PASSWORD CONFIRM
+  // ===============================
+  passwordConfirm.addEventListener("input", () => {
+    const hint = document.getElementById("passwordConfirmHint");
+    passwordConfirm.value === password.value
+      ? showOk(passwordConfirm, hint)
+      : showError(passwordConfirm, hint, "Mật khẩu không khớp");
+  });
+  // ===============================
+  // WATCH REQUIRED INPUTS
+  // ===============================
+  ["full_name", "username", "password", "password_confirm", "role"].forEach(
+    (id) => {
+      const el = document.getElementById(id);
+      el?.addEventListener("input", updateSubmitState);
+      el?.addEventListener("change", updateSubmitState);
+    },
+  );
+  updateSubmitState();
+
   submitBtn.addEventListener("click", submitForm);
+}
+
+// =====================================================
+// PASSWORD RULE – SYNC BACKEND
+// =====================================================
+function isStrongPassword(pw) {
+  if (!pw || pw.length < 8) return false;
+  if (!/[a-z]/.test(pw)) return false;
+  if (!/[A-Z]/.test(pw)) return false;
+  if (!/\d/.test(pw)) return false;
+  if (!/[^A-Za-z0-9]/.test(pw)) return false;
+  return true;
+}
+
+// =====================================================
+// PASSWORD STRENGTH UI (SYNC BACKEND RULE)
+// =====================================================
+function updatePasswordStrength(pw) {
+  const bars = document.querySelectorAll("[data-bar]");
+  const levelText = document.getElementById("passwordLevel");
+
+  if (!bars.length || !levelText) return;
+
+  const rules = {
+    length: pw.length >= 8,
+    lower: /[a-z]/.test(pw),
+    upper: /[A-Z]/.test(pw),
+    number: /\d/.test(pw),
+    special: /[^A-Za-z0-9]/.test(pw),
+  };
+
+  // update rule text
+  Object.entries(rules).forEach(([key, ok]) => {
+    const li = document.querySelector(`[data-rule="${key}"]`);
+    if (!li) return;
+    li.textContent = (ok ? "✔️ " : "❌ ") + li.textContent.slice(2);
+    li.classList.toggle("text-green-500", ok);
+    li.classList.toggle("text-red-500", !ok);
+  });
+
+  const score = Object.values(rules).filter(Boolean).length;
+
+  const levels = [
+    "Empty",
+    "Weak",
+    "Medium",
+    "Strong",
+    "Very Strong",
+    "Super Strong",
+  ];
+
+  levelText.textContent = levels[score];
+  levelText.className =
+    "font-semibold " +
+    (score >= 4
+      ? "text-green-500"
+      : score >= 2
+        ? "text-yellow-500"
+        : "text-red-500");
+
+  // update bars
+  bars.forEach((bar, i) => {
+    bar.className =
+      "h-2 flex-1 rounded " +
+      (i < score
+        ? score >= 4
+          ? "bg-green-500"
+          : score >= 2
+            ? "bg-yellow-400"
+            : "bg-red-400"
+        : "bg-slate-200");
+  });
 }
 
 // =====================================================
@@ -255,6 +548,33 @@ async function checkUsername() {
 }
 
 // =====================================================
+// VALIDATE USERNAME BASIC – STRICT RULE
+// =====================================================
+function validateUsernameBasic(username) {
+  // không khoảng trắng
+  if (/\s/.test(username)) {
+    return "Username không được chứa khoảng trắng";
+  }
+
+  // không tiếng Việt có dấu
+  if (/[^\x00-\x7F]/.test(username)) {
+    return "Username không được chứa ký tự tiếng Việt có dấu";
+  }
+
+  // chỉ cho phép a-z, 0-9, dấu chấm
+  if (!/^[a-z0-9.]+$/.test(username)) {
+    return "Username chỉ được chứa chữ thường, số và dấu chấm";
+  }
+
+  // tối thiểu 5 ký tự
+  if (username.length < 5) {
+    return "Username tối thiểu 5 ký tự";
+  }
+
+  return null;
+}
+
+// =====================================================
 // SUBMIT
 // =====================================================
 async function submitForm() {
@@ -268,12 +588,47 @@ async function submitForm() {
     manager_id: manager_id?.value || null,
   };
 
-  if (!data.full_name) return error("Họ tên là bắt buộc", "full_name");
-  if (!data.username) return error("Username là bắt buộc", "username");
-  if (!data.password) return error("Mật khẩu là bắt buộc", "password");
-  if (password_confirm.value !== password.value)
-    return error("Mật khẩu nhập lại không khớp", "password_confirm");
+  // ===============================
+  // FRONTEND VALIDATION → SCROLL
+  // ===============================
+  if (!data.full_name) {
+    scrollToField(full_name, null, "Họ tên là bắt buộc");
+    return;
+  }
 
+  if (!data.username) {
+    scrollToField(
+      username,
+      document.getElementById("usernameHint"),
+      "Username là bắt buộc",
+    );
+    return;
+  }
+
+  if (!data.password) {
+    scrollToField(
+      password,
+      document.getElementById("passwordConfirmHint"),
+      "Mật khẩu là bắt buộc",
+    );
+    return;
+  }
+
+  if (password_confirm.value !== password.value) {
+    scrollToField(
+      password_confirm,
+      document.getElementById("passwordConfirmHint"),
+      "Mật khẩu nhập lại không khớp",
+    );
+    return;
+  }
+
+  // chuẩn hóa họ tên
+  data.full_name = formatFullName(data.full_name);
+
+  // ===============================
+  // CALL BACKEND
+  // ===============================
   const res = await authFetch(API + "/users", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -282,7 +637,12 @@ async function submitForm() {
 
   if (!res.ok) {
     const err = await res.json();
-    showToast(err.message, "error");
+
+    const handled = handleBackendError(err);
+
+    if (!handled) {
+      showToast(err.message || "Dữ liệu không hợp lệ", "error");
+    }
     return;
   }
 
@@ -293,11 +653,251 @@ async function submitForm() {
 // =====================================================
 // UTIL
 // =====================================================
+// =====================================================
+// FORMAT FULL NAME – capitalize each word
+// =====================================================
 function formatFullName(value) {
   return value
     .trim()
     .toLowerCase()
     .split(/\s+/)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+// =====================================================
+// TOGGLE SUBMIT BUTTON (ERROR OR EMPTY)
+// =====================================================
+function updateSubmitState() {
+  const submitBtn = document.getElementById("submitBtn");
+  if (!submitBtn) return;
+
+  const hasError = document.querySelector('[data-error="1"]');
+  const filled = isFormFilled();
+
+  const disabled = !!hasError || !filled;
+
+  submitBtn.disabled = disabled;
+  submitBtn.classList.toggle("opacity-50", disabled);
+  submitBtn.classList.toggle("cursor-not-allowed", disabled);
+}
+// =====================================================
+// UI FEEDBACK
+// =====================================================
+
+// =====================================================
+// CHECK REQUIRED FIELDS FILLED
+// =====================================================
+function isFormFilled() {
+  const requiredIds = [
+    "full_name",
+    "username",
+    "password",
+    "password_confirm",
+    "role",
+    "manager_id",
+  ];
+
+  return requiredIds.every((id) => {
+    const el = document.getElementById(id);
+    if (!el) return false;
+    return el.value && el.value.trim() !== "";
+  });
+}
+
+// =====================================================
+// SHOW ERROR – FORCE red, persistent + mark error
+// =====================================================
+function showError(input, hintEl, msg) {
+  // mark error
+  input.dataset.error = "1";
+
+  // FORCE red border
+  input.style.borderColor = "#ef4444";
+  input.style.boxShadow = "0 0 0 1px #ef4444";
+
+  if (hintEl) {
+    hintEl.textContent = msg;
+    hintEl.style.color = "#ef4444";
+  }
+
+  updateSubmitState();
+}
+
+// =====================================================
+// SHOW OK – FORCE green (bypass CSS override)
+// =====================================================
+function showOk(input, hintEl) {
+  delete input.dataset.error;
+
+  input.style.borderColor = "#22c55e";
+  input.style.boxShadow = "0 0 0 1px #22c55e";
+
+  if (hintEl) {
+    hintEl.textContent = "✓ Hợp lệ";
+    hintEl.style.color = "#22c55e";
+  }
+
+  updateSubmitState();
+
+  setTimeout(() => {
+    input.style.borderColor = "";
+    input.style.boxShadow = "";
+
+    if (hintEl) {
+      hintEl.textContent = "";
+      hintEl.style.color = "";
+    }
+  }, 3000);
+}
+
+// =====================================================
+// CLEAR HINT – reset state + recheck submit
+// =====================================================
+function clearHint(input, hintEl) {
+  delete input.dataset.error;
+
+  input.style.borderColor = "";
+  input.style.boxShadow = "";
+
+  if (hintEl) {
+    hintEl.textContent = "";
+    hintEl.style.color = "";
+  }
+
+  updateSubmitState();
+}
+
+// =====================================================
+// SCROLL TO FIELD + FOCUS + SHOW ERROR
+// =====================================================
+function scrollToField(input, hintEl, msg) {
+  if (!input) return;
+
+  showError(input, hintEl, msg);
+
+  input.scrollIntoView({
+    behavior: "smooth",
+    block: "center",
+  });
+
+  setTimeout(() => {
+    input.focus();
+  }, 300);
+}
+
+// =====================================================
+// HANDLE BACKEND ERROR → FIELD
+// =====================================================
+function handleBackendError(err) {
+  const map = {
+    WEAK_PASSWORD: () =>
+      scrollToField(
+        password,
+        document.getElementById("passwordConfirmHint"),
+        "Mật khẩu không đủ mạnh",
+      ),
+
+    USERNAME_EXISTS: () =>
+      scrollToField(
+        username,
+        document.getElementById("usernameHint"),
+        "Username đã tồn tại",
+      ),
+  };
+
+  // theo error code
+  if (err.error && map[err.error]) {
+    map[err.error]();
+    return true;
+  }
+
+  // fallback theo message
+  if (err.message) {
+    if (err.message.toLowerCase().includes("username")) {
+      scrollToField(
+        username,
+        document.getElementById("usernameHint"),
+        err.message,
+      );
+      return true;
+    }
+
+    if (err.message.toLowerCase().includes("mật khẩu")) {
+      scrollToField(
+        password,
+        document.getElementById("passwordConfirmHint"),
+        err.message,
+      );
+      return true;
+    }
+  }
+
+  return false;
+}
+// =====================================================
+// REMOVE VIETNAMESE TONES (sync backend)
+// =====================================================
+function removeVietnameseTones(str) {
+  return str
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D");
+}
+
+// =====================================================
+// GENERATE USERNAME FROM FULL NAME (SAFE FOR 1 WORD)
+// =====================================================
+function generateUsernameFromFullName(fullName) {
+  const clean = removeVietnameseTones(fullName)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+
+  if (!clean) return "";
+
+  const parts = clean.split(" ");
+
+  // chỉ 1 từ → dùng luôn
+  if (parts.length === 1) {
+    return parts[0];
+  }
+
+  // >= 2 từ
+  const lastName = parts[parts.length - 1];
+  const initials = parts
+    .slice(0, -1)
+    .map((p) => p[0])
+    .join("");
+
+  return `${lastName}.${initials}`;
+}
+
+// =====================================================
+// RESOLVE USERNAME AVAILABLE (MIN LENGTH SAFE)
+// =====================================================
+async function resolveUsernameAvailable(baseUsername) {
+  let username = baseUsername;
+  let index = 1;
+
+  // ===== ensure min length = 5
+  if (username.length < 5) {
+    username = `${baseUsername}${String(index).padStart(2, "0")}`;
+    index++;
+  }
+
+  while (true) {
+    const res = await authFetch(
+      API + "/users/check-username?username=" + encodeURIComponent(username),
+    );
+
+    if (!res) return "";
+
+    const data = await res.json();
+    if (!data.exists) return username;
+
+    username = `${baseUsername}${String(index).padStart(2, "0")}`;
+    index++;
+  }
 }
