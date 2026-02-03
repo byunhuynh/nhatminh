@@ -24,8 +24,6 @@ let managersCache = [];
 // =====================================================
 async function initUsersPage() {
   try {
-    showLoading(true);
-
     const res = await authFetch(API + "/me");
     if (!res) return;
     currentUser = await res.json();
@@ -35,8 +33,6 @@ async function initUsersPage() {
   } catch (err) {
     console.error(err);
     showToast("Không thể tải trang tạo nhân viên", "error");
-  } finally {
-    showLoading(false);
   }
 }
 
@@ -159,8 +155,6 @@ async function onRoleChange(e) {
   wrapper.classList.remove("hidden");
 
   try {
-    showLoading(true);
-
     const res = await authFetch(API + `/users/managers?role=${role}`);
     if (!res) return;
 
@@ -180,8 +174,6 @@ async function onRoleChange(e) {
   } catch (err) {
     console.error(err);
     showToast("Không tải được danh sách quản lý", "error");
-  } finally {
-    showLoading(false);
   }
 }
 
@@ -241,8 +233,6 @@ async function submitForm() {
   }
 
   try {
-    showLoading(true);
-
     const res = await authFetch(API + "/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -265,7 +255,5 @@ async function submitForm() {
   } catch (err) {
     console.error(err);
     showToast(err.message, "error");
-  } finally {
-    showLoading(false);
   }
 }
