@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // =====================================================
 // RENDER
 // =====================================================
+// =====================================================
+// RENDER PAGE – CLEAN UI VERSION
+// =====================================================
+// =====================================================
+// RENDER PAGE – CLEAN UI VERSION
+// =====================================================
 function renderPage() {
   const page = document.getElementById("usersPage");
 
@@ -46,35 +52,21 @@ function renderPage() {
 
           <div>
             <label>Ngày sinh</label>
-            <input
-              id="dob"
-              type="date"
-              class="ui-input"
-            />
+            <input id="dob" type="date" class="ui-input" />
           </div>
 
           <div>
             <label>Số điện thoại</label>
-            <input
-              id="phone"
-              class="ui-input"
-              placeholder="Ví dụ: 0901234567"
-            />
+            <input id="phone" class="ui-input" placeholder="Ví dụ: 0901234567" />
             <p id="phoneHint" class="text-xs mt-1"></p>
           </div>
 
           <div>
             <label>Email</label>
-            <input
-              id="email"
-              type="email"
-              class="ui-input"
-              placeholder="Ví dụ: ten@email.com"
-            />
+            <input id="email" type="email" class="ui-input" placeholder="Ví dụ: ten@email.com" />
             <p id="emailHint" class="text-xs mt-1"></p>
           </div>
 
-          <!-- ========== ĐỊA CHỈ ========== -->
           <div class="md:col-span-2">
             <label>Tỉnh / Thành phố</label>
             <select id="province" class="ui-select">
@@ -98,11 +90,7 @@ function renderPage() {
 
           <div class="md:col-span-2">
             <label>Địa chỉ chi tiết</label>
-            <input
-              id="address_detail"
-              class="ui-input"
-              placeholder="Số nhà, tên đường..."
-            />
+            <input id="address_detail" class="ui-input" placeholder="Số nhà, tên đường..." />
           </div>
         </div>
       </div>
@@ -112,12 +100,15 @@ function renderPage() {
         <h2 class="text-lg font-semibold mb-4">🔐 Thông tin tài khoản</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+
+          <!-- USERNAME -->
           <div>
             <label>Username *</label>
             <input id="username" class="ui-input" />
             <p id="usernameHint" class="text-xs mt-1"></p>
           </div>
 
+          <!-- PASSWORD -->
           <div class="relative">
             <label>Mật khẩu *</label>
             <input
@@ -126,9 +117,15 @@ function renderPage() {
               class="ui-input"
               placeholder="Nhập mật khẩu mạnh"
             />
-            <div id="passwordPopover" class="hidden mt-2 w-full bg-white dark:bg-gray-800
-              border border-gray-200 dark:border-gray-700
-              rounded-lg shadow p-4">
+
+            <!-- PASSWORD STRENGTH POPOVER -->
+            <div
+              id="passwordPopover"
+              class="hidden absolute left-0 top-full mt-2 w-full
+                     bg-[var(--bg-card)] text-[var(--text-soft)]
+                     border border-[var(--border-main)]
+                     rounded-lg shadow-lg p-4 z-50"
+            >
               <div class="flex gap-1 mb-3">
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
@@ -136,7 +133,8 @@ function renderPage() {
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
               </div>
-              <ul class="space-y-1 text-sm">
+
+              <ul class="space-y-1 text-xs">
                 <li data-rule="length">• Tối thiểu 8 ký tự</li>
                 <li data-rule="lower">• Chữ thường</li>
                 <li data-rule="upper">• Chữ hoa</li>
@@ -146,16 +144,14 @@ function renderPage() {
             </div>
           </div>
 
+          <!-- PASSWORD CONFIRM -->
           <div>
             <label>Nhập lại mật khẩu *</label>
-            <input
-              id="password_confirm"
-              type="password"
-              class="ui-input"
-            />
+            <input id="password_confirm" type="password" class="ui-input" />
             <p id="passwordConfirmHint" class="text-xs mt-1"></p>
           </div>
 
+          <!-- ROLE -->
           <div>
             <label>Vai trò *</label>
             <select id="role" class="ui-select">
@@ -163,13 +159,14 @@ function renderPage() {
             </select>
           </div>
 
+          <!-- MANAGER -->
           <div id="managerWrapper" class="hidden">
             <label>Quản lý trực tiếp</label>
             <select id="manager_id" class="ui-select"></select>
           </div>
         </div>
 
-        <div class="mt-5">
+        <div class="mt-6">
           <button id="submitBtn" class="ui-btn ui-btn-primary w-full">
             ➕ Tạo tài khoản
           </button>

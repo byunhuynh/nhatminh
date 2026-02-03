@@ -3,6 +3,12 @@
 // File: frontend/js/core/bootstrap.js
 // =====================================================
 
+// ==================================
+// AUTO REFRESH ON PAGE LOAD
+// ==================================
+if (storage.get("remember_login") === "1") {
+  startAutoRefresh();
+}
 /**
  * bootstrapPage
  * @param {Object} options
@@ -37,7 +43,6 @@ async function bootstrapPage({
   const res = await authFetch(API + "/me");
 
   if (!res) {
-    showToast("Phiên đăng nhập đã hết hạn", "error");
     return;
   }
 

@@ -2,7 +2,7 @@
 <style>
   /* =====================================================
    GLOBAL THEME VARIABLES
-===================================================== */
+  ===================================================== */
   :root {
     --bg-page: #f8fafc;
     --bg-card: #ffffff;
@@ -39,9 +39,10 @@
 
   /* =====================================================
    BASE TEXT
-===================================================== */
+   ⚠️ KHÔNG SET BACKGROUND Ở BODY
+   Background thuộc về page (users.html, main.html…)
+  ===================================================== */
   body {
-    background: var(--bg-page);
     color: var(--text-main);
   }
 
@@ -65,7 +66,7 @@
 
   /* =====================================================
    CARD
-===================================================== */
+  ===================================================== */
   .ui-card {
     background: var(--bg-card);
     border-radius: 1rem;
@@ -74,7 +75,7 @@
 
   /* =====================================================
    INPUT / SELECT / TEXTAREA
-===================================================== */
+  ===================================================== */
   .ui-input,
   .ui-select,
   .ui-textarea {
@@ -101,7 +102,7 @@
 
   /* =====================================================
    BUTTON
-===================================================== */
+  ===================================================== */
   .ui-btn {
     display: inline-flex;
     align-items: center;
@@ -140,34 +141,8 @@
   }
 
   /* =====================================================
-   TABLE
-===================================================== */
-  .ui-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.9rem;
-  }
-
-  .ui-table th {
-    text-align: left;
-    padding: 0.6rem;
-    background: var(--bg-hover);
-    color: var(--text-muted);
-    font-weight: 600;
-  }
-
-  .ui-table td {
-    padding: 0.6rem;
-    border-bottom: 1px solid var(--border-main);
-  }
-
-  .ui-table tr:hover {
-    background: var(--bg-hover);
-  }
-
-  /* =====================================================
-   BADGE / STATUS
-===================================================== */
+   BADGE
+  ===================================================== */
   .ui-badge {
     display: inline-block;
     padding: 0.2rem 0.6rem;
@@ -185,53 +160,10 @@
     background: rgba(239, 68, 68, 0.15);
     color: #dc2626;
   }
-
-  .ui-dropdown {
-    position: relative;
-  }
-
-  .ui-dropdown-panel {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 50;
-    background: var(--bg-card);
-    border: 1px solid var(--border-main);
-    border-radius: 0.5rem;
-    max-height: 220px;
-    overflow-y: auto;
-    display: none;
-  }
-
-  .ui-dropdown-panel.open {
-    display: block;
-  }
-
-  .ui-dropdown-panel li {
-    padding: 0.5rem 0.75rem;
-    cursor: pointer;
-  }
-
-  .ui-dropdown-panel li:hover {
-    background: var(--bg-hover);
-  }
-
-  .ui-input.error,
-  .ui-select.error {
-    border-color: #ef4444 !important; /* red-500 */
-    box-shadow: 0 0 0 1px #ef4444;
-  }
-
-  .dark .ui-input.error,
-  .dark .ui-select.error {
-    border-color: #f87171 !important; /* red-400 */
-    box-shadow: 0 0 0 1px #f87171;
-  }
 </style>
 
 <div class="min-h-screen flex flex-col">
-  <!-- HEADER -->
+  <!-- ================= HEADER ================= -->
   <header
     class="sticky top-0 z-40 flex items-center justify-between px-4 py-3 bg-white/80 dark:bg-gray-900/80 backdrop-blur shadow-sm"
   >
@@ -245,27 +177,24 @@
       </div>
     </a>
 
-    <div class="flex items-center gap-4">
-      <!-- Dark mode -->
-      <button
-        id="themeToggle"
-        onclick="toggleDarkMode()"
-        class="text-xl p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-      >
-        <span id="themeIcon">🌙</span>
-      </button>
-    </div>
+    <button
+      id="themeToggle"
+      onclick="toggleDarkMode()"
+      class="text-xl p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+    >
+      <span id="themeIcon">🌙</span>
+    </button>
   </header>
 
-  <!-- MAIN -->
+  <!-- ================= MAIN ================= -->
   <main
     id="page-content"
-    class="flex-1 p-4 pb-24 max-w-5xl mx-auto w-full"
+    class="flex-1 p-4 pb-24 md:pb-4 max-w-5xl mx-auto w-full"
   ></main>
 
-  <!-- 📱 BOTTOM NAV -->
+  <!-- ================= MOBILE BOTTOM NAV ================= -->
   <nav
-    class="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 border-t border-gray-200 dark:border-gray-700"
+    class="fixed md:hidden bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 border-t border-gray-200 dark:border-gray-700"
   >
     <div class="flex justify-around items-center h-16">
       <button data-tab="home" class="flex flex-col items-center text-xs">
@@ -273,7 +202,6 @@
         Trang chủ
       </button>
 
-      <!-- USERS TAB -->
       <button
         data-tab="users"
         class="flex flex-col items-center text-xs hidden"
@@ -288,7 +216,8 @@
       </button>
     </div>
   </nav>
-  <!-- GLOBAL LOADING -->
+
+  <!-- ================= GLOBAL LOADING ================= -->
   <div
     id="globalLoading"
     class="fixed inset-0 z-[9999] bg-white/70 dark:bg-gray-900/70 backdrop-blur flex items-center justify-center text-gray-700 dark:text-gray-200 hidden"

@@ -1,16 +1,19 @@
 <!doctype html>
-<html lang="vi" class="h-full">
+<html lang="vi" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý người dùng</title>
+
     <link rel="stylesheet" href="assets/css/ui.css" />
 
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = { darkMode: "class" };
     </script>
 
+    <!-- Toast -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
@@ -18,10 +21,8 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </head>
 
-  <body
-    class="h-full bg-gradient-to-br from-slate-100 via-blue-100 to-indigo-200 dark:from-gray-900 dark:to-gray-800"
-  >
-    <div id="root" class="h-full"></div>
+  <body class="min-h-screen">
+    <div id="root"></div>
 
     <!-- core -->
     <script src="js/core/config.js"></script>

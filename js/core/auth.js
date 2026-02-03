@@ -27,6 +27,7 @@ async function login() {
   if (remember) {
     storage.set("refresh_token", data.refresh_token);
     storage.set("remember_login", "1");
+    startAutoRefresh(); // ✅ THÊM
   } else {
     storage.remove("refresh_token");
     storage.remove("remember_login");
@@ -40,4 +41,34 @@ function logout() {
   storage.clear();
   showToast("Đã đăng xuất", "info");
   location.replace("login.html");
+}
+
+// ==================================
+// AUTO REFRESH ACCESS TOKEN
+// ==================================
+let __REFRESH_TIMER__ = null;
+
+function startAutoRefresh() {
+  if (!storage.get("refresh_token")) return;
+
+  stopAutoRefresh();
+
+  // refresh trước khi access token hết hạn (ví dụ: 14 phút)
+  __REFRESH_TIMER__ = setInterval(
+    async () => {
+      const ok = await refreshToken();
+      if (!ok) {
+        stopAutoRefresh();
+        logout();
+      }
+    },
+    14 * 60 * 1000,
+  ); // 14 phút
+}
+
+function stopAutoRefresh() {
+  if (__REFRESH_TIMER__) {
+    clearInterval(__REFRESH_TIMER__);
+    __REFRESH_TIMER__ = null;
+  }
 }
