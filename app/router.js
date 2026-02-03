@@ -17,8 +17,15 @@ export function navigate(path) {
 }
 
 export function renderRoute() {
-  const path = location.hash.replace("#", "") || "/";
-  const fn = routes[path] || renderHome;
+  const raw = location.hash.replace("#", "");
+  const path = raw || "/";
+  const fn = routes[path];
+
+  if (!fn) {
+    navigate("/");
+    return;
+  }
+
   fn();
 }
 

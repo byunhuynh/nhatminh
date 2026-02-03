@@ -9,9 +9,14 @@ import { store } from "../app/store.js";
 // Render Home Page
 // =====================================================
 export function renderHome() {
+  const container = document.getElementById("page-content");
+  if (!container) {
+    console.warn("page-content chưa sẵn sàng");
+    return;
+  }
   const me = store.user;
 
-  document.getElementById("page-content").innerHTML = `
+  container.innerHTML = `
     <div class="space-y-6">
 
       <!-- ================= USER INFO ================= -->
