@@ -45,12 +45,25 @@ function renderPage() {
           </div>
 
           <div>
+            <label>Ngày sinh</label>
+            <input
+              id="dob"
+              type="date"
+              class="ui-input"
+            />
+          </div>
+
+          <div>
             <label>Số điện thoại</label>
-            <input id="phone" class="ui-input" placeholder="Ví dụ: 0901234567" />
+            <input
+              id="phone"
+              class="ui-input"
+              placeholder="Ví dụ: 0901234567"
+            />
             <p id="phoneHint" class="text-xs mt-1"></p>
           </div>
 
-          <div class="md:col-span-2">
+          <div>
             <label>Email</label>
             <input
               id="email"
@@ -59,6 +72,37 @@ function renderPage() {
               placeholder="Ví dụ: ten@email.com"
             />
             <p id="emailHint" class="text-xs mt-1"></p>
+          </div>
+
+          <!-- ========== ĐỊA CHỈ ========== -->
+          <div class="md:col-span-2">
+            <label>Tỉnh / Thành phố</label>
+            <select id="province" class="ui-select">
+              <option value="">-- chọn tỉnh / thành --</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Quận / Huyện</label>
+            <select id="district" class="ui-select" disabled>
+              <option value="">-- chọn quận / huyện --</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Phường / Xã</label>
+            <select id="ward" class="ui-select" disabled>
+              <option value="">-- chọn phường / xã --</option>
+            </select>
+          </div>
+
+          <div class="md:col-span-2">
+            <label>Địa chỉ chi tiết</label>
+            <input
+              id="address_detail"
+              class="ui-input"
+              placeholder="Số nhà, tên đường..."
+            />
           </div>
         </div>
       </div>
@@ -82,13 +126,9 @@ function renderPage() {
               class="ui-input"
               placeholder="Nhập mật khẩu mạnh"
             />
-
-            <div
-              id="passwordPopover"
-              class="hidden mt-2 w-full bg-white dark:bg-gray-800
-                     border border-gray-200 dark:border-gray-700
-                     rounded-lg shadow p-4"
-            >
+            <div id="passwordPopover" class="hidden mt-2 w-full bg-white dark:bg-gray-800
+              border border-gray-200 dark:border-gray-700
+              rounded-lg shadow p-4">
               <div class="flex gap-1 mb-3">
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
@@ -96,7 +136,6 @@ function renderPage() {
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
                 <div class="h-2 flex-1 rounded bg-gray-200" data-bar></div>
               </div>
-
               <ul class="space-y-1 text-sm">
                 <li data-rule="length">• Tối thiểu 8 ký tự</li>
                 <li data-rule="lower">• Chữ thường</li>
@@ -113,7 +152,6 @@ function renderPage() {
               id="password_confirm"
               type="password"
               class="ui-input"
-              placeholder="Nhập lại mật khẩu"
             />
             <p id="passwordConfirmHint" class="text-xs mt-1"></p>
           </div>
@@ -314,6 +352,17 @@ function bindEvents() {
     rules.forEach((li) =>
       li.classList.toggle("text-green-600", result[li.dataset.rule]),
     );
+  });
+
+  // ================= ADDRESS EVENTS =================
+  loadProvinces();
+
+  province.addEventListener("change", (e) => {
+    loadDistricts(e.target.value);
+  });
+
+  district.addEventListener("change", (e) => {
+    loadWards(e.target.value);
   });
 
   bindRealtimeValidation();
@@ -549,6 +598,58 @@ function resetForm() {
   role.value = "";
   managerWrapper.classList.add("hidden");
   passwordPopover.classList.add("hidden");
+}
+
+// =====================================================
+// LOAD PROVINCES API (VN)
+// =====================================================
+async function loadProvinces() {
+  const provinceSelect = document.getElementById("province");
+
+  const res = await fetch(`${API_PROVINCE}/p`);
+  const data = await res.json();
+
+  provinceSelect.innerHTML += data
+    .map((p) => `<option value="${p.code}">${p.name}</option>`)
+    .join("");
+}
+
+async function loadDistricts(provinceCode) {
+  const district = document.getElementById("district");
+  const ward = document.getElementById("ward");
+
+  district.disabled = true;
+  ward.disabled = true;
+  district.innerHTML = `<option value="">-- chọn quận / huyện --</option>`;
+  ward.innerHTML = `<option value="">-- chọn phường / xã --</option>`;
+
+  if (!provinceCode) return;
+
+  const res = await fetch(`${API_PROVINCE}/p/${provinceCode}?depth=2`);
+  const data = await res.json();
+
+  district.innerHTML += data.districts
+    .map((d) => `<option value="${d.code}">${d.name}</option>`)
+    .join("");
+
+  district.disabled = false;
+}
+
+async function loadWards(districtCode) {
+  const ward = document.getElementById("ward");
+  ward.disabled = true;
+  ward.innerHTML = `<option value="">-- chọn phường / xã --</option>`;
+
+  if (!districtCode) return;
+
+  const res = await fetch(`${API_PROVINCE}/d/${districtCode}?depth=2`);
+  const data = await res.json();
+
+  ward.innerHTML += data.wards
+    .map((w) => `<option value="${w.code}">${w.name}</option>`)
+    .join("");
+
+  ward.disabled = false;
 }
 
 // =====================================================

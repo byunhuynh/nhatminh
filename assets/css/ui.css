@@ -69,6 +69,46 @@ label {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* =====================================================
+   INPUT / SELECT / TEXTAREA
+===================================================== */
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.ui-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+/* ERROR STATE */
+.ui-input.error,
+.ui-select.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+.dark .ui-input.error,
+.dark .ui-select.error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 1px #f87171;
+}
+
 /* ================================
    FIX CHROME AUTOFILL STYLE
 ================================ */
