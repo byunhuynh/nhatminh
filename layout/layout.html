@@ -59,6 +59,9 @@
     background: var(--bg-page);
     color: var(--text-main);
   }
+  body {
+    padding-top: 4rem; /* khớp nav height */
+  }
 
   /* =====================================================
  TYPOGRAPHY
@@ -164,124 +167,6 @@
     }
   }
 
-  /* ================= NAV ACTIVE ================= */
-  .nav-active {
-    color: #2563eb;
-  }
-
-  .nav-active span {
-    transform: scale(1.15);
-  }
-
-  /* ================= TEMPLATE NAV STYLE ================= */
-  .nav-item {
-    color: var(--text-muted);
-    transition: all 0.2s ease;
-  }
-
-  .nav-item.nav-active {
-    color: var(--primary);
-  }
-
-  .nav-item.nav-active span:first-child {
-    transform: translateY(-2px) scale(1.1);
-  }
-
-  /* FAB nổi giữa */
-  .nav-fab {
-    position: relative;
-    top: -28px;
-  }
-
-  /* ================= THEME TOGGLE ADVANCED ANIMATION ================= */
-
-  /* transition màu nền toàn trang */
-  html,
-  body {
-    transition:
-      background-color 0.5s ease,
-      color 0.4s ease;
-  }
-
-  /* base button */
-  #themeToggle {
-    position: relative;
-    overflow: hidden;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-  }
-
-  /* ===== ROTATE DIRECTION ===== */
-  #themeToggle.rotate-cw {
-    animation: rotateCW 0.55s ease;
-  }
-
-  #themeToggle.rotate-ccw {
-    animation: rotateCCW 0.55s ease;
-  }
-
-  /* ===== BOUNCE ===== */
-  @keyframes rotateCW {
-    0% {
-      transform: rotate(0deg);
-    }
-    60% {
-      transform: rotate(380deg);
-    }
-    80% {
-      transform: rotate(350deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes rotateCCW {
-    0% {
-      transform: rotate(0deg);
-    }
-    60% {
-      transform: rotate(-380deg);
-    }
-    80% {
-      transform: rotate(-350deg);
-    }
-    100% {
-      transform: rotate(-360deg);
-    }
-  }
-
-  /* ===== RIPPLE ===== */
-  #themeToggle::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.35) 10%,
-      transparent 10%
-    );
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #themeToggle.ripple::after {
-    animation: ripple 0.6s ease-out;
-  }
-
-  @keyframes ripple {
-    0% {
-      transform: scale(0);
-      opacity: 0.6;
-    }
-    100% {
-      transform: scale(2.5);
-      opacity: 0;
-    }
-  }
   /* ================= THEME TOGGLE (IN HEADER) ================= */
   .theme-toggle {
     transition:
@@ -295,6 +180,25 @@
       right: 0.5rem;
     }
   }
+  /* ================= THEME TOGGLE SIZE ================= */
+  .theme-toggle {
+    font-size: 1.6rem; /* 🔥 tăng kích thước icon */
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px; /* tròn đẹp */
+  }
+
+  /* Mobile: to hơn chút cho dễ bấm */
+  @media (max-width: 640px) {
+    .theme-toggle {
+      font-size: 1.8rem;
+      width: 48px;
+      height: 48px;
+    }
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
@@ -302,9 +206,11 @@
 
   <!-- =============== HEADER NAVBAR (FIXED) =============== -->
   <header class="header" id="header">
-    <nav class="nav container">
+    <nav class="nav nav-fluid">
       <!-- LOGO (DUY NHẤT) -->
-      <a href="javascript:void(0)" class="nav__logo"> Nhật Minh </a>
+      <a href="javascript:void(0)" class="nav__logo flex items-center gap-2">
+        <img src="assets/img/logo.png" alt="Nhật Minh" class="nav__logo-img" />
+      </a>
 
       <!-- NAV MENU -->
       <div class="nav__menu" id="nav-menu">
@@ -349,42 +255,6 @@
     id="page-content"
     class="flex-1 p-4 pb-24 md:pb-4 max-w-5xl mx-auto w-full"
   ></main>
-
-  <!-- ================= MOBILE BOTTOM NAV (TEMPLATE STYLE) ================= -->
-  <nav
-    class="fixed md:hidden bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur border-t border-gray-200 dark:border-gray-700"
-  >
-    <ul class="flex justify-around items-center h-16 text-xs">
-      <li>
-        <button
-          data-tab="home"
-          class="nav-item flex flex-col items-center gap-1"
-        >
-          <span class="text-xl">🏠</span>
-          <span>Trang chủ</span>
-        </button>
-      </li>
-
-      <li>
-        <button
-          id="fabAddUser"
-          class="nav-fab w-14 h-14 rounded-full bg-blue-600 text-white text-3xl flex items-center justify-center shadow-xl hidden"
-        >
-          ➕
-        </button>
-      </li>
-
-      <li>
-        <button
-          data-tab="profile"
-          class="nav-item flex flex-col items-center gap-1"
-        >
-          <span class="text-xl">👤</span>
-          <span>Tài khoản</span>
-        </button>
-      </li>
-    </ul>
-  </nav>
 
   <!-- ================= GLOBAL LOADING ================= -->
   <div

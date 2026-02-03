@@ -1,34 +1,29 @@
 /*=============== GOOGLE FONTS ===============*/
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 
-/*=============== VARIABLES CSS ===============*/
+/*=============== THEME BRIDGE VARIABLES ===============*/
 :root {
-  --header-height: 3rem;
+  --first-color: var(--primary);
+  --first-color-alt: var(--primary-hover);
 
-  /*========== Colors ==========*/
-  --hue: 174;
-  --sat: 63%;
-  --first-color: hsl(var(--hue), var(--sat), 40%);
-  --first-color-alt: hsl(var(--hue), var(--sat), 36%);
-  --title-color: hsl(var(--hue), 12%, 15%);
-  --text-color: hsl(var(--hue), 8%, 35%);
-  --body-color: hsl(var(--hue), 100%, 99%);
-  --container-color: #fff;
+  --title-color: var(--text-title);
+  --text-color: var(--text-main);
 
-  /*========== Font and typography ==========*/
-  --body-font: "Open Sans", sans-serif;
-  --h1-font-size: 1.5rem;
-  --normal-font-size: 0.938rem;
-  --tiny-font-size: 0.625rem;
+  --body-color: var(--bg-page);
+  --container-color: var(--bg-card);
 
-  /*========== z index ==========*/
+  --nav-shadow: 0 1px 12px rgba(0, 0, 0, 0.08);
+
   --z-tooltip: 10;
   --z-fixed: 100;
+
+  --body-font: "Open Sans", sans-serif;
+  --normal-font-size: 0.938rem;
+  --tiny-font-size: 0.625rem;
 }
 
 @media screen and (min-width: 968px) {
   :root {
-    --h1-font-size: 2.25rem;
     --normal-font-size: 1rem;
   }
 }
@@ -36,8 +31,8 @@
 /*=============== BASE ===============*/
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 html {
@@ -45,206 +40,188 @@ html {
 }
 
 body {
-  margin: var(--header-height) 0 0 0;
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
   background-color: var(--body-color);
   color: var(--text-color);
 }
 
-ul {
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/*=============== REUSABLE CSS CLASSES ===============*/
-.section {
-  padding: 4.5rem 0 2rem;
-}
-
-.section__title {
-  font-size: var(--h1-font-size);
-  color: var(--title-color);
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-.section__height {
-  height: 100vh;
-}
-
-/*=============== LAYOUT ===============*/
-.container {
-  max-width: 968px;
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-/*=============== HEADER ===============*/
+/*=============== HEADER (FIXED – TEMPLATE STYLE) ===============*/
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
+
   background-color: var(--container-color);
+  border-bottom: 1px solid var(--border-main);
   z-index: var(--z-fixed);
-  transition: 0.4s;
+}
+
+.scroll-header {
+  box-shadow: var(--nav-shadow);
 }
 
 /*=============== NAV ===============*/
 .nav {
-  height: var(--header-height);
+  height: 4rem; /* 🔒 CỐ ĐỊNH – KEY */
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
 }
 
-.nav__img {
-  width: 32px;
-  border-radius: 50%;
-}
-
+/* LOGO */
 .nav__logo {
-  color: var(--title-color);
-  font-weight: 600;
-}
-
-@media screen and (max-width: 767px) {
-  .nav__menu {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background-color: var(--container-color);
-    box-shadow: 0 -1px 12px hsla(var(--hue), var(--sat), 15%, 0.15);
-    width: 100%;
-    height: 4rem;
-    padding: 0 1rem;
-    display: grid;
-    align-content: center;
-    border-radius: 1.25rem 1.25rem 0 0;
-    transition: 0.4s;
-  }
-}
-
-.nav__list,
-.nav__link {
   display: flex;
-}
-
-.nav__link {
-  flex-direction: column;
   align-items: center;
-  row-gap: 4px;
-  color: var(--title-color);
-  font-weight: 600;
+  padding-left: clamp(0.75rem, 2vw, 1.5rem);
 }
 
+/* ================= LOGO SIZE ================= */
+.nav__logo-img {
+  height: clamp(36px, 2.5vw, 52px); /* 👈 chỉnh tại đây */
+  width: auto;
+}
+
+/*=============== NAV MENU ===============*/
 .nav__list {
+  display: flex;
   justify-content: space-around;
 }
 
-.nav__name {
-  font-size: var(--tiny-font-size);
-  /* display: none;*/ /* Minimalist design, hidden labels */
+.nav__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 4px;
+
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .nav__icon {
   font-size: 1.5rem;
 }
 
-/*Active link*/
-.active-link {
-  position: relative;
+.nav__name {
+  font-size: var(--tiny-font-size);
+}
+
+/*=============== ACTIVE STATE ===============*/
+.is-active {
   color: var(--first-color);
-  transition: 0.3s;
 }
 
-/* Minimalist design, active link */
-/* .active-link::before{
-  content: '';
-  position: absolute;
-  bottom: -.5rem;
-  width: 4px;
-  height: 4px;
-  background-color: var(--first-color);
-  border-radius: 50%;
-} */
+.nav__link:hover {
+  color: var(--first-color);
+}
+/* =====================================================
+   RESPONSIVE TAB NAV (ONLY nav__menu)
+===================================================== */
 
-/* Change background header */
-.scroll-header {
-  box-shadow: 0 1px 12px hsla(var(--hue), var(--sat), 15%, 0.15);
+/* Desktop – nav nằm trong header */
+.nav__menu {
+  position: static;
 }
 
-/*=============== MEDIA QUERIES ===============*/
-/* For small devices */
-/* Remove if you choose, the minimalist design */
-@media screen and (max-width: 320px) {
-  .nav__name {
-    display: none;
+/* Mobile – chỉ tab nav xuống bottom */
+@media (max-width: 768px) {
+  .nav__menu {
+    position: fixed;
+    bottom: 0;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    border-radius: 1.25rem; /* 👈 bo cong 2 đầu */
+    overflow: hidden;
+
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-main);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+    z-index: 100;
   }
-}
 
-/* For medium devices */
-@media screen and (min-width: 576px) {
   .nav__list {
-    justify-content: center;
-    column-gap: 3rem;
+    display: flex;
+    justify-content: space-around;
+    height: 56px;
+    align-items: center;
+  }
+  .nav__link {
+    border-radius: 0.75rem;
+  }
+
+  .nav__item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .nav__name {
+    font-size: 0.7rem;
+  }
+  .nav__logo-img {
+    height: 40px;
+  }
+
+  /* chừa chỗ cho bottom nav */
+  body {
+    padding-bottom: 4rem;
   }
 }
-
-@media screen and (min-width: 767px) {
-  body {
-    margin: 0;
-  }
-  .section {
-    padding: 7rem 0 2rem;
-  }
+/* ================= DESKTOP NAV SPACING ================= */
+@media (min-width: 769px) {
   .nav {
-    height: calc(var(--header-height) + 1.5rem); /* 4.5rem */
+    display: flex;
+    align-items: center;
   }
-  .nav__img {
-    display: none;
+  .nav__logo-img {
+    height: clamp(44px, 3vw, 64px);
+  }
+
+  /* Logo giữ bên trái */
+  .nav__logo {
+    flex-shrink: 0;
+    padding-left: clamp(0.75rem, 2vw, 1.5rem);
+  }
+
+  /* ĐẨY MENU SANG PHẢI */
+  .nav__menu {
+    margin-left: auto; /* 👈 mấu chốt */
+    margin-right: 1rem; /* khoảng cách với nút theme */
+  }
+
+  .nav__list {
+    display: flex;
+    align-items: center;
+    /* 👇 khoảng cách tự co giãn theo màn hình */
+    gap: clamp(1.5rem, 3vw, 3.5rem);
   }
   .nav__icon {
     display: none;
   }
   .nav__name {
-    font-size: var(--normal-font-size);
-    /* display: block; */ /* Minimalist design, visible labels */
-  }
-  .nav__link:hover {
-    color: var(--first-color);
+    display: block;
+    font-size: clamp(1rem, 0.6vw + 0.9rem, 1.35rem);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    position: relative;
+    display: inline-block; /* 👈 QUAN TRỌNG */
   }
 
-  /* First design, remove if you choose the minimalist design */
-  .active-link::before {
+  .nav__link {
+    padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
+  }
+  .nav__link.is-active .nav__name::after {
     content: "";
     position: absolute;
-    bottom: -0.75rem;
-    width: 4px;
-    height: 4px;
-    background-color: var(--first-color);
-    border-radius: 50%;
-  }
 
-  /* Minimalist design */
-  /* .active-link::before{
-      bottom: -.75rem;
-  } */
-}
+    left: 0;
+    right: 0; /* 👈 đúng bằng chiều rộng chữ */
+    bottom: -6px;
 
-/* For large devices */
-@media screen and (min-width: 1024px) {
-  .container {
-    margin-left: auto;
-    margin-right: auto;
+    height: 3px;
+    background-color: var(--primary);
+    border-radius: 999px;
   }
 }

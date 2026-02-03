@@ -56,54 +56,31 @@ function bindTemplateNav() {
       .forEach((el) => el.parentElement.classList.add("hidden"));
   }
 }
-
 // ==================================
-// Active tab theo route (TEMPLATE STYLE)
+// Update active state for navbar (Top + Bottom)
+// Single active class: .is-active
 // ==================================
 export function updateActiveNav(path) {
-  document
-    .querySelectorAll(".nav-item")
-    .forEach((el) => el.classList.remove("nav-active"));
-
-  const mobile = document.querySelector(`.nav-item[data-tab="${tab}"]`);
-  if (mobile) mobile.classList.add("nav-active");
-
-  const map = {
+  const routeMap = {
     "/": "home",
     "/users": "users",
     "/profile": "profile",
   };
 
-  const tab = map[path];
+  const tab = routeMap[path];
   if (!tab) return;
 
-  const el = document.querySelector(`[data-tab="${tab}"]`);
-  if (el) el.classList.add("active-link");
+  // ===============================
+  // RESET ALL
+  // ===============================
+  document
+    .querySelectorAll("[data-tab]")
+    .forEach((el) => el.classList.remove("is-active"));
+
+  // ===============================
+  // SET ACTIVE
+  // ===============================
+  document
+    .querySelectorAll(`[data-tab="${tab}"]`)
+    .forEach((el) => el.classList.add("is-active"));
 }
-
-// ==================================
-// Advanced Theme Toggle Animation
-// ==================================
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest("#themeToggle");
-  if (!btn) return;
-
-  const isDark = document.documentElement.classList.contains("dark");
-
-  // clear state cũ
-  btn.classList.remove("rotate-cw", "rotate-ccw", "ripple");
-
-  // force reflow để animation luôn chạy lại
-  void btn.offsetWidth;
-
-  // hướng xoay
-  btn.classList.add(isDark ? "rotate-ccw" : "rotate-cw");
-
-  // ripple
-  btn.classList.add("ripple");
-
-  // cleanup
-  setTimeout(() => {
-    btn.classList.remove("rotate-cw", "rotate-ccw", "ripple");
-  }, 600);
-});

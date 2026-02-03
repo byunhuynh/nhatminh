@@ -1,0 +1,90 @@
+/* ==================================
+   Theme Toggle Advanced Animation
+   Shared for SPA + Login
+================================== */
+
+/* transition màu nền toàn trang */
+html,
+body {
+  transition:
+    background-color 0.5s ease,
+    color 0.4s ease;
+}
+
+/* base button */
+#themeToggle {
+  overflow: hidden;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* ===== ROTATE ===== */
+#themeToggle.rotate-cw {
+  animation: rotateCW 0.55s ease;
+}
+
+#themeToggle.rotate-ccw {
+  animation: rotateCCW 0.55s ease;
+}
+
+@keyframes rotateCW {
+  0% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(380deg);
+  }
+  80% {
+    transform: rotate(350deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateCCW {
+  0% {
+    transform: rotate(0deg);
+  }
+  60% {
+    transform: rotate(-380deg);
+  }
+  80% {
+    transform: rotate(-350deg);
+  }
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+/* ===== RIPPLE ===== */
+#themeToggle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.35) 10%,
+    transparent 10%
+  );
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#themeToggle.ripple::after {
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
