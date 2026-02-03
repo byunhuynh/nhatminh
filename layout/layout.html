@@ -59,9 +59,6 @@
     background: var(--bg-page);
     color: var(--text-main);
   }
-  body {
-    padding-top: 4rem; /* khớp nav height */
-  }
 
   /* =====================================================
  TYPOGRAPHY
@@ -201,58 +198,39 @@
   }
 
   /* ===============================
- DATE INPUT – SYNC THEME
+ FLATPICKR THEME SYNC
 =============================== */
-  input[type="date"] {
-    color-scheme: light;
-  }
-
-  .dark input[type="date"] {
-    color-scheme: dark;
-  }
-
-  /* ===============================
- DATE PICKER ICON COLOR
-=============================== */
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0);
-  }
-
-  .dark input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
-  }
-  input[type="date"] {
-    background-color: var(--bg-input);
+  .flatpickr-calendar {
+    background: var(--bg-card);
     border: 1px solid var(--border-main);
+    box-shadow: var(--card-shadow);
     color: var(--text-main);
   }
-  /* ===============================
- FIX DATE INPUT HEIGHT (MOBILE)
-=============================== */
-  @media (max-width: 640px) {
-    input[type="date"].ui-input {
-      height: 44px; /* khớp mobile input */
-      padding-top: 0.65rem;
-      padding-bottom: 0.65rem;
-      line-height: 1.2;
-    }
-  }
-  @media (max-width: 640px) {
-    input[type="date"]::-webkit-datetime-edit {
-      padding: 0;
-    }
 
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      margin: 0;
-      padding: 0;
-    }
+  .flatpickr-day {
+    color: var(--text-main);
   }
-  @supports (-webkit-touch-callout: none) {
-    @media (max-width: 640px) {
-      input[type="date"].ui-input {
-        min-height: 44px;
-      }
-    }
+
+  .flatpickr-day.today {
+    border-color: var(--primary);
+  }
+
+  .flatpickr-day.selected,
+  .flatpickr-day.selected:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .flatpickr-weekday {
+    color: var(--text-muted);
+  }
+
+  .flatpickr-months .flatpickr-month {
+    color: var(--text-title);
+  }
+
+  .flatpickr-current-month input.cur-year {
+    color: var(--text-title);
   }
 </style>
 
@@ -278,9 +256,16 @@
           </li>
 
           <li class="nav__item">
+            <a href="#/sales" data-tab="sales" class="nav__link">
+              <i class="bx bx-cart nav__icon"></i>
+              <span class="nav__name">Bán hàng</span>
+            </a>
+          </li>
+
+          <li class="nav__item">
             <a href="#/users" data-tab="users" class="nav__link">
               <i class="bx bx-user-plus nav__icon"></i>
-              <span class="nav__name">Users</span>
+              <span class="nav__name">Thêm nhân viên</span>
             </a>
           </li>
 
@@ -308,7 +293,7 @@
   <!-- ================= MAIN ================= -->
   <main
     id="page-content"
-    class="flex-1 p-4 pb-24 md:pb-4 max-w-5xl mx-auto w-full"
+    class="flex-1 p-4 pt-20 pb-24 md:pb-4 max-w-5xl mx-auto w-full overflow-y-auto"
   ></main>
 
   <!-- ================= GLOBAL LOADING ================= -->

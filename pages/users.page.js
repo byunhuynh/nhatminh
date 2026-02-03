@@ -37,6 +37,7 @@ export function renderUsers() {
     `<div id="usersPage"></div>`;
 
   renderPage();
+  initDobPicker();
   bindEvents();
 }
 
@@ -66,14 +67,22 @@ function renderPage() {
 
           <div>
             <label>Ngày sinh</label>
-            <input
+            <div class="relative">
+              <input
                 id="dob"
-                type="date"
-                class="ui-input"
-                placeholder="vd: 11/11/1994"
+                type="text"
+                class="ui-input cursor-pointer pr-10"
+                placeholder="DD/MM/YYYY"
               />
-
+              <span
+                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]"
+              >
+                📅
+              </span>
+            </div>
           </div>
+
+
 
           <div>
             <label>Số điện thoại</label>
@@ -934,4 +943,34 @@ async function resolveUsernameAvailable(baseUsername) {
     username = `${baseUsername}${String(index).padStart(2, "0")}`;
     index++;
   }
+}
+// ==================================
+// INIT FLATPICKR – DOB (SPA SAFE)
+// ==================================
+function initDobPicker() {
+  const input = document.getElementById("dob");
+  if (!input || !window.flatpickr) return;
+
+  // destroy cũ nếu render lại page
+  if (input._flatpickr) {
+    input._flatpickr.destroy();
+  }
+
+  flatpickr(input, {
+    dateFormat: "d-m-Y",
+    allowInput: false,
+    disableMobile: true, // 🔥 QUAN TRỌNG
+    locale: {
+      firstDayOfWeek: 1,
+    },
+    onOpen: () => {
+      // sync dark/light mỗi lần mở
+      const cal = document.querySelector(".flatpickr-calendar");
+      if (!cal) return;
+
+      document.documentElement.classList.contains("dark")
+        ? cal.classList.add("dark")
+        : cal.classList.remove("dark");
+    },
+  });
 }

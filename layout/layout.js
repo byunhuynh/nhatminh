@@ -43,6 +43,7 @@ function bindTemplateNav() {
         home: "/",
         users: "/users",
         profile: "/profile",
+        sales: "/sales", // ✅ NEW
       };
 
       navigate(map[tab]);
@@ -65,6 +66,7 @@ export function updateActiveNav(path) {
     "/": "home",
     "/users": "users",
     "/profile": "profile",
+    "/sales": "sales", // ✅ NEW
   };
 
   const tab = routeMap[path];
@@ -84,3 +86,38 @@ export function updateActiveNav(path) {
     .querySelectorAll(`[data-tab="${tab}"]`)
     .forEach((el) => el.classList.add("is-active"));
 }
+// ==================================
+// Scroll Rebound for Short Content
+// Fixed header-safe version
+// ==================================
+function applyScrollRebound() {
+  const container = document.getElementById("page-content");
+  if (!container) return;
+
+  let timer = null;
+
+  container.addEventListener(
+    "scroll",
+    () => {
+      clearTimeout(timer);
+
+      timer = setTimeout(() => {
+        const contentHeight = container.scrollHeight;
+        const viewHeight = container.clientHeight;
+
+        // chỉ xử lý trang ngắn
+        if (contentHeight <= viewHeight) {
+          if (container.scrollTop !== 0) {
+            container.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+        }
+      }, 120);
+    },
+    { passive: true },
+  );
+}
+
+window.__applyScrollRebound = applyScrollRebound;
