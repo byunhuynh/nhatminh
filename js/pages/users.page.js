@@ -8,7 +8,7 @@
 // =====================================================
 let currentUser = null;
 let managersCache = [];
-
+let lastCheckedUsername = null; // ⬅️ thêm
 // =====================================================
 // BOOTSTRAP
 // =====================================================
@@ -153,6 +153,66 @@ function isValidEmail(email) {
 }
 
 // =====================================================
+// NORMALIZE USERNAME (MIN LENGTH = 6)
+// =====================================================
+function normalizeUsername(value) {
+  let username = value.toLowerCase();
+
+  if (username.length >= 6) return username;
+
+  // thêm hậu tố 001, 002...
+  const suffix = "001";
+  return (username + suffix).slice(0, 50); // an toàn độ dài
+}
+
+// =====================================================
+// CHECK USERNAME EXISTENCE (ONLY WHEN CHANGED)
+// =====================================================
+async function checkUsername() {
+  const input = document.getElementById("username");
+  const hint = document.getElementById("usernameHint");
+
+  let value = input.value.trim().toLowerCase();
+
+  if (!value) {
+    clearHint(input, hint);
+    lastCheckedUsername = null;
+    return;
+  }
+
+  // ⬇️ chuẩn hoá độ dài
+  const normalized = normalizeUsername(value);
+
+  if (normalized !== value) {
+    input.value = normalized;
+    value = normalized;
+  }
+
+  // ⛔ không đổi → không check lại
+  if (value === lastCheckedUsername) return;
+
+  lastCheckedUsername = value;
+
+  try {
+    const res = await authFetch(
+      API + "/users/check-username?username=" + encodeURIComponent(value),
+    );
+    if (!res) return;
+
+    const data = await res.json();
+
+    if (data.exists) {
+      showError(input, hint, "❌ Username đã tồn tại");
+    } else {
+      showOk(input, hint);
+    }
+  } catch (err) {
+    console.error(err);
+    showError(input, hint, "❌ Không kiểm tra được username");
+  }
+}
+
+// =====================================================
 // PASSWORD STRENGTH
 // =====================================================
 function evaluatePassword(password) {
@@ -231,6 +291,10 @@ function bindEvents() {
     username.value = data.username;
     checkUsername();
   });
+  username.addEventListener("input", () => {
+    lastCheckedUsername = null;
+    clearHint(username, document.getElementById("usernameHint"));
+  });
 
   // password popover
   password.addEventListener("focus", () => popover.classList.remove("hidden"));
@@ -278,7 +342,39 @@ async function onRoleChange(e) {
   // supervisor tạo sales → manager mặc định = chính mình
   if (currentUser.role === "supervisor" && role === "sales") {
     wrapper.classList.add("hidden");
-    select.innerHTML = `<option value="${currentUser.id}" selected></option>`;
+    select.innerHTML = `<option value="${currentUser.id}" selected></option>`; // =====================================================
+    // CHECK USERNAME EXISTENCE
+    // =====================================================
+    async function checkUsername() {
+      const input = document.getElementById("username");
+      const hint = document.getElementById("usernameHint");
+
+      const value = input.value.trim().toLowerCase();
+
+      if (!value) {
+        clearHint(input, hint);
+        return;
+      }
+
+      try {
+        const res = await authFetch(
+          API + "/users/check-username?username=" + encodeURIComponent(value),
+        );
+        if (!res) return;
+
+        const data = await res.json();
+
+        if (data.exists) {
+          showError(input, hint, "❌ Username đã tồn tại");
+        } else {
+          showOk(input, hint);
+        }
+      } catch (err) {
+        console.error(err);
+        showError(input, hint, "❌ Không kiểm tra được username");
+      }
+    }
+
     return;
   }
 

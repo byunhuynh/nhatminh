@@ -69,44 +69,29 @@ label {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-/* =====================================================
-   INPUT / SELECT / TEXTAREA
-===================================================== */
-.ui-input,
-.ui-select,
-.ui-textarea {
-  width: 100%;
-  padding: 0.6rem 0.75rem;
-  border-radius: 0.6rem;
-  border: 1px solid var(--border-main);
-  background: var(--bg-input);
-  color: var(--text-main);
-  font-size: 0.9rem;
+/* ================================
+   FIX CHROME AUTOFILL STYLE
+================================ */
+
+/* Light mode */
+.ui-input:-webkit-autofill,
+.ui-input:-webkit-autofill:hover,
+.ui-input:-webkit-autofill:focus,
+.ui-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
+  transition: background-color 9999s ease-in-out 0s;
 }
 
-.ui-input::placeholder {
-  color: var(--text-muted);
-}
-
-.ui-input:focus,
-.ui-select:focus,
-.ui-textarea:focus {
-  outline: none;
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
-}
-
-/* ERROR STATE */
-.ui-input.error,
-.ui-select.error {
-  border-color: #ef4444 !important;
-  box-shadow: 0 0 0 1px #ef4444;
-}
-
-.dark .ui-input.error,
-.dark .ui-select.error {
-  border-color: #f87171 !important;
-  box-shadow: 0 0 0 1px #f87171;
+/* Dark mode */
+.dark .ui-input:-webkit-autofill,
+.dark .ui-input:-webkit-autofill:hover,
+.dark .ui-input:-webkit-autofill:focus,
+.dark .ui-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
 }
 
 /* =====================================================
