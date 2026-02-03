@@ -7,6 +7,7 @@
     <title>Đăng nhập</title>
 
     <link rel="stylesheet" href="assets/css/ui.css" />
+    <link rel="icon" href="assets/img/favicon.ico" />
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,12 +23,18 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   </head>
 
-  <body class="min-h-screen">
+  <body
+    class="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900"
+  >
     <div
       class="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6 relative"
     >
       <!-- Dark mode toggle -->
-      <button id="themeToggle" class="absolute top-4 right-4 text-xl">
+      <button
+        id="themeToggle"
+        onclick="toggleDarkMode()"
+        class="absolute top-4 right-4 text-xl"
+      >
         🌙
       </button>
 
@@ -60,17 +67,82 @@
       <p class="text-xs text-center text-gray-400 mt-6">© 2026 Nhật Minh</p>
     </div>
 
-    <!-- core -->
-    <script src="js/core/config.js"></script>
-    <script src="js/core/storage.js"></script>
-    <script src="js/core/api.js"></script>
-    <script src="js/core/auth.js"></script>
+    <!-- ================= CORE (ĐÚNG PATH) ================= -->
 
-    <!-- ui -->
-    <script src="js/ui/theme.js"></script>
-    <script src="js/ui/toast.js"></script>
+    <script src="core/config.js"></script>
+    <script src="core/storage.js"></script>
+    <script src="ui/theme.js"></script>
+    <script src="ui/toast.js"></script>
 
-    <!-- page -->
-    <script src="js/pages/login.page.js"></script>
+    <!-- ================= LOGIN LOGIC ================= -->
+    <script>
+      const btn = document.getElementById("loginBtn");
+
+      async function handleLogin() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const remember = document.getElementById("rememberMe").checked;
+
+        if (!username || !password) {
+          showToast("Vui lòng nhập đầy đủ thông tin", "error");
+          return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "⏳ Đang đăng nhập...";
+
+        try {
+          const res = await fetch(API + "/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          if (!res.ok) {
+            showToast("Sai tài khoản hoặc mật khẩu", "error");
+            return;
+          }
+
+          const data = await res.json();
+          storage.set("access_token", data.access_token);
+          storage.set("refresh_token", data.refresh_token);
+          // ✅ đánh dấu login thành công
+          localStorage.setItem("login_notice", "1");
+
+          if (remember) {
+            storage.set("remember_username", username);
+          } else {
+            storage.remove("remember_username");
+          }
+
+          location.replace("/");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Đăng nhập";
+        }
+      }
+
+      btn.addEventListener("click", handleLogin);
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleLogin();
+      });
+
+      // ===============================
+      // Restore remembered username
+      // ===============================
+      const remembered = storage.get("remember_username");
+      if (remembered) {
+        document.getElementById("username").value = remembered;
+        document.getElementById("rememberMe").checked = true;
+      }
+      // ===============================
+      // Show logout notice
+      // ===============================
+      if (localStorage.getItem("logout_notice")) {
+        localStorage.removeItem("logout_notice");
+        showToast("Đã đăng xuất", "info");
+      }
+    </script>
   </body>
 </html>

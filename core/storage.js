@@ -1,4 +1,6 @@
-// js/core/storage.js
+// ==================================
+// Quản lý localStorage
+// ==================================
 const storage = {
   get(key) {
     return localStorage.getItem(key);

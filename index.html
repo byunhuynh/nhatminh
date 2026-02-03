@@ -1,10 +1,39 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="refresh" content="0; url=login.html" />
-    <link rel="stylesheet" href="assets/css/ui.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nhật Minh</title>
+
+    <link rel="stylesheet" href="assets/css/ui.css" />
+    <link rel="icon" href="assets/img/favicon.ico" />
+    <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body></body>
+
+  <body class="min-h-screen">
+    <div id="root"></div>
+
+    <!-- core (GLOBAL) -->
+    <script src="core/config.js"></script>
+    <script src="core/storage.js"></script>
+    <script src="core/api.js"></script>
+    <script src="core/auth.js"></script>
+    <script src="core/guard.js"></script>
+
+    <!-- Toastify -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- ui (GLOBAL) -->
+    <script src="ui/theme.js"></script>
+    <script src="ui/toast.js"></script>
+    <script src="ui/loading.js"></script>
+    <script src="ui/badge.js"></script>
+
+    <!-- SPA ENTRY (ES MODULE) -->
+    <script type="module" src="app/app.js"></script>
+  </body>
 </html>

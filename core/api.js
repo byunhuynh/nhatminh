@@ -1,4 +1,6 @@
-// js/core/api.js
+// ==================================
+// Refresh access token
+// ==================================
 async function refreshToken() {
   const rt = storage.get("refresh_token");
   if (!rt) return false;
@@ -16,13 +18,14 @@ async function refreshToken() {
   return true;
 }
 
+// ==================================
+// Fetch có auth + auto refresh
+// ==================================
 async function authFetch(url, options = {}) {
   apiLoadingStart();
 
   try {
     let token = storage.get("access_token");
-
-    // ❌ không có token → logout
     if (!token) {
       logout();
       return null;
@@ -39,7 +42,7 @@ async function authFetch(url, options = {}) {
     if (res.status === 401) {
       const ok = await refreshToken();
       if (!ok) {
-        logout(); // ⬅️ BẮT BUỘC
+        logout();
         return null;
       }
 
