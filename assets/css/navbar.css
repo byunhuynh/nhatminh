@@ -22,6 +22,24 @@
   --tiny-font-size: 0.625rem;
 }
 
+/* ============================= */
+/* LIGHT MODE Viền của Bottom navbar*/
+/* ============================= */
+:root {
+  --nav-border: rgba(37, 99, 235, 0.45); /* xanh đậm hơn */
+  --nav-shadow:
+    0 -1px 0 rgba(37, 99, 235, 0.35), 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* ============================= */
+/* DARK MODE Viền của Bottom navbar*/
+/* ============================= */
+.dark {
+  --nav-border: rgba(56, 189, 248, 0.35); /* xanh dịu */
+  --nav-shadow:
+    0 -1px 0 rgba(56, 189, 248, 0.25), 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
 @media screen and (min-width: 968px) {
   :root {
     --normal-font-size: 1rem;
@@ -207,8 +225,8 @@ body {
     overflow: hidden;
 
     background: var(--bg-card);
-    border-top: 1px solid var(--border-main);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    border-top: 1px solid var(--nav-border);
+    box-shadow: var(--nav-shadow);
 
     z-index: 100;
   }

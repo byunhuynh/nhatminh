@@ -2,43 +2,56 @@
 // ==================================
 // SPA Router dùng hash (#)
 // ==================================
-import { renderHome } from "../pages/home.page.js";
+import { renderHome, unmountHome } from "../pages/home.page.js";
 import { renderUsers } from "../pages/users.page.js";
 import { renderProfile } from "../pages/profile.page.js";
 import { updateActiveNav } from "../layout/layout.js";
 import { renderSales } from "../pages/sales.page.js";
 import { renderChangePassword } from "../pages/change-password.page.js";
 
+let currentUnmount = null;
+
 const routes = {
-  "/": renderHome,
-  "/users": renderUsers,
-  "/profile": renderProfile,
-  "/sales": renderSales,
-  "/change-password": renderChangePassword,
+  "/": {
+    render: renderHome,
+    unmount: unmountHome,
+  },
+  "/users": { render: renderUsers },
+  "/profile": { render: renderProfile },
+  "/sales": { render: renderSales },
+  "/change-password": { render: renderChangePassword },
 };
 
 export function navigate(path) {
   location.hash = path;
 }
+
 export function renderRoute() {
   const raw = location.hash.replace("#", "");
   const path = raw || "/";
-  const fn = routes[path];
+  const route = routes[path];
 
-  if (!fn) {
+  if (!route) {
     navigate("/");
     return;
   }
 
-  fn();
+  // ===============================
+  // UNMOUNT PAGE CŨ (SPA SAFE)
+  // ===============================
+  if (typeof currentUnmount === "function") {
+    currentUnmount();
+    currentUnmount = null;
+  }
+
+  route.render();
+  currentUnmount = route.unmount || null;
+
   updateActiveNav(path);
 
-  // ==================================
-  // Apply scroll rebound after render
-  // ==================================
   requestAnimationFrame(() => {
     window.__applyScrollRebound?.();
-    window.applyHeaderOffset?.(); // 🔥 quan trọng
+    window.applyHeaderOffset?.();
   });
 }
 

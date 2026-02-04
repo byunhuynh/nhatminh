@@ -490,3 +490,71 @@ label {
   background: var(--bg-card);
   color: var(--text-main);
 }
+
+/* ===============================
+   Page enter animation Home Page
+   =============================== */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.25s ease-out both;
+}
+/* ===============================
+   Time change animation
+   =============================== */
+@keyframes pulseSoft {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 0.3s ease-out;
+}
+/* ===============================
+   Weather / location reveal
+   =============================== */
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.animate-fade-soft {
+  animation: fadeInSoft 0.4s ease-out both;
+}
+@keyframes iconPop {
+  0% {
+    transform: scale(0.9) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+
+.animate-icon-pop {
+  animation: iconPop 0.3s ease-out;
+}
