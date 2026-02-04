@@ -29,6 +29,92 @@ let managersCache = [];
 let lastCheckedUsername = null;
 
 // =====================================================
+// ADDRESS CACHE (PROVINCE API)
+// =====================================================
+let provinceCache = [];
+let districtCache = {};
+let wardCache = {};
+
+// =====================================================
+// Toggle regenerate username loading / hover icon
+// =====================================================
+let __usernameGenerating = false;
+
+function setUsernameGenerating(isLoading) {
+  const btn = document.getElementById("regenUsernameBtn");
+  if (!btn) return;
+
+  __usernameGenerating = isLoading;
+  btn.disabled = isLoading;
+
+  btn.innerHTML = isLoading
+    ? `<i class="fa-solid fa-arrows-rotate fa-spin"></i>`
+    : `<i class="fa-solid fa-rotate"></i>`;
+}
+
+// =====================================================
+// Bind hover effect for regenerate username icon
+// =====================================================
+function bindUsernameRegenHover() {
+  const btn = document.getElementById("regenUsernameBtn");
+  if (!btn) return;
+
+  btn.addEventListener("mouseenter", () => {
+    if (__usernameGenerating) return;
+
+    btn.innerHTML = `<i class="fa-solid fa-arrows-rotate fa-spin"></i>`;
+  });
+
+  btn.addEventListener("mouseleave", () => {
+    if (__usernameGenerating) return;
+
+    btn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;
+  });
+}
+// =====================================================
+// Danh sách tỉnh thành (theo API tác giả)
+// =====================================================
+async function loadProvinces() {
+  if (provinceCache.length) return provinceCache;
+
+  const res = await fetch(API_PROVINCE + "/api/v1/p/");
+  if (!res.ok) return [];
+
+  provinceCache = await res.json();
+  return provinceCache;
+}
+// =====================================================
+// Danh sách quận / huyện theo tỉnh
+// =====================================================
+async function loadDistricts(provinceCode) {
+  if (districtCache[provinceCode]) {
+    return districtCache[provinceCode];
+  }
+
+  const res = await fetch(API_PROVINCE + `/api/v1/p/${provinceCode}?depth=2`);
+  if (!res.ok) return [];
+
+  const data = await res.json();
+  districtCache[provinceCode] = data.districts || [];
+  return districtCache[provinceCode];
+}
+// =====================================================
+// Danh sách phường / xã theo huyện
+// =====================================================
+async function loadWards(districtCode) {
+  if (wardCache[districtCode]) {
+    return wardCache[districtCode];
+  }
+
+  const res = await fetch(API_PROVINCE + `/api/v1/d/${districtCode}?depth=2`);
+  if (!res.ok) return [];
+
+  const data = await res.json();
+  wardCache[districtCode] = data.wards || [];
+  return wardCache[districtCode];
+}
+
+// =====================================================
 // RENDER ENTRY (SPA)
 // =====================================================
 export function renderUsers() {
@@ -47,6 +133,7 @@ export function renderUsers() {
     `<div id="usersPage"></div>`;
 
   renderPage();
+  bindUsernameRegenHover();
   initDobPicker();
   bindEvents();
 }
@@ -54,16 +141,15 @@ export function renderUsers() {
 // =====================================================
 // RENDER PAGE
 // =====================================================
+// =====================================================
+// RENDER PAGE
+// =====================================================
 function renderPage() {
   const page = document.getElementById("usersPage");
 
-  // ==================================
-  // Render Users Page (layout aligned with home.page)
-  // ==================================
   page.innerHTML = `
   <div class="ui-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- AUTO GRID LIKE HOME -->
     <div class="ui-grid-auto">
 
       <!-- ================= THÔNG TIN CÁ NHÂN ================= -->
@@ -74,44 +160,107 @@ function renderPage() {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- HỌ TÊN -->
           <div>
             <label>Họ tên *</label>
-            <input id="full_name" class="ui-input" placeholder="vd: Nguyễn Văn A" />
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-user"></i>
+              <input
+                id="full_name"
+                class="ui-input"
+                placeholder="vd: Nguyễn Văn A"
+              />
+            </div>
           </div>
 
+          <!-- NGÀY SINH -->
           <div>
             <label>Ngày sinh</label>
-            <div class="relative">
+            <div class="ui-input-icon">
+              <i class="fa-regular fa-calendar"></i>
               <input
                 id="dob"
                 type="text"
-                class="ui-input cursor-pointer pr-10"
+                class="ui-input cursor-pointer"
                 placeholder="DD/MM/YYYY"
                 autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
               />
-              <span
-                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted)"
-              >
-                <i class="fa-regular fa-calendar"></i>
-              </span>
+            </div>
+          </div>
+
+          <!-- ĐIỆN THOẠI -->
+          <div>
+            <label>Số điện thoại</label>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-phone"></i>
+              <input
+                id="phone"
+                class="ui-input"
+                placeholder="vd: 0901234567"
+              />
+            </div>
+            <div id="phoneHint" class="ui-hint mt-1"></div>
+          </div>
+
+          <!-- EMAIL -->
+          <div>
+            <label>Email</label>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-envelope"></i>
+              <input
+                id="email"
+                type="email"
+                class="ui-input"
+                placeholder="vd: nguyenvana@example.com"
+              />
+            </div>
+            <div id="emailHint" class="ui-hint mt-1"></div>
+          </div>
+          <!-- ================= ĐỊA CHỈ ================= -->
+          <div class="md:col-span-2">
+            <label>Địa chỉ</label>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+              <!-- TỈNH -->
+              <div class="ui-input-icon">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <select id="province" class="ui-select">
+                  <option value="">-- Tỉnh / Thành --</option>
+                </select>
+              </div>
+
+              <!-- HUYỆN -->
+              <div class="ui-input-icon">
+                <i class="fa-solid fa-map"></i>
+                <select id="district" class="ui-select" disabled>
+                  <option value="">-- Quận / Huyện --</option>
+                </select>
+              </div>
+
+              <!-- XÃ -->
+              <div class="ui-input-icon">
+                <i class="fa-solid fa-location-dot"></i>
+                <select id="ward" class="ui-select" disabled>
+                  <option value="">-- Phường / Xã --</option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- ĐỊA CHỈ CHI TIẾT -->
+            <div class="ui-input-icon mt-3">
+              <i class="fa-solid fa-house"></i>
+              <input
+                id="address_detail"
+                class="ui-input"
+                placeholder="Số nhà, tên đường..."
+              />
             </div>
           </div>
 
 
-          <div>
-            <label>Số điện thoại</label>
-            <input id="phone" class="ui-input" placeholder="vd: 0901234567" />
-            <div id="phoneHint" class="ui-hint mt-1"></div>
-          </div>
-
-          <div>
-            <label>Email</label>
-            <input id="email" type="email" class="ui-input" placeholder="vd: ho_ten@example.com" />
-            <div id="emailHint" class="ui-hint mt-1"></div>
-          </div>
         </div>
       </div>
 
@@ -123,30 +272,48 @@ function renderPage() {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <!-- USERNAME -->
           <div>
             <label>Username *</label>
-            <div class="flex gap-2">
-              <input id="username" class="ui-input flex-1" placeholder="vd: ten.ho" />
+
+            <div class="ui-input-icon ui-input-password">
+              <!-- icon trái -->
+              <i class="fa-solid fa-at"></i>
+
+              <input
+                id="username"
+                class="ui-input"
+                placeholder="vd: a.nv001"
+              />
+
+              <!-- icon phải: regenerate -->
               <button
                 id="regenUsernameBtn"
                 type="button"
-                class="ui-btn ui-btn-primary px-3"
+                class="ui-password-toggle"
                 title="Tạo lại username"
               >
                 <i class="fa-solid fa-rotate"></i>
               </button>
             </div>
+
             <div id="usernameHint" class="ui-hint mt-1"></div>
           </div>
 
+
+          <!-- PASSWORD -->
           <div>
             <label>Mật khẩu *</label>
-            <input
-              id="password"
-              type="password"
-              class="ui-input"
-              placeholder="Ít nhất 8 ký tự, gồm hoa, thường, số, ký tự đặc biệt"
-            />
+            <div class="ui-input-icon ui-input-password">
+              <i class="fa-solid fa-lock"></i>
+              <input
+                id="password"
+                type="password"
+                class="ui-input"
+                placeholder="Ít nhất 8 ký tự"
+              />
+            </div>
           </div>
 
           <!-- PASSWORD STRENGTH -->
@@ -158,13 +325,11 @@ function renderPage() {
               <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
               <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
             </div>
-
             <div class="mt-2 text-sm">
               Level:
               <span id="passwordLevel" class="font-semibold">Empty</span>
             </div>
-
-            <ul class="mt-3 space-y-1 text-sm text-muted-foreground-1">
+            <ul class="mt-3 space-y-1 text-sm">
               <li data-rule="length">❌ Ít nhất 8 ký tự</li>
               <li data-rule="lower">❌ Có chữ thường</li>
               <li data-rule="upper">❌ Có chữ hoa</li>
@@ -173,28 +338,41 @@ function renderPage() {
             </ul>
           </div>
 
+          <!-- CONFIRM PASSWORD -->
           <div>
             <label>Nhập lại mật khẩu *</label>
-            <input
-              id="password_confirm"
-              type="password"
-              class="ui-input"
-              placeholder="Nhập lại đúng mật khẩu ở trên"
-            />
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-shield-keyhole"></i>
+              <input
+                id="password_confirm"
+                type="password"
+                class="ui-input"
+                placeholder="Nhập lại mật khẩu"
+              />
+            </div>
             <div id="passwordConfirmHint" class="ui-hint mt-1"></div>
           </div>
 
+          <!-- ROLE -->
           <div>
             <label>Vai trò *</label>
-            <select id="role" class="ui-select">
-              ${renderRoleOptions()}
-            </select>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-user-tag"></i>
+              <select id="role" class="ui-select">
+                ${renderRoleOptions()}
+              </select>
+            </div>
           </div>
 
+          <!-- MANAGER -->
           <div id="managerWrapper" class="hidden">
             <label>Quản lý trực tiếp</label>
-            <select id="manager_id" class="ui-select"></select>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-user-tie"></i>
+              <select id="manager_id" class="ui-select"></select>
+            </div>
           </div>
+
         </div>
 
         <div class="mt-6">
@@ -272,12 +450,20 @@ function bindEvents() {
     const baseUsername = generateUsernameFromFullName(fullName.value);
     if (!baseUsername) return;
 
+    setUsernameGenerating(true);
+
     username.value = "⏳ đang tạo username...";
     username.disabled = true;
 
     const finalUsername = await resolveUsernameAvailable(baseUsername);
 
     username.disabled = false;
+    setUsernameGenerating(false);
+
+    if (finalUsername) {
+      username.value = finalUsername;
+      showOk(username, document.getElementById("usernameHint"));
+    }
 
     if (finalUsername) {
       username.value = finalUsername;
@@ -301,6 +487,7 @@ function bindEvents() {
 
     const baseUsername = generateUsernameFromFullName(fullName.value);
     if (!baseUsername) return;
+    setUsernameGenerating(true);
 
     username.value = "⏳ đang tạo username...";
     username.disabled = true;
@@ -308,6 +495,12 @@ function bindEvents() {
     const finalUsername = await resolveUsernameAvailable(baseUsername);
 
     username.disabled = false;
+    setUsernameGenerating(false);
+
+    if (finalUsername) {
+      username.value = finalUsername;
+      showOk(username, document.getElementById("usernameHint"));
+    }
 
     if (finalUsername) {
       username.value = finalUsername;
@@ -431,8 +624,64 @@ function bindEvents() {
     },
   );
   updateSubmitState();
+  bindAddressEvents();
 
   submitBtn.addEventListener("click", submitForm);
+}
+
+function bindAddressEvents() {
+  const province = document.getElementById("province");
+  const district = document.getElementById("district");
+  const ward = document.getElementById("ward");
+
+  if (!province || !district || !ward) return;
+
+  // ===== LOAD PROVINCES =====
+  loadProvinces().then((list) => {
+    province.innerHTML = `
+      <option value="">-- Tỉnh / Thành --</option>
+      ${list
+        .map((p) => `<option value="${p.code}">${p.name}</option>`)
+        .join("")}
+    `;
+  });
+
+  // ===== ON PROVINCE CHANGE =====
+  province.addEventListener("change", async () => {
+    const code = province.value;
+
+    district.disabled = true;
+    ward.disabled = true;
+
+    district.innerHTML = `<option value="">-- Quận / Huyện --</option>`;
+    ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
+
+    if (!code) return;
+
+    const districts = await loadDistricts(code);
+
+    district.disabled = false;
+    district.innerHTML += districts
+      .map((d) => `<option value="${d.code}">${d.name}</option>`)
+      .join("");
+  });
+
+  // ===== ON DISTRICT CHANGE =====
+  district.addEventListener("change", async () => {
+    const code = district.value;
+
+    ward.disabled = true;
+    ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
+
+    if (!code) return;
+
+    const wards = await loadWards(code);
+
+    ward.disabled = false;
+    ward.innerHTML += wards
+      .map((w) => `<option value="${w.code}">${w.name}</option>`)
+      .join("");
+  });
 }
 
 // =====================================================
@@ -652,6 +901,20 @@ async function submitForm() {
 
   // chuẩn hóa họ tên
   data.full_name = formatFullName(data.full_name);
+
+  const province = document.getElementById("province");
+  const district = document.getElementById("district");
+  const ward = document.getElementById("ward");
+  const addressDetail = document.getElementById("address_detail");
+
+  data.address = [
+    addressDetail?.value,
+    ward?.selectedOptions[0]?.text,
+    district?.selectedOptions[0]?.text,
+    province?.selectedOptions[0]?.text,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   // ===============================
   // CALL BACKEND
