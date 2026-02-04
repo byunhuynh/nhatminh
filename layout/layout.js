@@ -203,16 +203,18 @@ function bindRightSidenavAutoClose() {
   });
 }
 // ==================================
-// Update navbar fade indicators
+// Update navbar fade indicators (STABLE)
 // ==================================
 function updateNavFade() {
   const menu = document.getElementById("nav-menu");
-  if (!menu) return;
+  const wrap = document.querySelector(".nav__menu-wrap");
+
+  if (!menu || !wrap) return;
 
   const { scrollLeft, scrollWidth, clientWidth } = menu;
 
-  menu.classList.toggle("has-left", scrollLeft > 4);
-  menu.classList.toggle(
+  wrap.classList.toggle("has-left", scrollLeft > 4);
+  wrap.classList.toggle(
     "has-right",
     scrollLeft + clientWidth < scrollWidth - 4,
   );

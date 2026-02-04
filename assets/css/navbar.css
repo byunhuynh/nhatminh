@@ -118,44 +118,45 @@ body {
 }
 
 /* =====================================================
- NAV MENU FADE – LOGO SAFE VERSION
+ NAV MENU FADE – FINAL STABLE VERSION
 ===================================================== */
-.nav__menu {
+.nav__menu-wrap {
   position: relative;
-  overflow: hidden; /* 🔥 quan trọng */
+  flex: 1;
+  overflow: hidden;
 }
 
-/* overlay container */
-.nav__menu::before,
-.nav__menu::after {
+/* fade layers */
+.nav__menu-wrap::before,
+.nav__menu-wrap::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 20px;
+  width: 24px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.25s ease;
-  z-index: 5;
+  z-index: 10;
 }
 
-/* LEFT FADE – bắt đầu sau logo */
-.nav__menu::before {
+/* LEFT */
+.nav__menu-wrap::before {
   left: 0;
-  background: linear-gradient(to right, var(--bg-page) 40%, transparent);
+  background: linear-gradient(to right, var(--bg-page), transparent);
 }
 
-/* RIGHT FADE */
-.nav__menu::after {
+/* RIGHT */
+.nav__menu-wrap::after {
   right: 0;
-  background: linear-gradient(to left, var(--bg-page) 40%, transparent);
+  background: linear-gradient(to left, var(--bg-page), transparent);
 }
 
-/* Active */
-.nav__menu.has-left::before {
+/* ACTIVE */
+.nav__menu-wrap.has-left::before {
   opacity: 1;
 }
-.nav__menu.has-right::after {
+.nav__menu-wrap.has-right::after {
   opacity: 1;
 }
 
@@ -259,6 +260,27 @@ body {
   .nav__menu {
     margin-left: auto; /* 👈 mấu chốt */
     margin-right: 1rem; /* khoảng cách với nút theme */
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* =====================================================
+ NAV MENU – HIDE SCROLLBAR (FINAL)
+===================================================== */
+  .nav__menu {
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    /* Firefox */
+    scrollbar-width: none;
+
+    /* IE / Edge legacy */
+    -ms-overflow-style: none;
+  }
+
+  /* Chrome / Safari / Edge Chromium */
+  .nav__menu::-webkit-scrollbar {
+    display: none;
   }
 
   .nav__list {
