@@ -359,3 +359,134 @@ label {
 .toastify .toast-close {
   display: none !important;
 }
+
+/* ======================================================
+   FLATPICKR – UNIFIED THEME (LIGHT / DARK)
+   ====================================================== */
+
+/* ===============================
+   CALENDAR WRAPPER
+   =============================== */
+.flatpickr-calendar {
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  font-family: inherit;
+}
+
+/* ===============================
+   HEADER (MONTH / YEAR)
+   =============================== */
+.flatpickr-current-month {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ===============================
+   MONTH DROPDOWN (SELECT)
+   =============================== */
+.flatpickr-monthDropdown-months {
+  appearance: auto;
+  background: var(--bg-input);
+  color: var(--text-title);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+/* hover / focus – TOÀN BỘ INPUT */
+.flatpickr-monthDropdown-months:hover,
+.flatpickr-monthDropdown-months:focus,
+.flatpickr-current-month:hover .flatpickr-monthDropdown-months {
+  background: var(--bg-input-hover);
+  border-color: var(--border-focus);
+  outline: none;
+}
+
+/* ===============================
+   YEAR INPUT
+   =============================== */
+.flatpickr-current-month input.cur-year {
+  background: var(--bg-input);
+  color: var(--text-title);
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  width: 72px;
+  padding: 2px 6px;
+  text-align: center;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.flatpickr-current-month input.cur-year:focus {
+  background: var(--bg-input-hover);
+  border-color: var(--border-focus);
+  outline: none;
+}
+
+/* ===============================
+   DROPDOWN OPTIONS
+   =============================== */
+.flatpickr-monthDropdown-months option {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+/* selected option */
+.flatpickr-monthDropdown-months option:checked {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* ===============================
+   DAYS / GRID (NHẸ – KHÔNG GHI ĐÈ)
+   =============================== */
+.flatpickr-day {
+  border-radius: 6px;
+}
+
+.flatpickr-day.today {
+  border-color: var(--primary);
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* ===============================
+   DARK MODE
+   =============================== */
+.dark .flatpickr-calendar {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+.dark .flatpickr-monthDropdown-months,
+.dark .flatpickr-current-month input.cur-year {
+  background: var(--bg-input);
+  color: var(--text-title);
+  border-color: var(--border-main);
+}
+
+.dark .flatpickr-monthDropdown-months:hover,
+.dark .flatpickr-monthDropdown-months:focus,
+.dark .flatpickr-current-month:hover .flatpickr-monthDropdown-months,
+.dark .flatpickr-current-month input.cur-year:focus {
+  background: var(--bg-input-hover);
+  border-color: var(--border-focus);
+}
+
+.dark .flatpickr-monthDropdown-months option {
+  background: var(--bg-card);
+  color: var(--text-main);
+}

@@ -237,9 +237,55 @@
 =============================== */
   .ui-page {
     display: flex;
-    flex-direction: column;
+
     gap: var(--s-6); /* 32px giữa các section */
     padding-top: var(--s-4); /* 🔥 khoảng trống đầu page */
+
+    flex-direction: column;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* =====================================================
+ CARD GLOW – LIGHT MODE
+ XANH ĐẬM + TỎA TỐI (NO GLOW TRẮNG)
+===================================================== */
+  .ui-card-glow {
+    border: 1px solid rgba(30, 64, 175, 0.45); /* blue-800 */
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.08),
+      0 10px 28px rgba(30, 64, 175, 0.18);
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .ui-card-glow:hover {
+    border-color: rgba(30, 64, 175, 0.7);
+    box-shadow:
+      0 2px 4px rgba(15, 23, 42, 0.12),
+      0 16px 40px rgba(30, 64, 175, 0.28);
+    transform: translateY(-2px);
+  }
+
+  /* =====================================================
+ CARD GLOW – DARK MODE
+ GIỮ GLOW XANH SÁNG (HIGH-TECH)
+===================================================== */
+  .dark .ui-card-glow {
+    border-color: rgba(56, 189, 248, 0.55);
+    box-shadow:
+      0 0 0 1px rgba(56, 189, 248, 0.5),
+      0 10px 25px rgba(56, 189, 248, 0.25);
+  }
+
+  .dark .ui-card-glow:hover {
+    border-color: rgba(56, 189, 248, 0.85);
+    box-shadow:
+      0 0 0 1px rgba(56, 189, 248, 0.8),
+      0 14px 35px rgba(56, 189, 248, 0.35);
   }
 
   /* =====================================================
@@ -269,28 +315,28 @@
           <ul class="nav__list">
             <li class="nav__item">
               <a href="#/" data-tab="home" class="nav__link">
-                <i class="bx bx-home-alt nav__icon"></i>
+                <i class="fa-solid fa-house nav__icon"></i>
                 <span class="nav__name">Trang chủ</span>
               </a>
             </li>
 
             <li class="nav__item">
               <a href="#/sales" data-tab="sales" class="nav__link">
-                <i class="bx bx-cart nav__icon"></i>
+                <i class="fa-solid fa-cart-shopping nav__icon"></i>
                 <span class="nav__name">Bán hàng</span>
               </a>
             </li>
 
             <li class="nav__item">
               <a href="#/users" data-tab="users" class="nav__link">
-                <i class="bx bx-user-plus nav__icon"></i>
+                <i class="fa-solid fa-user-plus nav__icon"></i>
                 <span class="nav__name">Thêm nhân viên</span>
               </a>
             </li>
 
             <li class="nav__item">
               <a href="#/profile" data-tab="profile" class="nav__link">
-                <i class="bx bx-user nav__icon"></i>
+                <i class="fa-solid fa-user nav__icon"></i>
                 <span class="nav__name">Tài khoản</span>
               </a>
             </li>

@@ -57,30 +57,30 @@ export function renderUsers() {
 function renderPage() {
   const page = document.getElementById("usersPage");
 
+  // ==================================
+  // Render Users Page (layout aligned with home.page)
+  // ==================================
   page.innerHTML = `
-    <div class="space-y-6">
+  <div class="ui-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- AUTO GRID LIKE HOME -->
+    <div class="ui-grid-auto">
 
       <!-- ================= THÔNG TIN CÁ NHÂN ================= -->
-      <div class="ui-card">
+      <div class="ui-card ui-card-glow">
         <div class="ui-title mb-4 flex items-center gap-2">
           <i class="fa-solid fa-id-card"></i>
           <span>Thông tin cá nhân</span>
         </div>
 
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label>Họ tên *</label>
-            <input
-              id="full_name"
-              class="ui-input"
-              placeholder="vd: Nguyễn Văn A"
-            />
-
+            <input id="full_name" class="ui-input" placeholder="vd: Nguyễn Văn A" />
           </div>
 
           <div>
-            <label>Ngày sinh</label>
+            <label>Ngày sinh (DD/MM/YYYY)</label>
             <div class="relative">
               <input
                 id="dob"
@@ -89,61 +89,40 @@ function renderPage() {
                 placeholder="DD/MM/YYYY"
               />
               <span
-                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted)
-]"
+                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted)"
               >
                 <i class="fa-regular fa-calendar"></i>
               </span>
-
             </div>
           </div>
 
 
-
           <div>
             <label>Số điện thoại</label>
-            <input
-              id="phone"
-              class="ui-input"
-              placeholder="vd: 0901234567"
-            />
-
+            <input id="phone" class="ui-input" placeholder="vd: 0901234567" />
             <div id="phoneHint" class="ui-hint mt-1"></div>
           </div>
 
           <div>
             <label>Email</label>
-            <input
-              id="email"
-              type="email"
-              class="ui-input"
-              placeholder="vd: ho_ten@example.com"
-            />
-
+            <input id="email" type="email" class="ui-input" placeholder="vd: ho_ten@example.com" />
             <div id="emailHint" class="ui-hint mt-1"></div>
           </div>
         </div>
       </div>
 
       <!-- ================= TÀI KHOẢN ================= -->
-      <div class="ui-card">
+      <div class="ui-card ui-card-glow">
         <div class="ui-title mb-4 flex items-center gap-2">
           <i class="fa-solid fa-user-lock"></i>
           <span>Thông tin tài khoản</span>
         </div>
 
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label>Username *</label>
-
             <div class="flex gap-2">
-              <input
-                id="username"
-                class="ui-input flex-1"
-                placeholder="vd: ten.ho"
-              />
-
+              <input id="username" class="ui-input flex-1" placeholder="vd: ten.ho" />
               <button
                 id="regenUsernameBtn"
                 type="button"
@@ -152,12 +131,9 @@ function renderPage() {
               >
                 <i class="fa-solid fa-rotate"></i>
               </button>
-
             </div>
-
             <div id="usernameHint" class="ui-hint mt-1"></div>
           </div>
-
 
           <div>
             <label>Mật khẩu *</label>
@@ -167,13 +143,10 @@ function renderPage() {
               class="ui-input"
               placeholder="Ít nhất 8 ký tự, gồm hoa, thường, số, ký tự đặc biệt"
             />
-
           </div>
 
-          <!-- PASSWORD STRENGTH – FULL WIDTH -->
+          <!-- PASSWORD STRENGTH -->
           <div id="passwordStrength" class="hidden md:col-span-2 mt-2">
-
-            <!-- Strength bar -->
             <div class="flex gap-1">
               <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
               <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
@@ -196,9 +169,6 @@ function renderPage() {
             </ul>
           </div>
 
-
-
-
           <div>
             <label>Nhập lại mật khẩu *</label>
             <input
@@ -207,7 +177,6 @@ function renderPage() {
               class="ui-input"
               placeholder="Nhập lại đúng mật khẩu ở trên"
             />
-
             <div id="passwordConfirmHint" class="ui-hint mt-1"></div>
           </div>
 
@@ -225,15 +194,19 @@ function renderPage() {
         </div>
 
         <div class="mt-6">
-          <button id="submitBtn" class="ui-btn ui-btn-primary w-full flex items-center justify-center gap-2">
+          <button
+            id="submitBtn"
+            class="ui-btn ui-btn-primary w-full flex items-center justify-center gap-2"
+          >
             <i class="fa-solid fa-user-plus"></i>
             <span>Tạo tài khoản</span>
           </button>
-
         </div>
       </div>
+
     </div>
-  `;
+  </div>
+`;
 }
 
 // =====================================================
@@ -312,21 +285,19 @@ function bindEvents() {
   // FULL NAME → REGENERATE USERNAME
   // ===============================
   fullName.addEventListener("blur", async () => {
+    // ❌ KHÔNG showError khi trống
     if (!fullName.value.trim()) {
-      showError(fullName, null, "Họ tên là bắt buộc");
+      clearHint(fullName);
       return;
     }
 
-    // format họ tên
     fullName.value = formatFullName(fullName.value);
 
-    // nếu user đã sửa username tay → không auto
     if (usernameManuallyEdited) return;
 
     const baseUsername = generateUsernameFromFullName(fullName.value);
     if (!baseUsername) return;
 
-    // UX: đang xử lý
     username.value = "⏳ đang tạo username...";
     username.disabled = true;
 
@@ -334,12 +305,10 @@ function bindEvents() {
 
     username.disabled = false;
 
-    if (!finalUsername) return;
-
-    username.value = finalUsername;
-
-    // show OK ngay
-    showOk(username, document.getElementById("usernameHint"));
+    if (finalUsername) {
+      username.value = finalUsername;
+      showOk(username, document.getElementById("usernameHint"));
+    }
   });
 
   // nếu user xóa trắng username → cho phép auto lại
@@ -874,33 +843,71 @@ async function resolveUsernameAvailable(baseUsername) {
     index++;
   }
 }
+
 // ==================================
-// INIT FLATPICKR – DOB (SPA SAFE)
+// INIT FLATPICKR – DOB (CLEAN VERSION)
+// Không can thiệp hiển thị tháng
 // ==================================
 function initDobPicker() {
   const input = document.getElementById("dob");
   if (!input || !window.flatpickr) return;
 
-  // destroy cũ nếu render lại page
+  // destroy instance cũ (SPA-safe)
   if (input._flatpickr) {
     input._flatpickr.destroy();
   }
 
   flatpickr(input, {
-    dateFormat: "d-m-Y",
-    allowInput: false,
-    disableMobile: true, // 🔥 QUAN TRỌNG
-    locale: {
-      firstDayOfWeek: 1,
-    },
-    onOpen: () => {
-      // sync dark/light mỗi lần mở
-      const cal = document.querySelector(".flatpickr-calendar");
+    dateFormat: "d/m/Y",
+
+    // cho phép nhập tay năm
+    allowInput: true,
+
+    // tránh native picker mobile
+    disableMobile: true,
+
+    // tiếng Việt
+    locale: flatpickr.l10ns.vn,
+
+    // giữ dropdown tháng mặc định
+    monthSelectorType: "dropdown",
+
+    maxDate: "today",
+
+    // ===============================
+    // OPEN – sync dark mode
+    // ===============================
+    onOpen: (_, __, instance) => {
+      const cal = instance.calendarContainer;
       if (!cal) return;
 
       document.documentElement.classList.contains("dark")
         ? cal.classList.add("dark")
         : cal.classList.remove("dark");
+    },
+
+    // ===============================
+    // CLOSE – validate ngày & năm
+    // ===============================
+    onClose: (_, dateStr) => {
+      if (!dateStr) return;
+
+      // validate format
+      const ok = /^\d{2}\/\d{2}\/\d{4}$/.test(dateStr);
+      if (!ok) {
+        showToast("Ngày sinh phải theo định dạng DD/MM/YYYY", "warning");
+        input.value = "";
+        return;
+      }
+
+      // validate year
+      const year = parseInt(dateStr.split("/")[2], 10);
+      const now = new Date().getFullYear();
+
+      if (year < 1900 || year > now) {
+        showToast("Năm sinh không hợp lệ", "warning");
+        input.value = "";
+      }
     },
   });
 }

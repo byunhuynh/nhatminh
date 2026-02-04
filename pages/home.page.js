@@ -20,10 +20,11 @@ export function renderHome() {
   const me = store.user;
 
   container.innerHTML = `
-    <div class="ui-page max-w-7xl mx-auto">
+    <div class="ui-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
 
       <!-- ================= USER INFO ================= -->
-      <div class="ui-card">
+      <div class="ui-card ui-card-glow">
         <div class="ui-title mb-4">👋 Chào mừng</div>
 
         <div class="ui-text space-y-2">
@@ -40,13 +41,13 @@ export function renderHome() {
       <div class="ui-grid-auto">
 
         <!-- Revenue -->
-        <div class="ui-card" id="revenueCard">
+        <div class="ui-card ui-card-glow" id="revenueCard">
           <div class="ui-title mb-3">📈 Doanh thu theo tháng</div>
           <canvas id="revenueChart" height="140"></canvas>
         </div>
 
         <!-- KPI -->
-        <div class="ui-card" id="kpiCard">
+        <div class="ui-card ui-card-glow" id="kpiCard">
           <div class="ui-title mb-1">🎯 Hoàn thành chỉ tiêu</div>
           <div class="ui-hint mb-3">Doanh thu / kế hoạch tháng</div>
 
@@ -60,7 +61,7 @@ export function renderHome() {
         </div>
 
         <!-- Route -->
-        <div class="ui-card" id="routeCard">
+        <div class="ui-card ui-card-glow" id="routeCard">
           <div class="ui-title mb-3">🛣️ Đơn hàng theo tuyến</div>
           <canvas id="routeChart" height="140"></canvas>
         </div>
@@ -97,4 +98,3 @@ function bindChartAnimations() {
     );
   });
 }
-
