@@ -1,5 +1,5 @@
 // =====================================================
-// HOME PAGE – SPA (FIX PAGE WRAPPER SPACING)
+// HOME PAGE – RESPONSIVE DASHBOARD (FULL WIDTH SAFE)
 // File: Frontend/nhatminh/pages/home.page.js
 // =====================================================
 
@@ -21,7 +21,7 @@ export function renderHome() {
   const me = store.user;
 
   container.innerHTML = `
-    <div class="ui-page">
+    <div class="ui-page max-w-7xl mx-auto">
 
       <!-- ================= USER INFO ================= -->
       <div class="ui-card">
@@ -38,8 +38,16 @@ export function renderHome() {
       </div>
 
       <!-- ================= DASHBOARD ================= -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+      <div
+        class="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          xl:grid-cols-3
+          2xl:grid-cols-4
+          gap-6
+        "
+      >
         <!-- Revenue -->
         <div class="ui-card" id="revenueCard">
           <div class="ui-title mb-3">📈 Doanh thu theo tháng</div>
@@ -61,11 +69,10 @@ export function renderHome() {
         </div>
 
         <!-- Route -->
-        <div class="ui-card md:col-span-2" id="routeCard">
+        <div class="ui-card" id="routeCard">
           <div class="ui-title mb-3">🛣️ Đơn hàng theo tuyến</div>
           <canvas id="routeChart" height="140"></canvas>
         </div>
-
       </div>
     </div>
   `;
