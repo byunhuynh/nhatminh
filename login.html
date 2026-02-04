@@ -2,7 +2,10 @@
 <html lang="vi" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
 
     <title>Đăng nhập</title>
 
@@ -282,6 +285,24 @@
         icon?.classList.remove("fa-toggle-on");
         wrap?.classList.remove("active");
       }
+    </script>
+    <script>
+      // ==================================
+      // Disable zoom (Ctrl + / Ctrl - / Ctrl wheel)
+      // ==================================
+      window.addEventListener(
+        "wheel",
+        function (e) {
+          if (e.ctrlKey) e.preventDefault();
+        },
+        { passive: false },
+      );
+
+      window.addEventListener("keydown", function (e) {
+        if ((e.ctrlKey || e.metaKey) && ["+", "-", "=", "_"].includes(e.key)) {
+          e.preventDefault();
+        }
+      });
     </script>
   </body>
 </html>

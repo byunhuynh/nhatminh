@@ -59,7 +59,6 @@ async function authFetch(url, options = {}) {
       // ❌ bị đá do login thiết bị khác
       if (err?.message === "SESSION_REVOKED") {
         showToast("⚠️ Tài khoản đã đăng nhập ở thiết bị khác", "warning");
-        logout();
         return null;
       }
 

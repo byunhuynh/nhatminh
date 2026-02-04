@@ -15,10 +15,18 @@ async function bootstrap() {
   await loadLayoutOnce();
 
   const res = await authFetch(API + "/me");
-  if (!res) return;
+  if (!res) {
+    location.replace("./login.html");
+    return;
+  }
 
   store.setUser(await res.json());
   // ✅ sau khi đã có user
+
+  // 🔥 START SESSION HEARTBEAT
+  // 🔥 START SESSION HEARTBEAT
+  window.startSessionHeartbeat?.();
+
   // fill user info for sidenav
   window.fillSidenavUserInfo?.();
 

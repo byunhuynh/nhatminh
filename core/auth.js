@@ -1,10 +1,10 @@
 // ==================================
 // Logout (KEEP THEME)
 // ==================================
-function logout() {
-  // ❌ không clear toàn bộ localStorage
 
-  // ✅ clear auth state
+function logout() {
+  window.stopSessionHeartbeat?.();
+
   storage.remove("access_token");
   storage.remove("refresh_token");
   storage.remove("remember_login");
@@ -13,3 +13,6 @@ function logout() {
   localStorage.setItem("logout_notice", "1");
   location.replace("./login.html");
 }
+
+// 🔥 expose global
+window.logout = logout;
