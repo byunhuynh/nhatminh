@@ -16,7 +16,10 @@ async function refreshToken() {
     body: JSON.stringify({ refresh_token: rt }),
   });
 
-  if (!res.ok) return false;
+  if (!res.ok) {
+    showToast("Lỗi máy chủ", "error");
+    return null;
+  }
 
   const data = await res.json();
   storage.set("access_token", data.access_token);
