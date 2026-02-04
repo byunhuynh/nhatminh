@@ -1,9 +1,15 @@
 // =====================================================
 // FORM FEEDBACK – REUSABLE
 // =====================================================
-
+// ==================================
+// Feedback timers per input
+// ==================================
+const __feedbackTimers = new WeakMap();
 export function showError(input, hintEl, msg) {
   if (!input) return;
+
+  // ❌ hủy timer OK trước đó
+  clearFeedbackTimer(input);
 
   input.dataset.error = "1";
 
@@ -19,6 +25,9 @@ export function showError(input, hintEl, msg) {
 export function showOk(input, hintEl) {
   if (!input) return;
 
+  // ❌ hủy timer cũ nếu có
+  clearFeedbackTimer(input);
+
   delete input.dataset.error;
 
   input.style.borderColor = "#22c55e";
@@ -29,13 +38,18 @@ export function showOk(input, hintEl) {
     hintEl.style.color = "#22c55e";
   }
 
-  setTimeout(() => {
+  const timer = setTimeout(() => {
     clearHint(input, hintEl);
+    __feedbackTimers.delete(input);
   }, 2500);
+
+  __feedbackTimers.set(input, timer);
 }
 
 export function clearHint(input, hintEl) {
   if (!input) return;
+
+  clearFeedbackTimer(input);
 
   delete input.dataset.error;
 
@@ -59,4 +73,11 @@ export function scrollToField(input, hintEl, msg) {
   });
 
   setTimeout(() => input.focus(), 300);
+}
+
+function clearFeedbackTimer(input) {
+  if (__feedbackTimers.has(input)) {
+    clearTimeout(__feedbackTimers.get(input));
+    __feedbackTimers.delete(input);
+  }
 }

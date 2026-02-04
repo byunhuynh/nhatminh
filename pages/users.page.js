@@ -80,13 +80,17 @@ function renderPage() {
           </div>
 
           <div>
-            <label>Ngày sinh (DD/MM/YYYY)</label>
+            <label>Ngày sinh</label>
             <div class="relative">
               <input
                 id="dob"
                 type="text"
                 class="ui-input cursor-pointer pr-10"
                 placeholder="DD/MM/YYYY"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
               />
               <span
                 class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted)"

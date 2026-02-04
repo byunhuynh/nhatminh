@@ -296,6 +296,31 @@
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var(--s-6);
   }
+
+  /* ===============================
+ FLATPICKR NAV ARROWS – DARK MODE FIX
+=============================== */
+
+  /* mũi tên tháng (prev / next) */
+  .dark .flatpickr-prev-month,
+  .dark .flatpickr-next-month {
+    color: #e5e7eb; /* sáng rõ */
+    fill: #e5e7eb; /* cho SVG */
+    opacity: 0.85;
+  }
+
+  /* icon bên trong (SVG) */
+  .dark .flatpickr-prev-month svg,
+  .dark .flatpickr-next-month svg {
+    fill: currentColor;
+  }
+
+  /* hover → nổi rõ hơn chút */
+  .dark .flatpickr-prev-month:hover,
+  .dark .flatpickr-next-month:hover {
+    color: #93c5fd; /* xanh nhạt */
+    opacity: 1;
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
