@@ -49,85 +49,100 @@
   <body
     class="min-h-screen flex items-center justify-center bg-slate-100 dark:bg-slate-900 px-4"
   >
-    <div
-      class="ui-card w-full max-w-sm p-6 relative transition-transform duration-200 hover:-translate-y-0.5"
-    >
-      <!-- Dark mode toggle -->
-      <button
-        id="themeToggle"
-        onclick="toggleDarkMode()"
-        class="absolute top-4 right-4 text-xl"
-      >
-        🌙
-      </button>
-
-      <div class="flex flex-col items-center mb-6 gap-1">
-        <img src="assets/img/logo.png" class="h-20 mb-4" alt="Nhật Minh" />
-        <p class="text-sm text-gray-500 dark:text-gray-400">
-          Sạch – Thơm – An toàn
-        </p>
-      </div>
-
-      <!-- USERNAME -->
-      <div class="mb-4">
-        <label class="text-sm mb-1 block">Tài khoản</label>
-
-        <div class="ui-input-icon">
-          <i class="fa-solid fa-id-card"></i>
-          <input
-            id="username"
-            class="ui-input"
-            placeholder="Nhập tên đăng nhập"
-            autocomplete="username"
-          />
-        </div>
-      </div>
-
-      <!-- PASSWORD -->
-      <div class="mb-4">
-        <label class="text-sm mb-1 block">Mật khẩu</label>
-
-        <div class="ui-input-icon ui-input-password">
-          <i class="fa-solid fa-lock"></i>
-
-          <input
-            id="password"
-            type="password"
-            class="ui-input"
-            placeholder="Nhập mật khẩu"
-            autocomplete="current-password"
-          />
-
-          <!-- toggle -->
-          <button
-            type="button"
-            class="ui-password-toggle"
-            aria-label="Hiện mật khẩu"
-            onclick="togglePassword('password', this)"
-          >
-            <i class="fa-regular fa-eye"></i>
-          </button>
-        </div>
-      </div>
+    <div class="relative flex items-center justify-center">
+      <div
+        class="pointer-events-none absolute w-[420px] h-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.35),transparent_65%)] blur-3xl opacity-70 dark:bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.45),transparent_65%)]"
+      ></div>
 
       <div
-        id="rememberToggle"
-        class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none"
-        onclick="toggleRemember()"
+        class="ui-card w-full max-w-sm p-6 relative z-10 transition-transform duration-200 hover:-translate-y-0.5 border border-sky-300 shadow-[0_0_0_1px_rgba(56,189,248,0.4),0_8px_24px_rgba(56,189,248,0.15)] hover:shadow-[0_0_0_1px_rgba(56,189,248,0.6),0_12px_36px_rgba(56,189,248,0.25)] dark:border-sky-500 dark:shadow-[0_0_0_1px_rgba(56,189,248,0.6),0_8px_32px_rgba(56,189,248,0.25)] dark:hover:shadow-[0_0_0_1px_rgba(56,189,248,0.8),0_12px_48px_rgba(56,189,248,0.35)]"
       >
-        <i id="rememberIcon" class="fa-solid fa-toggle-off text-2xl"></i>
-        <span>Ghi nhớ đăng nhập</span>
+        <!-- Dark mode toggle -->
+        <button
+          id="themeToggle"
+          onclick="toggleDarkMode()"
+          class="absolute top-4 right-4 text-xl"
+        >
+          🌙
+        </button>
+
+        <div class="flex flex-col items-center mb-6 gap-1">
+          <img src="assets/img/logo.png" class="h-20 mb-4" alt="Nhật Minh" />
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Sạch – Thơm – An toàn
+          </p>
+        </div>
+
+        <!-- USERNAME -->
+        <div class="mb-4">
+          <label class="text-sm mb-1 block">Tài khoản</label>
+
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-id-card"></i>
+            <input
+              id="username"
+              class="ui-input"
+              placeholder="Nhập tên đăng nhập"
+              autocomplete="username"
+            />
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="mb-4">
+          <label class="text-sm mb-1 block">Mật khẩu</label>
+
+          <div class="ui-input-icon ui-input-password">
+            <i class="fa-solid fa-lock"></i>
+
+            <input
+              id="password"
+              type="password"
+              class="ui-input"
+              placeholder="Nhập mật khẩu"
+              autocomplete="current-password"
+            />
+
+            <!-- toggle -->
+            <button
+              type="button"
+              class="ui-password-toggle"
+              aria-label="Hiện mật khẩu"
+              onclick="togglePassword('password', this)"
+            >
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="rememberToggle"
+          class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none"
+          onclick="toggleRemember()"
+        >
+          <i id="rememberIcon" class="fa-solid fa-toggle-off text-2xl"></i>
+          <span>Ghi nhớ đăng nhập</span>
+        </div>
+
+        <button
+          id="loginBtn"
+          class="w-full ui-btn ui-btn-primary flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <i class="fa-solid fa-arrow-right-to-bracket fa-beat"></i>
+          <span>Đăng nhập</span>
+        </button>
+
+        <p class="text-xs text-center text-gray-400 mt-6">© 2026 Nhật Minh</p>
+        <div
+          id="loginOverlay"
+          class="absolute inset-0 hidden bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm flex items-center justify-center rounded-xl"
+        >
+          <div class="flex items-center gap-2 text-sky-500 font-medium">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>Đang đăng nhập...</span>
+          </div>
+        </div>
       </div>
-
-      <button
-        id="loginBtn"
-        class="w-full ui-btn ui-btn-primary flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-      >
-        <i class="fa-solid fa-arrow-right-to-bracket fa-beat"></i>
-        <span>Đăng nhập</span>
-      </button>
-
-      <p class="text-xs text-center text-gray-400 mt-6">© 2026 Nhật Minh</p>
     </div>
 
     <!-- ================= CORE (ĐÚNG PATH) ================= -->
