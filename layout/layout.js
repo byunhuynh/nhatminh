@@ -19,7 +19,13 @@ export async function loadLayoutOnce() {
   }
 
   root.innerHTML = await res.text();
-
+  enableNavDragScroll();
+  const navMenu = document.getElementById("nav-menu");
+  if (navMenu) {
+    updateNavFade();
+    navMenu.addEventListener("scroll", updateNavFade, { passive: true });
+    window.addEventListener("resize", updateNavFade);
+  }
   bindTemplateNav();
   // 🔥 BẮT BUỘC: sync icon dark/light sau khi render layout
   bindRightSidenavAutoClose(); // ✅ THÊM DÒNG NÀY
@@ -194,5 +200,55 @@ function bindRightSidenavAutoClose() {
 
     // đóng menu sau khi click link
     window.closeNavRight?.();
+  });
+}
+// ==================================
+// Update navbar fade indicators
+// ==================================
+function updateNavFade() {
+  const menu = document.getElementById("nav-menu");
+  if (!menu) return;
+
+  const { scrollLeft, scrollWidth, clientWidth } = menu;
+
+  menu.classList.toggle("has-left", scrollLeft > 4);
+  menu.classList.toggle(
+    "has-right",
+    scrollLeft + clientWidth < scrollWidth - 4,
+  );
+}
+
+// ==================================
+// Drag to scroll navbar (desktop)
+// ==================================
+function enableNavDragScroll() {
+  const menu = document.getElementById("nav-menu");
+  if (!menu) return;
+
+  let isDown = false;
+  let startX = 0;
+  let scrollStart = 0;
+
+  menu.addEventListener("mousedown", (e) => {
+    // chỉ desktop
+    if (e.button !== 0) return;
+
+    isDown = true;
+    startX = e.pageX;
+    scrollStart = menu.scrollLeft;
+    menu.classList.add("dragging");
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDown = false;
+    menu.classList.remove("dragging");
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+
+    const dx = e.pageX - startX;
+    menu.scrollLeft = scrollStart - dx;
   });
 }

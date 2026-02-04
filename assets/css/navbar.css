@@ -87,6 +87,7 @@ body {
 .nav__list {
   display: flex;
   justify-content: space-around;
+  padding-inline: 8px; /* 🔥 tạo không gian cho fade */
 }
 
 .nav__link {
@@ -115,6 +116,65 @@ body {
 .nav__link:hover {
   color: var(--first-color);
 }
+
+/* =====================================================
+ NAV MENU FADE – LOGO SAFE VERSION
+===================================================== */
+.nav__menu {
+  position: relative;
+  overflow: hidden; /* 🔥 quan trọng */
+}
+
+/* overlay container */
+.nav__menu::before,
+.nav__menu::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 5;
+}
+
+/* LEFT FADE – bắt đầu sau logo */
+.nav__menu::before {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-page) 40%, transparent);
+}
+
+/* RIGHT FADE */
+.nav__menu::after {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-page) 40%, transparent);
+}
+
+/* Active */
+.nav__menu.has-left::before {
+  opacity: 1;
+}
+.nav__menu.has-right::after {
+  opacity: 1;
+}
+
+/* Active states */
+.nav__menu.has-left::before {
+  opacity: 1;
+}
+.nav__menu.has-right::after {
+  opacity: 1;
+}
+/* Drag UX */
+.nav__menu.dragging {
+  cursor: grabbing;
+}
+
+.nav__menu {
+  cursor: grab;
+}
+
 /* =====================================================
    RESPONSIVE TAB NAV (ONLY nav__menu)
 ===================================================== */
