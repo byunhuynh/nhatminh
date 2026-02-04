@@ -1,3 +1,8 @@
+// =====================================================
+// HOME PAGE – SPA (FIX PAGE WRAPPER SPACING)
+// File: Frontend/nhatminh/pages/home.page.js
+// =====================================================
+
 import { store } from "../app/store.js";
 import {
   createLineChart,
@@ -6,6 +11,9 @@ import {
   observeOnce,
 } from "../ui/charts.js";
 
+// =====================================================
+// Render Home Page
+// =====================================================
 export function renderHome() {
   const container = document.getElementById("page-content");
   if (!container) return;
@@ -13,26 +21,32 @@ export function renderHome() {
   const me = store.user;
 
   container.innerHTML = `
-    <div class="space-y-6">
+    <div class="ui-page">
 
-      <!-- USER INFO -->
+      <!-- ================= USER INFO ================= -->
       <div class="ui-card">
         <div class="ui-title mb-4">👋 Chào mừng</div>
+
         <div class="ui-text space-y-2">
           <div><b>Tài khoản:</b> ${me.username}</div>
           <div><b>Họ tên:</b> ${me.full_name || "—"}</div>
-          <div><b>Chức vụ:</b> <span id="home_role"></span></div>
+          <div>
+            <b>Chức vụ:</b>
+            <span id="home_role"></span>
+          </div>
         </div>
       </div>
 
-      <!-- DASHBOARD -->
+      <!-- ================= DASHBOARD ================= -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+        <!-- Revenue -->
         <div class="ui-card" id="revenueCard">
           <div class="ui-title mb-3">📈 Doanh thu theo tháng</div>
           <canvas id="revenueChart" height="140"></canvas>
         </div>
 
+        <!-- KPI -->
         <div class="ui-card" id="kpiCard">
           <div class="ui-title mb-1">🎯 Hoàn thành chỉ tiêu</div>
           <div class="ui-hint mb-3">Doanh thu / kế hoạch tháng</div>
@@ -46,8 +60,8 @@ export function renderHome() {
           </div>
         </div>
 
-
-        <div class="ui-card" id="routeCard">
+        <!-- Route -->
+        <div class="ui-card md:col-span-2" id="routeCard">
           <div class="ui-title mb-3">🛣️ Đơn hàng theo tuyến</div>
           <canvas id="routeChart" height="140"></canvas>
         </div>
@@ -56,14 +70,17 @@ export function renderHome() {
     </div>
   `;
 
+  // ===============================
+  // Apply role badge
+  // ===============================
   applyRoleBadge(document.getElementById("home_role"), me.role);
 
   bindChartAnimations();
 }
 
-// ==================================
-// Animate charts when scroll to view
-// ==================================
+// =====================================================
+// Animate charts when scroll to view (SPA SAFE)
+// =====================================================
 function bindChartAnimations() {
   observeOnce(document.getElementById("revenueCard"), () => {
     createLineChart(

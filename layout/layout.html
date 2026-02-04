@@ -232,6 +232,15 @@
   .flatpickr-current-month input.cur-year {
     color: var(--text-title);
   }
+  /* ===============================
+ PAGE WRAPPER
+=============================== */
+  .ui-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-6); /* 32px giữa các section */
+    padding-top: var(--s-4); /* 🔥 khoảng trống đầu page */
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
@@ -343,7 +352,7 @@
   <!-- ================= MAIN ================= -->
   <main
     id="page-content"
-    class="flex-1 p-4 pt-20 pb-24 md:pb-4 max-w-5xl mx-auto w-full overflow-y-auto"
+    class="flex-1 p-4 pb-24 md:pb-4 max-w-5xl mx-auto w-full overflow-y-auto"
   ></main>
 
   <!-- ================= GLOBAL LOADING ================= -->

@@ -19,6 +19,10 @@ export async function loadLayoutOnce() {
   }
 
   root.innerHTML = await res.text();
+
+  applyHeaderOffset();
+  window.addEventListener("resize", applyHeaderOffset);
+
   enableNavDragScroll();
   const navMenu = document.getElementById("nav-menu");
   if (navMenu) {
@@ -253,4 +257,16 @@ function enableNavDragScroll() {
     const dx = e.pageX - startX;
     menu.scrollLeft = scrollStart - dx;
   });
+}
+
+// ==================================
+// Apply header offset for fixed header
+// ==================================
+function applyHeaderOffset() {
+  const header = document.getElementById("header");
+  const main = document.getElementById("page-content");
+  if (!header || !main) return;
+
+  const h = header.getBoundingClientRect().height;
+  main.style.paddingTop = h + 16 + "px"; // +16px cho thoáng
 }

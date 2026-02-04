@@ -38,6 +38,7 @@ export function renderRoute() {
   // ==================================
   requestAnimationFrame(() => {
     window.__applyScrollRebound?.();
+    window.applyHeaderOffset?.(); // 🔥 quan trọng
   });
 }
 
