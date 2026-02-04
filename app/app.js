@@ -17,6 +17,8 @@ async function bootstrap() {
 
   store.setUser(await res.json());
   // ✅ sau khi đã có user
+  // fill user info for sidenav
+  window.fillSidenavUserInfo?.();
 
   // ===============================
   // Show login success

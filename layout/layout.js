@@ -22,6 +22,7 @@ export async function loadLayoutOnce() {
 
   bindTemplateNav();
   // 🔥 BẮT BUỘC: sync icon dark/light sau khi render layout
+  bindRightSidenavAutoClose(); // ✅ THÊM DÒNG NÀY
   if (window.updateThemeIcon) {
     window.updateThemeIcon();
   }
@@ -121,3 +122,69 @@ function applyScrollRebound() {
 }
 
 window.__applyScrollRebound = applyScrollRebound;
+// ==================================
+// RIGHT SIDENAV CONTROL
+// ==================================
+window.openNavRight = function () {
+  document.getElementById("rightSidenav")?.classList.add("open");
+  document.getElementById("rightSidenavOverlay")?.classList.add("show");
+
+  // khóa scroll nền
+  document.body.style.overflow = "hidden";
+};
+
+window.closeNavRight = function () {
+  document.getElementById("rightSidenav")?.classList.remove("open");
+  document.getElementById("rightSidenavOverlay")?.classList.remove("show");
+
+  document.body.style.overflow = "";
+};
+// ==================================
+// Fill user info in right sidenav
+// ==================================
+function fillSidenavUserInfo() {
+  if (!store.user) return;
+
+  const { full_name, username, role } = store.user;
+
+  const nameEl = document.getElementById("sidenavFullName");
+  const userEl = document.getElementById("sidenavUsername");
+  const roleEl = document.getElementById("sidenavRole");
+
+  if (nameEl) nameEl.textContent = full_name || username;
+  if (userEl) userEl.textContent = username;
+  if (roleEl) roleEl.textContent = roleToLabel(role);
+}
+
+// gọi sau khi đã set user
+// ==================================
+// Fill user info in right sidenav
+// ==================================
+window.fillSidenavUserInfo = function () {
+  if (!store.user) return;
+
+  const { full_name, username, role } = store.user;
+
+  document.getElementById("sidenavFullName").textContent =
+    full_name || username;
+
+  document.getElementById("sidenavUsername").textContent = username;
+
+  document.getElementById("sidenavRole").textContent = roleToLabel(role);
+};
+
+// ==================================
+// Auto close right sidenav when click link
+// ==================================
+function bindRightSidenavAutoClose() {
+  const sidenav = document.getElementById("rightSidenav");
+  if (!sidenav) return;
+
+  sidenav.addEventListener("click", (e) => {
+    const link = e.target.closest("a[href^='#/']");
+    if (!link) return;
+
+    // đóng menu sau khi click link
+    window.closeNavRight?.();
+  });
+}

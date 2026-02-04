@@ -7,12 +7,14 @@ import { renderUsers } from "../pages/users.page.js";
 import { renderProfile } from "../pages/profile.page.js";
 import { updateActiveNav } from "../layout/layout.js";
 import { renderSales } from "../pages/sales.page.js";
+import { renderChangePassword } from "../pages/change-password.page.js";
 
 const routes = {
   "/": renderHome,
   "/users": renderUsers,
   "/profile": renderProfile,
   "/sales": renderSales,
+  "/change-password": renderChangePassword,
 };
 
 export function navigate(path) {

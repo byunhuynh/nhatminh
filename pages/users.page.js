@@ -10,7 +10,17 @@ let usernameTimer = null;
 
 import { store } from "../app/store.js";
 import { navigate } from "../app/router.js";
+import {
+  showError,
+  showOk,
+  clearHint,
+  scrollToField,
+} from "../ui/form-feedback.js";
 
+import {
+  bindPasswordStrength,
+  isStrongPassword,
+} from "../ui/password-strength.js";
 // =====================================================
 // STATE
 // =====================================================
@@ -440,18 +450,6 @@ function bindEvents() {
 }
 
 // =====================================================
-// PASSWORD RULE – SYNC BACKEND
-// =====================================================
-function isStrongPassword(pw) {
-  if (!pw || pw.length < 8) return false;
-  if (!/[a-z]/.test(pw)) return false;
-  if (!/[A-Z]/.test(pw)) return false;
-  if (!/\d/.test(pw)) return false;
-  if (!/[^A-Za-z0-9]/.test(pw)) return false;
-  return true;
-}
-
-// =====================================================
 // PASSWORD STRENGTH UI (SYNC BACKEND RULE)
 // =====================================================
 function updatePasswordStrength(pw) {
@@ -746,87 +744,6 @@ function isFormFilled() {
     if (!el) return false;
     return el.value && el.value.trim() !== "";
   });
-}
-
-// =====================================================
-// SHOW ERROR – FORCE red, persistent + mark error
-// =====================================================
-function showError(input, hintEl, msg) {
-  // mark error
-  input.dataset.error = "1";
-
-  // FORCE red border
-  input.style.borderColor = "#ef4444";
-  input.style.boxShadow = "0 0 0 1px #ef4444";
-
-  if (hintEl) {
-    hintEl.textContent = msg;
-    hintEl.style.color = "#ef4444";
-  }
-
-  updateSubmitState();
-}
-
-// =====================================================
-// SHOW OK – FORCE green (bypass CSS override)
-// =====================================================
-function showOk(input, hintEl) {
-  delete input.dataset.error;
-
-  input.style.borderColor = "#22c55e";
-  input.style.boxShadow = "0 0 0 1px #22c55e";
-
-  if (hintEl) {
-    hintEl.textContent = "✓ Hợp lệ";
-    hintEl.style.color = "#22c55e";
-  }
-
-  updateSubmitState();
-
-  setTimeout(() => {
-    input.style.borderColor = "";
-    input.style.boxShadow = "";
-
-    if (hintEl) {
-      hintEl.textContent = "";
-      hintEl.style.color = "";
-    }
-  }, 3000);
-}
-
-// =====================================================
-// CLEAR HINT – reset state + recheck submit
-// =====================================================
-function clearHint(input, hintEl) {
-  delete input.dataset.error;
-
-  input.style.borderColor = "";
-  input.style.boxShadow = "";
-
-  if (hintEl) {
-    hintEl.textContent = "";
-    hintEl.style.color = "";
-  }
-
-  updateSubmitState();
-}
-
-// =====================================================
-// SCROLL TO FIELD + FOCUS + SHOW ERROR
-// =====================================================
-function scrollToField(input, hintEl, msg) {
-  if (!input) return;
-
-  showError(input, hintEl, msg);
-
-  input.scrollIntoView({
-    behavior: "smooth",
-    block: "center",
-  });
-
-  setTimeout(() => {
-    input.focus();
-  }, 300);
 }
 
 // =====================================================

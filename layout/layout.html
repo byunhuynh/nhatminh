@@ -279,16 +279,65 @@
       </div>
 
       <!-- THEME TOGGLE -->
-      <button
-        id="themeToggle"
-        onclick="toggleDarkMode()"
-        class="theme-toggle"
-        aria-label="Toggle dark mode"
-      >
-        🌙
-      </button>
+      <!-- ACTIONS RIGHT -->
+      <div class="nav__actions">
+        <button
+          id="themeToggle"
+          onclick="toggleDarkMode()"
+          class="theme-toggle"
+          aria-label="Toggle dark mode"
+        >
+          🌙
+        </button>
+
+        <button
+          class="menu-toggle"
+          onclick="openNavRight()"
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+      </div>
     </nav>
   </header>
+  <!-- ================= RIGHT SIDENAV ================= -->
+  <div id="rightSidenav" class="right-sidenav">
+    <div class="right-sidenav__body">
+      <!-- USER INFO -->
+      <div class="right-sidenav__user">
+        <div class="right-sidenav__name" id="sidenavFullName">—</div>
+        <div class="right-sidenav__meta">
+          <span id="sidenavUsername">—</span>
+          •
+          <span id="sidenavRole">—</span>
+        </div>
+      </div>
+
+      <hr class="right-sidenav__divider" />
+
+      <!-- PROFILE -->
+      <a href="#/profile" class="right-sidenav__item"> 👤 Thông tin cá nhân </a>
+
+      <!-- CHANGE PASSWORD -->
+      <a href="#/change-password" class="right-sidenav__item">
+        🔐 Đổi mật khẩu
+      </a>
+
+      <hr class="right-sidenav__divider" />
+
+      <!-- LOGOUT -->
+      <button class="right-sidenav__item danger" onclick="logout()">
+        🚪 Đăng xuất
+      </button>
+    </div>
+  </div>
+
+  <!-- OVERLAY -->
+  <div
+    id="rightSidenavOverlay"
+    class="right-sidenav-overlay"
+    onclick="closeNavRight()"
+  ></div>
 
   <!-- ================= MAIN ================= -->
   <main
