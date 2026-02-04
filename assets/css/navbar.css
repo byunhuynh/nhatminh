@@ -121,7 +121,17 @@ body {
 
 /* Desktop – nav nằm trong header */
 .nav__menu {
-  position: static;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin; /* Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+.nav__menu::-webkit-scrollbar {
+  height: 4px;
+}
+.nav__menu::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 999px;
 }
 
 /* Mobile – chỉ tab nav xuống bottom */
@@ -196,6 +206,7 @@ body {
     align-items: center;
     /* 👇 khoảng cách tự co giãn theo màn hình */
     gap: clamp(1.5rem, 3vw, 3.5rem);
+    flex-wrap: nowrap; /* ❌ không xuống dòng */
   }
   .nav__icon {
     display: none;
@@ -211,6 +222,7 @@ body {
 
   .nav__link {
     padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
+    white-space: nowrap; /* ❌ không xuống dòng */
   }
   .nav__link.is-active .nav__name::after {
     content: "";

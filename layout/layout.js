@@ -62,31 +62,39 @@ function bindTemplateNav() {
 // Update active state for navbar (Top + Bottom)
 // Single active class: .is-active
 // ==================================
+// ==================================
+// Update active state for navbar
+// Auto scroll active tab into view
+// ==================================
 export function updateActiveNav(path) {
   const routeMap = {
     "/": "home",
     "/users": "users",
     "/profile": "profile",
-    "/sales": "sales", // ✅ NEW
+    "/sales": "sales",
   };
 
   const tab = routeMap[path];
   if (!tab) return;
 
-  // ===============================
-  // RESET ALL
-  // ===============================
   document
     .querySelectorAll("[data-tab]")
     .forEach((el) => el.classList.remove("is-active"));
 
-  // ===============================
-  // SET ACTIVE
-  // ===============================
-  document
-    .querySelectorAll(`[data-tab="${tab}"]`)
-    .forEach((el) => el.classList.add("is-active"));
+  const actives = document.querySelectorAll(`[data-tab="${tab}"]`);
+
+  actives.forEach((el) => {
+    el.classList.add("is-active");
+
+    // 🔥 auto scroll tab into view
+    el.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  });
 }
+
 // ==================================
 // Scroll Rebound for Short Content
 // Fixed header-safe version
