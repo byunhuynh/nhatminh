@@ -89,7 +89,8 @@ function renderPage() {
                 placeholder="DD/MM/YYYY"
               />
               <span
-                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]"
+                class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-(--text-muted)
+]"
               >
                 <i class="fa-regular fa-calendar"></i>
               </span>
