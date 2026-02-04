@@ -352,3 +352,10 @@ label {
 #rememberToggle:hover i {
   transform: scale(1.05);
 }
+
+/* ==================================
+   Toastify – hide close icon
+================================== */
+.toastify .toast-close {
+  display: none !important;
+}

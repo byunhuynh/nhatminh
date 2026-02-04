@@ -62,7 +62,11 @@ function renderPage() {
 
       <!-- ================= THÔNG TIN CÁ NHÂN ================= -->
       <div class="ui-card">
-        <div class="ui-title mb-4">🧾 Thông tin cá nhân</div>
+        <div class="ui-title mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-id-card"></i>
+          <span>Thông tin cá nhân</span>
+        </div>
+
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -87,8 +91,9 @@ function renderPage() {
               <span
                 class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]"
               >
-                📅
+                <i class="fa-regular fa-calendar"></i>
               </span>
+
             </div>
           </div>
 
@@ -121,7 +126,11 @@ function renderPage() {
 
       <!-- ================= TÀI KHOẢN ================= -->
       <div class="ui-card">
-        <div class="ui-title mb-4">🔐 Thông tin tài khoản</div>
+        <div class="ui-title mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-user-lock"></i>
+          <span>Thông tin tài khoản</span>
+        </div>
+
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -140,8 +149,9 @@ function renderPage() {
                 class="ui-btn ui-btn-primary px-3"
                 title="Tạo lại username"
               >
-                ↻
+                <i class="fa-solid fa-rotate"></i>
               </button>
+
             </div>
 
             <div id="usernameHint" class="ui-hint mt-1"></div>
@@ -214,9 +224,11 @@ function renderPage() {
         </div>
 
         <div class="mt-6">
-          <button id="submitBtn" class="ui-btn ui-btn-primary w-full">
-            ➕ Tạo tài khoản
+          <button id="submitBtn" class="ui-btn ui-btn-primary w-full flex items-center justify-center gap-2">
+            <i class="fa-solid fa-user-plus"></i>
+            <span>Tạo tài khoản</span>
           </button>
+
         </div>
       </div>
     </div>

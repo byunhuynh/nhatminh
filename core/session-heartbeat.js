@@ -15,10 +15,9 @@ const HEARTBEAT_INTERVAL = 10000;
 async function checkSessionOnce() {
   if (document.hidden) return;
 
-  const res = await authFetch(API + "/me");
+  const res = await authFetch(API + "/me", { silent: true });
 
   if (!res) {
-    // ⏳ cho toast render xong
     setTimeout(() => {
       location.replace("./login.html");
     }, 500);

@@ -1,13 +1,15 @@
 // ==================================
-// Toast helper
+// Toast helper (HEADER-AWARE + CLICK WORKING)
 // ==================================
-function isMobile() {
-  return window.innerWidth <= 640;
+
+function getHeaderOffset() {
+  const header = document.getElementById("header");
+  if (!header) return 16;
+  return Math.ceil(header.getBoundingClientRect().height + 12);
 }
 
 // ==================================
 // Show toast message
-// type: success | error | info | warning
 // ==================================
 function showToast(text, type = "info") {
   const colors = {
@@ -17,18 +19,44 @@ function showToast(text, type = "info") {
     warning: "linear-gradient(to right, #facc15, #eab308)",
   };
 
-  Toastify({
+  const toast = Toastify({
     text,
     duration: 3000,
-    gravity: "top", // ✅ LUÔN TRÊN
-    position: "right", // desktop
+
+    gravity: "top",
+    position: "right",
+
+    close: false,
+    stopOnFocus: false, // ❌ không pause
+
     style: {
       background: colors[type] || colors.info,
       borderRadius: "12px",
       fontSize: "14px",
       maxWidth: "90%",
-      marginTop: isMobile() ? "12px" : "16px", // tránh sát header
+      marginTop: getHeaderOffset() + "px",
       color: type === "warning" ? "#1f2937" : "#fff",
+      cursor: "pointer",
+      userSelect: "none",
+      pointerEvents: "auto", // 🔥 QUAN TRỌNG
     },
-  }).showToast();
+  });
+
+  toast.showToast();
+
+  // 🔥 SAU KHI RENDER → bind click CHUẨN
+  requestAnimationFrame(() => {
+    if (!toast.toastElement) return;
+
+    toast.toastElement.addEventListener(
+      "click",
+      () => {
+        toast.hideToast();
+      },
+      { once: true },
+    );
+  });
 }
+
+// expose global
+window.showToast = showToast;

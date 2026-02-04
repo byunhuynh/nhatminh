@@ -29,8 +29,16 @@ async function refreshToken() {
 // ==================================
 // Fetch có auth + auto refresh
 // ==================================
+// ==================================
+// Fetch có auth + auto refresh
+// options.silent = true → không show loading
+// ==================================
 async function authFetch(url, options = {}) {
-  apiLoadingStart();
+  const { silent = false, ...fetchOptions } = options;
+
+  if (!silent) {
+    apiLoadingStart();
+  }
 
   try {
     let token =
@@ -42,41 +50,40 @@ async function authFetch(url, options = {}) {
     }
 
     let res = await fetch(url, {
-      ...options,
+      ...fetchOptions,
       headers: {
-        ...(options.headers || {}),
+        ...(fetchOptions.headers || {}),
         Authorization: "Bearer " + token,
       },
     });
 
     // ===============================
-    // 🔥 HANDLE 401
+    // HANDLE 401
     // ===============================
     if (res.status === 401) {
       const clone = res.clone();
       const err = await clone.json().catch(() => null);
 
-      // ❌ bị đá do login thiết bị khác
       if (err?.message === "SESSION_REVOKED") {
         showToast("⚠️ Tài khoản đã đăng nhập ở thiết bị khác", "warning");
         return null;
       }
 
-      // 🔄 THỬ REFRESH TOKEN
       const refreshed = await refreshToken();
+
+      if (refreshed === false) return null;
+
       if (!refreshed) {
         logout();
         return null;
       }
 
-      // lấy token mới (refresh chỉ dành cho remember_login)
       token = storage.get("access_token");
 
-      // retry request
       res = await fetch(url, {
-        ...options,
+        ...fetchOptions,
         headers: {
-          ...(options.headers || {}),
+          ...(fetchOptions.headers || {}),
           Authorization: "Bearer " + token,
         },
       });
@@ -84,6 +91,8 @@ async function authFetch(url, options = {}) {
 
     return res;
   } finally {
-    apiLoadingEnd();
+    if (!silent) {
+      apiLoadingEnd();
+    }
   }
 }
