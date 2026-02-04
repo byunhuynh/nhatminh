@@ -1,6 +1,5 @@
 // =====================================================
-// HOME PAGE – RESPONSIVE DASHBOARD (FULL WIDTH SAFE)
-// File: Frontend/nhatminh/pages/home.page.js
+// HOME PAGE – AUTO FIT DASHBOARD GRID
 // =====================================================
 
 import { store } from "../app/store.js";
@@ -37,17 +36,9 @@ export function renderHome() {
         </div>
       </div>
 
-      <!-- ================= DASHBOARD ================= -->
-      <div
-        class="
-          grid
-          grid-cols-1
-          sm:grid-cols-2
-          xl:grid-cols-3
-          2xl:grid-cols-4
-          gap-6
-        "
-      >
+      <!-- ================= DASHBOARD (AUTO FIT GRID) ================= -->
+      <div class="ui-grid-auto">
+
         <!-- Revenue -->
         <div class="ui-card" id="revenueCard">
           <div class="ui-title mb-3">📈 Doanh thu theo tháng</div>
@@ -73,15 +64,12 @@ export function renderHome() {
           <div class="ui-title mb-3">🛣️ Đơn hàng theo tuyến</div>
           <canvas id="routeChart" height="140"></canvas>
         </div>
+
       </div>
     </div>
   `;
 
-  // ===============================
-  // Apply role badge
-  // ===============================
   applyRoleBadge(document.getElementById("home_role"), me.role);
-
   bindChartAnimations();
 }
 
@@ -109,3 +97,4 @@ function bindChartAnimations() {
     );
   });
 }
+

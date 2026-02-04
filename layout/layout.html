@@ -241,6 +241,15 @@
     gap: var(--s-6); /* 32px giữa các section */
     padding-top: var(--s-4); /* 🔥 khoảng trống đầu page */
   }
+
+  /* =====================================================
+ AUTO FIT GRID – DASHBOARD
+===================================================== */
+  .ui-grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-6);
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
