@@ -16,6 +16,11 @@
       tailwind.config = { darkMode: "class" };
     </script>
 
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+
     <!-- Toast -->
     <link
       rel="stylesheet"
@@ -46,23 +51,63 @@
         </p>
       </div>
 
+      <!-- USERNAME -->
       <div class="mb-4">
-        <label class="text-sm">Tài khoản</label>
-        <input id="username" class="ui-input" />
+        <label class="text-sm mb-1 block">Tài khoản</label>
+
+        <div class="ui-input-icon">
+          <i class="fa-solid fa-id-card"></i>
+          <input
+            id="username"
+            class="ui-input"
+            placeholder="Nhập tên đăng nhập"
+            autocomplete="username"
+          />
+        </div>
       </div>
 
+      <!-- PASSWORD -->
       <div class="mb-4">
-        <label class="text-sm">Mật khẩu</label>
-        <input id="password" type="password" class="ui-input" />
+        <label class="text-sm mb-1 block">Mật khẩu</label>
+
+        <div class="ui-input-icon ui-input-password">
+          <i class="fa-solid fa-lock"></i>
+
+          <input
+            id="password"
+            type="password"
+            class="ui-input"
+            placeholder="Nhập mật khẩu"
+            autocomplete="current-password"
+          />
+
+          <!-- toggle -->
+          <button
+            type="button"
+            class="ui-password-toggle"
+            aria-label="Hiện mật khẩu"
+            onclick="togglePassword('password', this)"
+          >
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
       </div>
 
-      <label class="flex items-center gap-2 text-sm mb-4">
-        <input id="rememberMe" type="checkbox" />
-        Ghi nhớ tài khoản
-      </label>
+      <div
+        id="rememberToggle"
+        class="flex items-center gap-2 text-sm mb-4 cursor-pointer select-none"
+        onclick="toggleRemember()"
+      >
+        <i id="rememberIcon" class="fa-solid fa-toggle-off text-2xl"></i>
+        <span>Ghi nhớ đăng nhập</span>
+      </div>
 
-      <button id="loginBtn" class="w-full ui-btn ui-btn-primary">
-        Đăng nhập
+      <button
+        id="loginBtn"
+        class="w-full ui-btn ui-btn-primary flex items-center justify-center gap-2"
+      >
+        <i class="fa-solid fa-arrow-right-to-bracket fa-beat"></i>
+        <span>Đăng nhập</span>
       </button>
 
       <p class="text-xs text-center text-gray-400 mt-6">© 2026 Nhật Minh</p>
@@ -83,7 +128,7 @@
       async function handleLogin() {
         const username = document.getElementById("username").value.trim();
         const password = document.getElementById("password").value;
-        const remember = document.getElementById("rememberMe").checked;
+        const remember = rememberMe;
 
         if (!username || !password) {
           showToast("Vui lòng nhập đầy đủ thông tin", "error");
@@ -91,7 +136,10 @@
         }
 
         btn.disabled = true;
-        btn.textContent = "⏳ Đang đăng nhập...";
+        btn.innerHTML = `
+  <i class="fa-solid fa-spinner fa-spin"></i>
+  <span>Đang đăng nhập...</span>
+`;
 
         try {
           const res = await fetch(API + "/login", {
@@ -106,21 +154,28 @@
           }
 
           const data = await res.json();
-          storage.set("access_token", data.access_token);
-          storage.set("refresh_token", data.refresh_token);
-          // ✅ đánh dấu login thành công
-          localStorage.setItem("login_notice", "1");
 
           if (remember) {
-            storage.set("remember_username", username);
+            // 🔐 remember login (mobile)
+            storage.set("access_token", data.access_token);
+            storage.set("refresh_token", data.refresh_token);
+            storage.set("remember_login", "1");
           } else {
-            storage.remove("remember_username");
+            // ⏳ session only
+            sessionStorage.setItem("access_token", data.access_token);
+            storage.remove("refresh_token");
+            storage.remove("remember_login");
           }
+
+          localStorage.setItem("login_notice", "1");
 
           location.replace("./#/");
         } finally {
           btn.disabled = false;
-          btn.textContent = "Đăng nhập";
+          btn.innerHTML = `
+  <i class="fa-solid fa-arrow-right-to-bracket fa-beat"></i>
+  <span>Đăng nhập</span>
+`;
         }
       }
 
@@ -131,19 +186,101 @@
       });
 
       // ===============================
-      // Restore remembered username
-      // ===============================
-      const remembered = storage.get("remember_username");
-      if (remembered) {
-        document.getElementById("username").value = remembered;
-        document.getElementById("rememberMe").checked = true;
-      }
-      // ===============================
       // Show logout notice
       // ===============================
       if (localStorage.getItem("logout_notice")) {
         localStorage.removeItem("logout_notice");
         showToast("Đã đăng xuất", "warning");
+      }
+    </script>
+
+    <script>
+      // ==================================
+      // Toggle password with auto-hide (2s)
+      // ==================================
+      const __pwTimers = new WeakMap();
+
+      function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        if (!input || !btn) return;
+
+        const icon = btn.querySelector("i");
+        if (!icon) return;
+
+        // clear timer cũ nếu có
+        if (__pwTimers.has(input)) {
+          clearTimeout(__pwTimers.get(input));
+          __pwTimers.delete(input);
+        }
+
+        const isHidden = input.type === "password";
+
+        // toggle
+        input.type = isHidden ? "text" : "password";
+
+        icon.classList.toggle("fa-eye", !isHidden);
+        icon.classList.toggle("fa-eye-slash", isHidden);
+
+        btn.setAttribute(
+          "aria-label",
+          isHidden ? "Ẩn mật khẩu" : "Hiện mật khẩu",
+        );
+
+        // nếu vừa hiện → auto hide sau 2s
+        if (isHidden) {
+          const timer = setTimeout(() => {
+            input.type = "password";
+
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+
+            btn.setAttribute("aria-label", "Hiện mật khẩu");
+            __pwTimers.delete(input);
+          }, 2000);
+
+          __pwTimers.set(input, timer);
+        }
+      }
+      let rememberMe = true;
+
+      function toggleRemember() {
+        rememberMe = !rememberMe;
+
+        const icon = document.getElementById("rememberIcon");
+        const wrap = document.getElementById("rememberToggle");
+
+        if (!icon || !wrap) return;
+
+        icon.classList.toggle("fa-toggle-off", !rememberMe);
+        icon.classList.toggle("fa-toggle-on", rememberMe);
+        wrap.classList.toggle("active", rememberMe);
+      }
+
+      // ===============================
+      // Restore remember login toggle
+      // ===============================
+      // ===============================
+      // Restore remember login (default ON)
+      // ===============================
+      if (storage.get("remember_login") === null) {
+        // lần đầu / chưa từng tắt → giữ ON
+        rememberMe = true;
+      } else {
+        // đã có remember_login → đọc đúng trạng thái
+        rememberMe = storage.get("remember_login") === "1";
+      }
+
+      const icon = document.getElementById("rememberIcon");
+      const wrap = document.getElementById("rememberToggle");
+
+      if (rememberMe) {
+        icon?.classList.add("fa-toggle-on");
+        icon?.classList.remove("fa-toggle-off");
+        wrap?.classList.add("active");
+      } else {
+        icon?.classList.add("fa-toggle-off");
+        icon?.classList.remove("fa-toggle-on");
+        wrap?.classList.remove("active");
       }
     </script>
   </body>

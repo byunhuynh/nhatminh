@@ -2,15 +2,14 @@
 // Logout (KEEP THEME)
 // ==================================
 function logout() {
-  // ❌ KHÔNG clear toàn bộ localStorage
+  // ❌ không clear toàn bộ localStorage
 
-  // ✅ chỉ xoá auth-related keys
+  // ✅ clear auth state
   storage.remove("access_token");
   storage.remove("refresh_token");
-  storage.remove("remember_username");
+  storage.remove("remember_login");
+  sessionStorage.removeItem("access_token");
 
-  // đánh dấu vừa logout (để show toast)
   localStorage.setItem("logout_notice", "1");
-
   location.replace("./login.html");
 }

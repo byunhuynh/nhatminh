@@ -4,7 +4,9 @@ import { renderRoute } from "./router.js";
 import { store } from "./store.js";
 
 async function bootstrap() {
-  const token = storage.get("access_token");
+  const token =
+    storage.get("access_token") || sessionStorage.getItem("access_token");
+
   if (!token) {
     location.replace("./login.html");
     return;

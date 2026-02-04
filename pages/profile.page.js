@@ -43,14 +43,7 @@ export function renderProfile() {
         </div>
       </div>
 
-      <div class="mt-6">
-        <button
-          id="logoutBtn"
-          class="ui-btn ui-btn-primary w-full"
-        >
-          🚪 Đăng xuất
-        </button>
-      </div>
+      
     </div>
   `;
 
@@ -59,8 +52,5 @@ export function renderProfile() {
   // ===============================
   // Logout
   // ===============================
-  document.getElementById("logoutBtn").onclick = () => {
-    window.logout();
-  };
 }
 // =====================================================

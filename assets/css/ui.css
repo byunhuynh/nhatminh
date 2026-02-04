@@ -289,3 +289,66 @@ label {
 #globalLoading.hidden {
   display: none;
 }
+/* =====================================================
+ INPUT WITH ICON + PASSWORD TOGGLE (FINAL FIX)
+===================================================== */
+
+/* container */
+.ui-input-icon {
+  position: relative;
+  width: 100%;
+  display: block; /* ❌ KHÔNG DÙNG FLEX */
+}
+
+/* input */
+.ui-input-icon .ui-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 2.5rem; /* chỗ icon trái */
+  padding-right: 2.5rem; /* chỗ icon eye */
+}
+
+/* icon bên trái */
+.ui-input-icon > i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* ===============================
+ PASSWORD TOGGLE (EYE ICON)
+=============================== */
+.ui-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.ui-password-toggle:hover {
+  color: var(--text-main);
+}
+/* ===============================
+ REMEMBER ME TOGGLE
+=============================== */
+#rememberToggle i {
+  color: var(--text-muted);
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
+}
+
+#rememberToggle:hover i {
+  transform: scale(1.05);
+}
