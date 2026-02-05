@@ -196,10 +196,12 @@ body {
 }
 
 .nav {
+  display: grid;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  grid-template-columns: auto 1fr auto;
 }
 .nav {
   padding-left: clamp(1rem, 3vw, 2rem);
@@ -271,6 +273,11 @@ body {
   -webkit-user-select: none;
   flex: 0 1 auto;
   min-width: 0; /* DÒNG QUAN TRỌNG NHẤT */
+}
+
+.nav__menu--header {
+  justify-self: center; /* ⭐ CĂN GIỮA THẬT */
+  max-width: 100%;
 }
 
 .nav__menu--header::before {
