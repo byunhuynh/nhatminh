@@ -1,7 +1,11 @@
-/*=============== GOOGLE FONTS ===============*/
+/* =====================================================
+   GOOGLE FONTS
+===================================================== */
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap");
 
-/*=============== THEME BRIDGE VARIABLES ===============*/
+/* =====================================================
+   THEME VARIABLES
+===================================================== */
 :root {
   --first-color: var(--primary);
   --first-color-alt: var(--primary-hover);
@@ -12,77 +16,187 @@
   --body-color: var(--bg-page);
   --container-color: var(--bg-card);
 
-  --nav-shadow: 0 1px 12px rgba(0, 0, 0, 0.08);
+  --nav-border: rgba(37, 99, 235, 0.45);
+  --nav-shadow:
+    0 -1px 0 rgba(37, 99, 235, 0.35), 0 8px 24px rgba(0, 0, 0, 0.18);
 
-  --z-tooltip: 10;
-  --z-fixed: 100;
+  --z-header: 300;
+  --z-bottom-nav: 200;
 
   --body-font: "Open Sans", sans-serif;
   --normal-font-size: 0.938rem;
   --tiny-font-size: 0.625rem;
 }
 
-/* ============================= */
-/* LIGHT MODE Viền của Bottom navbar*/
-/* ============================= */
-:root {
-  --nav-border: rgba(37, 99, 235, 0.45); /* xanh đậm hơn */
-  --nav-shadow:
-    0 -1px 0 rgba(37, 99, 235, 0.35), 0 8px 24px rgba(0, 0, 0, 0.18);
-}
-
-/* ============================= */
-/* DARK MODE Viền của Bottom navbar*/
-/* ============================= */
 .dark {
-  --nav-border: rgba(56, 189, 248, 0.35); /* xanh dịu */
+  --nav-border: rgba(56, 189, 248, 0.35);
   --nav-shadow:
     0 -1px 0 rgba(56, 189, 248, 0.25), 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
-@media screen and (min-width: 968px) {
-  :root {
-    --normal-font-size: 1rem;
-  }
-}
-
-/*=============== BASE ===============*/
+/* =====================================================
+   BASE
+===================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   font-family: var(--body-font);
   font-size: var(--normal-font-size);
-  background-color: var(--body-color);
+  background: var(--body-color);
   color: var(--text-color);
 }
 
-/*=============== HEADER (FIXED – TEMPLATE STYLE) ===============*/
+/* ================= RIGHT SIDENAV ================= */
+/* ================= RIGHT SIDENAV (UI CLEAN) ================= */
+.right-sidenav {
+  position: fixed;
+  top: 0;
+  right: 0;
+
+  width: min(82vw, 320px);
+  height: 100svh;
+
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-main);
+  border-radius: 16px 0 0 16px;
+
+  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.18);
+
+  z-index: 1200;
+
+  /* trạng thái đóng */
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+  will-change: transform;
+  display: flex;
+  flex-direction: column;
+}
+
+.right-sidenav.open {
+  transform: translateX(0);
+}
+
+/* ================= HEADER ================= */
+.right-sidenav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px;
+  border-bottom: 1px solid var(--border-main);
+}
+
+.right-sidenav__close {
+  font-size: 1.4rem;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.right-sidenav__close:hover {
+  opacity: 1;
+}
+
+/* ================= BODY ================= */
+.right-sidenav__body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+/* ================= ITEM ================= */
+.right-sidenav__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 12px 14px;
+  border-radius: 12px;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+
+  color: var(--text-main);
+  text-decoration: none;
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+
+.right-sidenav__item:hover {
+  background: var(--bg-hover);
+}
+
+.right-sidenav__item:active {
+  transform: scale(0.98);
+}
+
+.right-sidenav__item.danger {
+  color: var(--danger);
+}
+
+/* ================= USER BLOCK ================= */
+.right-sidenav__user {
+  padding: 12px 14px 8px;
+}
+
+.right-sidenav__name {
+  font-weight: 600;
+  color: var(--text-title);
+}
+
+.right-sidenav__meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ================= OVERLAY (MƯỢT HƠN) ================= */
+.right-sidenav-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+
+  z-index: 1100;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.35s ease;
+}
+
+.right-sidenav-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ================= RIGHT SIDENAV ================= */
+
+
+/* =====================================================
+   HEADER (FIXED TOP)
+===================================================== */
 .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-
-  background-color: var(--container-color);
+  height: 64px;
+  background: var(--container-color);
   border-bottom: 1px solid var(--border-main);
-  z-index: var(--z-fixed);
+  z-index: var(--z-header);
 }
 
-.scroll-header {
-  box-shadow: var(--nav-shadow);
-}
-
-/*=============== NAV ===============*/
 .nav {
-  height: 4rem; /* 🔒 CỐ ĐỊNH – KEY */
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -95,372 +209,139 @@ body {
   padding-left: clamp(0.75rem, 2vw, 1.5rem);
 }
 
-/* ================= LOGO SIZE ================= */
 .nav__logo-img {
-  height: clamp(36px, 2.5vw, 52px); /* 👈 chỉnh tại đây */
+  height: clamp(36px, 2.5vw, 52px);
   width: auto;
 }
 
-/*=============== NAV MENU ===============*/
+/* =====================================================
+   MENU – COMMON
+===================================================== */
 .nav__list {
-  display: flex;
-  justify-content: space-around;
-  padding-inline: 8px; /* 🔥 tạo không gian cho fade */
+  list-style: none;
 }
 
 .nav__link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 4px;
-
+  text-decoration: none;
   color: var(--text-muted);
   font-weight: 600;
 }
 
-.nav__icon {
-  font-size: 1.5rem;
-}
-
-.nav__name {
-  font-size: var(--tiny-font-size);
-}
-
-/*=============== ACTIVE STATE ===============*/
-.is-active {
-  color: var(--first-color);
-}
-
-.nav__link:hover {
+.nav__link.is-active {
   color: var(--first-color);
 }
 
 /* =====================================================
- NAV MENU FADE – FINAL STABLE VERSION
+   HEADER MENU (DESKTOP)
 ===================================================== */
-.nav__menu-wrap {
-  position: relative;
-  flex: 1;
-  overflow: hidden;
+.nav__menu--header {
+  display: block;
 }
 
-/* fade layers */
-.nav__menu-wrap::before,
-.nav__menu-wrap::after {
+.nav__menu--header .nav__list {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3.5rem);
+}
+
+.nav__menu--header .nav__icon {
+  display: none;
+}
+
+.nav__menu--header .nav__name {
+  font-size: clamp(1rem, 0.6vw + 0.9rem, 1.35rem);
+  position: relative;
+}
+
+.nav__menu--header .nav__link {
+  padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
+  white-space: nowrap;
+}
+
+.nav__menu--header .nav__link.is-active .nav__name::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 24px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  z-index: 10;
-}
-
-/* LEFT */
-.nav__menu-wrap::before {
   left: 0;
-  background: linear-gradient(to right, var(--bg-page), transparent);
-}
-
-/* RIGHT */
-.nav__menu-wrap::after {
   right: 0;
-  background: linear-gradient(to left, var(--bg-page), transparent);
-}
-
-/* ACTIVE */
-.nav__menu-wrap.has-left::before {
-  opacity: 1;
-}
-.nav__menu-wrap.has-right::after {
-  opacity: 1;
-}
-
-/* Active states */
-.nav__menu.has-left::before {
-  opacity: 1;
-}
-.nav__menu.has-right::after {
-  opacity: 1;
-}
-/* Drag UX */
-.nav__menu.dragging {
-  cursor: grabbing;
-}
-
-.nav__menu {
-  cursor: grab;
-}
-
-/* =====================================================
-   RESPONSIVE TAB NAV (ONLY nav__menu)
-===================================================== */
-
-/* Desktop – nav nằm trong header */
-.nav__menu {
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: thin; /* Firefox */
-  -webkit-overflow-scrolling: touch;
-}
-.nav__menu::-webkit-scrollbar {
-  height: 4px;
-}
-.nav__menu::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  bottom: -6px;
+  height: 3px;
+  background: var(--primary);
   border-radius: 999px;
 }
 
-/* Mobile – chỉ tab nav xuống bottom */
-@media (max-width: 768px) {
-  .nav__menu {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 3.5rem 3.5rem 0 0;
-    overflow: hidden;
-
-    background: var(--bg-card);
-    border-top: 1px solid var(--nav-border);
-    box-shadow: var(--nav-shadow);
-
-    z-index: 100;
-  }
-
-  .nav__list {
-    display: flex;
-    justify-content: space-around;
-    height: 56px;
-    align-items: center;
-  }
-  .nav__link {
-    border-radius: 0.75rem;
-  }
-
-  .nav__item {
-    flex: 1;
-    text-align: center;
-  }
-
-  .nav__name {
-    font-size: 0.7rem;
-  }
-  .nav__logo-img {
-    height: 40px;
-  }
-}
-/* ================= DESKTOP NAV SPACING ================= */
-@media (min-width: 769px) {
-  .nav {
-    display: flex;
-    align-items: center;
-  }
-  .nav__logo-img {
-    height: clamp(44px, 3vw, 64px);
-  }
-
-  /* Logo giữ bên trái */
-  .nav__logo {
-    flex-shrink: 0;
-    padding-left: clamp(0.75rem, 2vw, 1.5rem);
-  }
-
-  /* ĐẨY MENU SANG PHẢI */
-  .nav__menu {
-    margin-left: auto; /* 👈 mấu chốt */
-    margin-right: 1rem; /* khoảng cách với nút theme */
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-  }
-  /* =====================================================
- NAV MENU – HIDE SCROLLBAR (FINAL)
+/* =====================================================
+   BOTTOM NAV (MOBILE)
 ===================================================== */
-  .nav__menu {
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    /* Firefox */
-    scrollbar-width: none;
-
-    /* IE / Edge legacy */
-    -ms-overflow-style: none;
-  }
-
-  /* Chrome / Safari / Edge Chromium */
-  .nav__menu::-webkit-scrollbar {
-    display: none;
-  }
-
-  .nav__list {
-    display: flex;
-    align-items: center;
-    /* 👇 khoảng cách tự co giãn theo màn hình */
-    gap: clamp(1.5rem, 3vw, 3.5rem);
-    flex-wrap: nowrap; /* ❌ không xuống dòng */
-  }
-  .nav__icon {
-    display: none;
-  }
-  .nav__name {
-    display: block;
-    font-size: clamp(1rem, 0.6vw + 0.9rem, 1.35rem);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    position: relative;
-    display: inline-block; /* 👈 QUAN TRỌNG */
-  }
-
-  .nav__link {
-    padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
-    white-space: nowrap; /* ❌ không xuống dòng */
-  }
-  .nav__link.is-active .nav__name::after {
-    content: "";
-    position: absolute;
-
-    left: 0;
-    right: 0; /* 👈 đúng bằng chiều rộng chữ */
-    bottom: -6px;
-
-    height: 3px;
-    background-color: var(--primary);
-    border-radius: 999px;
-  }
+.nav__menu--bottom {
+  display: none;
 }
 
-/* ================= RIGHT ACTION GROUP ================= */
+/* =====================================================
+   ACTIONS RIGHT
+===================================================== */
 .nav__actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: auto; /* 🔥 ép về bên phải */
+  margin-right: 1rem;
 }
 
-/* menu icon */
 .menu-toggle {
   font-size: 1.6rem;
   width: 44px;
   height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-radius: 999px;
   cursor: pointer;
   background: transparent;
 }
 
-/* mobile: to hơn cho dễ bấm */
-@media (max-width: 640px) {
-  .menu-toggle {
-    font-size: 1.8rem;
-    width: 48px;
-    height: 48px;
+/* =====================================================
+   MOBILE BREAKPOINT
+===================================================== */
+@media (max-width: 768px) {
+  /* ẨN MENU TRÊN HEADER */
+  .nav__menu--header {
+    display: none;
+  }
+
+  /* HIỆN BOTTOM NAV */
+  .nav__menu--bottom {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--nav-border);
+    box-shadow: var(--nav-shadow);
+    z-index: var(--z-bottom-nav);
+  }
+
+  .nav__menu--bottom .nav__list {
+    display: flex;
+    height: 56px;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .nav__menu--bottom .nav__link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.7rem;
+  }
+
+  .nav__menu--bottom .nav__icon {
+    font-size: 1.4rem;
   }
 }
-/* ================= RIGHT SIDENAV ================= */
 
-.right-sidenav {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 280px;
-  height: 100svh;
-  max-height: 100svh;
-  background: var(--bg-card);
-  border-left: 1px solid var(--border-main);
-  z-index: 1200;
-
-  /* 🔥 trạng thái đóng */
-  transform: translateX(100%);
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.right-sidenav.open {
-  transform: translateX(0);
-}
-
-/* header */
-.right-sidenav__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid var(--border-main);
-}
-
-.right-sidenav__close {
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-/* body */
-.right-sidenav__body {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.right-sidenav__item {
-  padding: 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--text-main);
-}
-
-.right-sidenav__item:hover {
-  background: var(--bg-hover);
-}
-
-.right-sidenav__item.danger {
-  color: var(--danger);
-}
-
-/* ================= OVERLAY ================= */
-.right-sidenav-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px);
-  z-index: 1100;
-
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
-
-.right-sidenav-overlay.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ================= USER INFO BLOCK ================= */
-.right-sidenav__user {
-  padding: 12px 12px 8px;
-}
-
-.right-sidenav__name {
-  font-weight: 600;
-  color: var(--text-title);
-}
-
-.right-sidenav__meta {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* ================= DIVIDER ================= */
-.right-sidenav__divider {
-  border: none;
-  border-top: 1px solid var(--border-main);
-  margin: 8px 0;
+/* =====================================================
+   DESKTOP BREAKPOINT
+===================================================== */
+@media (min-width: 769px) {
+  .nav__menu--bottom {
+    display: none;
+  }
 }

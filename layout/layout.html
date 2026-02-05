@@ -327,56 +327,46 @@
 <div class="min-h-screen flex flex-col">
   <!-- ================= HEADER ================= -->
 
-  <!-- =============== HEADER NAVBAR (FIXED) =============== -->
+  <!-- ================= HEADER ================= -->
   <header class="header" id="header">
     <nav class="nav nav-fluid">
-      <!-- LOGO (DUY NHẤT) -->
+      <!-- LOGO -->
       <a href="javascript:void(0)" class="nav__logo flex items-center gap-2">
         <img src="assets/img/logo.png" alt="Nhật Minh" class="nav__logo-img" />
       </a>
 
-      <!-- NAV MENU -->
-      <div class="nav__menu-wrap">
-        <div class="nav__menu" id="nav-menu">
+      <!-- HEADER MENU (DESKTOP ONLY) -->
+      <div class="nav__menu-wrap nav__menu--header">
+        <div class="nav__menu">
           <ul class="nav__list">
             <li class="nav__item">
-              <a href="#/" data-tab="home" class="nav__link">
-                <i class="fa-solid fa-house nav__icon"></i>
-                <span class="nav__name">Trang chủ</span>
-              </a>
+              <a href="#/" data-tab="home" class="nav__link"> Trang chủ </a>
             </li>
-
             <li class="nav__item">
               <a href="#/sales" data-tab="sales" class="nav__link">
-                <i class="fa-solid fa-cart-shopping nav__icon"></i>
-                <span class="nav__name">Bán hàng</span>
+                Bán hàng
               </a>
             </li>
-
             <li class="nav__item">
               <a href="#/users" data-tab="users" class="nav__link">
-                <i class="fa-solid fa-user-plus nav__icon"></i>
-                <span class="nav__name">Thêm nhân viên</span>
+                Thêm nhân viên
               </a>
             </li>
-
             <li class="nav__item">
               <a href="#/profile" data-tab="profile" class="nav__link">
-                <i class="fa-solid fa-user nav__icon"></i>
-                <span class="nav__name">Tài khoản</span>
+                Tài khoản
               </a>
             </li>
           </ul>
         </div>
       </div>
-      <!-- THEME TOGGLE -->
+
       <!-- ACTIONS RIGHT -->
       <div class="nav__actions">
         <button
           id="themeToggle"
           onclick="toggleDarkMode()"
           class="theme-toggle"
-          aria-label="Toggle dark mode"
         >
           🌙
         </button>
@@ -391,6 +381,7 @@
       </div>
     </nav>
   </header>
+
   <!-- ================= RIGHT SIDENAV ================= -->
   <div id="rightSidenav" class="right-sidenav">
     <div class="right-sidenav__body">
@@ -434,8 +425,43 @@
   <main
     id="page-content"
     class="flex-1 p-4 w-full overflow-y-auto"
-    style="padding-bottom: calc(64px + env(safe-area-inset-bottom))"
+    style="
+      padding-top: 64px;
+      padding-bottom: calc(64px + env(safe-area-inset-bottom));
+    "
   ></main>
+  <!-- ================= BOTTOM NAVBAR ================= -->
+  <nav class="bottom-nav nav__menu--bottom" id="bottom-nav">
+    <ul class="nav__list">
+      <li class="nav__item">
+        <a href="#/" data-tab="home" class="nav__link">
+          <i class="fa-solid fa-house nav__icon"></i>
+          <span class="nav__name">Trang chủ</span>
+        </a>
+      </li>
+
+      <li class="nav__item">
+        <a href="#/sales" data-tab="sales" class="nav__link">
+          <i class="fa-solid fa-cart-shopping nav__icon"></i>
+          <span class="nav__name">Bán hàng</span>
+        </a>
+      </li>
+
+      <li class="nav__item">
+        <a href="#/users" data-tab="users" class="nav__link">
+          <i class="fa-solid fa-user-plus nav__icon"></i>
+          <span class="nav__name">Thêm nhân viên</span>
+        </a>
+      </li>
+
+      <li class="nav__item">
+        <a href="#/profile" data-tab="profile" class="nav__link">
+          <i class="fa-solid fa-user nav__icon"></i>
+          <span class="nav__name">Tài khoản</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 
   <!-- ================= GLOBAL LOADING ================= -->
   <div

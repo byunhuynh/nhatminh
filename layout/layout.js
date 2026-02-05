@@ -142,6 +142,8 @@ function applyScrollRebound() {
 }
 
 window.__applyScrollRebound = applyScrollRebound;
+
+
 // ==================================
 // RIGHT SIDENAV CONTROL
 // ==================================
@@ -159,22 +161,7 @@ window.closeNavRight = function () {
 
   document.body.style.overflow = "";
 };
-// ==================================
-// Fill user info in right sidenav
-// ==================================
-function fillSidenavUserInfo() {
-  if (!store.user) return;
 
-  const { full_name, username, role } = store.user;
-
-  const nameEl = document.getElementById("sidenavFullName");
-  const userEl = document.getElementById("sidenavUsername");
-  const roleEl = document.getElementById("sidenavRole");
-
-  if (nameEl) nameEl.textContent = full_name || username;
-  if (userEl) userEl.textContent = username;
-  if (roleEl) roleEl.textContent = roleToLabel(role);
-}
 
 // gọi sau khi đã set user
 // ==================================
@@ -208,6 +195,8 @@ function bindRightSidenavAutoClose() {
     window.closeNavRight?.();
   });
 }
+
+
 // ==================================
 // Update navbar fade indicators (STABLE)
 // ==================================
