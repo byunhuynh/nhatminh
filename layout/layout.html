@@ -321,6 +321,18 @@
     color: #93c5fd; /* xanh nhạt */
     opacity: 1;
   }
+
+  /* ===============================
+ MOBILE INPUT ZOOM FIX (CRITICAL)
+ iOS zoom input nếu font-size < 16px
+=============================== */
+  @media (max-width: 768px) {
+    .ui-input,
+    .ui-select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
 </style>
 
 <div class="min-h-screen flex flex-col">
