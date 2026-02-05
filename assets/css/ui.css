@@ -40,7 +40,8 @@
 ===================================================== */
 html,
 body {
-  height: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
 }
 
 body {
@@ -89,7 +90,7 @@ label {
   border: 1px solid var(--border-main);
   background: var(--bg-input);
   color: var(--text-main);
-  font-size: 0.9rem;
+  font-size: 16px;
 }
 
 .ui-input::placeholder {

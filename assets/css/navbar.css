@@ -255,7 +255,7 @@ body {
 
   /* chừa chỗ cho bottom nav */
   body {
-    padding-bottom: 4rem;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 /* ================= DESKTOP NAV SPACING ================= */

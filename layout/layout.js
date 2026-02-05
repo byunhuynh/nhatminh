@@ -31,6 +31,8 @@ export async function loadLayoutOnce() {
     window.addEventListener("resize", updateNavFade);
   }
   bindTemplateNav();
+  bindMobileViewportFix();
+
   // 🔥 BẮT BUỘC: sync icon dark/light sau khi render layout
   bindRightSidenavAutoClose(); // ✅ THÊM DÒNG NÀY
   if (window.updateThemeIcon) {
@@ -270,36 +272,25 @@ function applyHeaderOffset() {
   const h = header.getBoundingClientRect().height;
   main.style.paddingTop = h + 16 + "px"; // +16px cho thoáng
 }
+
 // ==================================
-// MOBILE KEYBOARD SAFE VIEWPORT FIX
-// Giữ header + bottom nav không bị mất khi keyboard open
+// Giữ header & bottom nav khi keyboard mở (mobile)
 // ==================================
-(function bindMobileKeyboardFix() {
+export function bindMobileViewportFix() {
   if (!window.visualViewport) return;
 
-  const header = document.getElementById("header");
-  const bottomNav = document.querySelector(".nav__menu"); // bottom nav mobile
+  const header = document.querySelector(".header");
+  const bottomNav = document.querySelector(".nav__menu");
 
-  function update() {
-    const vv = window.visualViewport;
+  const update = () => {
+    const offset = window.innerHeight - window.visualViewport.height;
 
-    // chiều cao bị keyboard chiếm
-    const keyboardHeight = window.innerHeight - (vv.height + vv.offsetTop);
-
-    const offset = Math.max(0, keyboardHeight);
-
-    // đẩy header xuống nếu cần
-    if (header) {
-      header.style.transform =
-        offset > 0 ? `translateY(${vv.offsetTop}px)` : "";
-    }
-
-    // kéo bottom nav lên trên keyboard
+    if (header) header.style.transform = `translateY(0)`;
     if (bottomNav) {
-      bottomNav.style.transform = offset > 0 ? `translateY(-${offset}px)` : "";
+      bottomNav.style.transform = `translateY(-${offset}px)`;
     }
-  }
+  };
 
-  visualViewport.addEventListener("resize", update);
-  visualViewport.addEventListener("scroll", update);
-})();
+  window.visualViewport.addEventListener("resize", update);
+  window.visualViewport.addEventListener("scroll", update);
+}
