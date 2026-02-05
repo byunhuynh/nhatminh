@@ -78,7 +78,7 @@ function renderMenu(listEl, type = "header") {
 // Update active state for navbar (Top + Bottom)
 // Single active class: .is-active
 // ==================================
-import { MENU_ITEMS } from "/assets/js/menu.config.js";
+import { MENU_ITEMS } from "../assets/js/menu.config.js";
 
 export function updateActiveNav(path) {
   const matchedItem = MENU_ITEMS.find((item) => item.path === path);
