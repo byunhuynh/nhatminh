@@ -223,6 +223,7 @@ function renderPage() {
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 
+              <!-- ============ TỈNH / THÀNH ============ -->
               <div class="ui-field relative">
                 <div class="ui-input-icon">
                   <i class="fa-solid fa-map-location-dot"></i>
@@ -233,34 +234,42 @@ function renderPage() {
                     autocomplete="off"
                   />
                 </div>
-
-                <!-- DROPDOWN -->
-                <div
-                  id="province_dropdown"
-                  class="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-md border bg-white shadow hidden"
-                ></div>
+                <div id="province_dropdown" class="ui-search-dropdown"></div>
               </div>
 
-              <div class="ui-field">
+              <!-- ============ QUẬN / HUYỆN ============ -->
+              <div class="ui-field relative">
                 <div class="ui-input-icon">
                   <i class="fa-solid fa-map"></i>
-                  <select id="district" class="ui-select" disabled>
-                    <option value="">-- Quận / Huyện --</option>
-                  </select>
+                  <input
+                    id="district_input"
+                    class="ui-input"
+                    placeholder="Quận / Huyện"
+                    autocomplete="off"
+                    disabled
+                  />
                 </div>
+                <div id="district_dropdown" class="ui-search-dropdown"></div>
               </div>
 
-              <div class="ui-field">
+              <!-- ============ PHƯỜNG / XÃ ============ -->
+              <div class="ui-field relative">
                 <div class="ui-input-icon">
                   <i class="fa-solid fa-location-dot"></i>
-                  <select id="ward" class="ui-select" disabled>
-                    <option value="">-- Phường / Xã --</option>
-                  </select>
+                  <input
+                    id="ward_input"
+                    class="ui-input"
+                    placeholder="Phường / Xã"
+                    autocomplete="off"
+                    disabled
+                  />
                 </div>
+                <div id="ward_dropdown" class="ui-search-dropdown"></div>
               </div>
 
             </div>
 
+            <!-- ============ ĐỊA CHỈ CHI TIẾT ============ -->
             <div class="ui-field mt-4">
               <div class="ui-input-icon">
                 <i class="fa-solid fa-house"></i>
@@ -272,6 +281,7 @@ function renderPage() {
               </div>
             </div>
           </div>
+
 
 
         </div>
@@ -643,16 +653,17 @@ function bindEvents() {
 }
 
 import { setupSearchDropdown } from "../ui/address-dropdown.js";
-
 async function bindAddressEvents() {
   const provinceInput = document.getElementById("province_input");
   const provinceDropdown = document.getElementById("province_dropdown");
-  const district = document.getElementById("district");
-  const ward = document.getElementById("ward");
 
-  if (!provinceInput || !provinceDropdown) return;
+  const districtInput = document.getElementById("district_input");
+  const districtDropdown = document.getElementById("district_dropdown");
 
-  // LOAD DATA Ở PAGE
+  const wardInput = document.getElementById("ward_input");
+  const wardDropdown = document.getElementById("ward_dropdown");
+
+  // ===== LOAD PROVINCES =====
   const provinces = await loadProvinces();
 
   setupSearchDropdown({
@@ -661,18 +672,41 @@ async function bindAddressEvents() {
     data: provinces,
 
     async onSelect(province) {
-      district.disabled = true;
-      ward.disabled = true;
+      // reset downstream
+      districtInput.value = "";
+      wardInput.value = "";
+      districtInput.disabled = true;
+      wardInput.disabled = true;
 
-      district.innerHTML = `<option value="">-- Quận / Huyện --</option>`;
-      ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
-
+      // load districts
       const districts = await loadDistricts(province.code);
 
-      district.disabled = false;
-      district.innerHTML += districts
-        .map((d) => `<option value="${d.code}">${d.name}</option>`)
-        .join("");
+      districtInput.disabled = false;
+
+      setupSearchDropdown({
+        inputEl: districtInput,
+        dropdownEl: districtDropdown,
+        data: districts,
+
+        async onSelect(district) {
+          wardInput.value = "";
+          wardInput.disabled = true;
+
+          const wards = await loadWards(district.code);
+
+          wardInput.disabled = false;
+
+          setupSearchDropdown({
+            inputEl: wardInput,
+            dropdownEl: wardDropdown,
+            data: wards,
+
+            onSelect() {
+              // chọn xong phường → không cần làm gì thêm
+            },
+          });
+        },
+      });
     },
   });
 }

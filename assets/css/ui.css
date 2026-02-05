@@ -464,44 +464,74 @@ label {
   transform: scale(1.05);
 }
 
-/* ===============================
-   Tạo nền cho dropdown (address-dropdown.js)
-   =============================== */
-/* ===============================
-   SEARCH DROPDOWN FIX
-=============================== */
-#province_dropdown {
+/* =====================================================
+   SEARCH DROPDOWN – BASE COMPONENT
+   Áp dụng cho tất cả dropdown custom
+===================================================== */
+
+.ui-search-dropdown {
+  /* Ẩn mặc định */
   display: none;
+
+  /* Positioning */
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
+  margin-top: 4px;
+
+  /* Size & scroll */
   max-height: 12rem;
   overflow-y: auto;
+
+  /* Visual */
   background: var(--bg-input);
+  color: var(--text-main);
   border: 1px solid var(--border-main);
   border-radius: 0.5rem;
+
+  /* Elevation */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   z-index: 100;
 }
 
-#province_dropdown.open {
+/* Mở dropdown */
+.ui-search-dropdown.open {
   display: block;
 }
-.ui-field:has(.ui-input:focus) #province_dropdown.open {
+
+/* =====================================================
+   ITEM
+===================================================== */
+
+.ui-search-dropdown .ui-dropdown-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ui-search-dropdown .ui-dropdown-item:hover {
+  background: rgba(37, 99, 235, 0.1);
+}
+
+/* =====================================================
+   FOCUS SYNC – INPUT ↔ DROPDOWN
+===================================================== */
+
+/* Cách chuẩn (browser hiện đại) */
+.ui-field:has(.ui-input:focus) .ui-search-dropdown.open {
   border-color: var(--border-focus);
   box-shadow:
     0 0 0 2px rgba(37, 99, 235, 0.15),
     0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.ui-dropdown-item {
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-}
-
-.ui-dropdown-item:hover {
-  background: rgba(37, 99, 235, 0.1);
+/* Fallback cho browser cũ */
+.ui-field.dropdown-focus .ui-search-dropdown {
+  border-color: var(--border-focus);
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
 /* ==================================

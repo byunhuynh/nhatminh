@@ -11,9 +11,6 @@ export function setupSearchDropdown({
 }) {
   if (!inputEl || !dropdownEl) return;
 
-  // ===============================
-  // STATE
-  // ===============================
   let isOpen = false;
 
   // ===============================
@@ -22,12 +19,14 @@ export function setupSearchDropdown({
   function openDropdown() {
     if (isOpen) return;
     dropdownEl.classList.add("open");
+    inputEl.closest(".ui-field")?.classList.add("dropdown-focus");
     isOpen = true;
   }
 
   function closeDropdown() {
     if (!isOpen) return;
     dropdownEl.classList.remove("open");
+    inputEl.closest(".ui-field")?.classList.remove("dropdown-focus");
     isOpen = false;
   }
 
@@ -60,7 +59,7 @@ export function setupSearchDropdown({
   // EVENTS
   // ===============================
 
-  // Focus → show all items
+  // Focus → show all
   inputEl.addEventListener("focus", () => {
     renderList(data);
   });
@@ -76,18 +75,18 @@ export function setupSearchDropdown({
     renderList(filtered);
   });
 
-  // Click outside → close
-  document.addEventListener("click", (e) => {
-    if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
-      closeDropdown();
-    }
-  });
-
   // ESC → close
   inputEl.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeDropdown();
       inputEl.blur();
+    }
+  });
+
+  // Click outside → close
+  document.addEventListener("click", (e) => {
+    if (!inputEl.contains(e.target) && !dropdownEl.contains(e.target)) {
+      closeDropdown();
     }
   });
 }
