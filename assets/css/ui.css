@@ -269,6 +269,26 @@ label {
   background: var(--bg-hover);
 }
 
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ui-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.ui-error {
+  font-size: 0.75rem;
+  color: var(--danger);
+}
+
+.ui-error:not(.hidden) {
+  display: block;
+}
+
 /* =====================================================
    GLOBAL LOADING
 ===================================================== */
@@ -558,4 +578,16 @@ label {
 
 .animate-icon-pop {
   animation: iconPop 0.3s ease-out;
+}
+
+/* ==================================
+   MOBILE INPUT ZOOM FIX (iOS / Android)
+   ================================== */
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select,
+  button {
+    font-size: 16px !important;
+  }
 }
