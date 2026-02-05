@@ -1,3 +1,5 @@
+//layout\layout.js
+
 import { navigate } from "../app/router.js";
 import { store } from "../app/store.js";
 
@@ -18,30 +20,85 @@ export async function loadLayoutOnce() {
     return;
   }
 
+  // ==================================
+  // 1️⃣ Inject layout TRƯỚC
+  // ==================================
   root.innerHTML = await res.text();
 
+  // ==================================
+  // 2️⃣ Render menu (DOM đã có)
+  // ==================================
+  renderMenu(document.getElementById("headerMenu"), "header");
+  renderMenu(document.getElementById("bottomMenu"), "bottom");
+
+  // ==================================
+  // 3️⃣ Bind observer + resize
+  // ==================================
+  bindHeaderMenuObserver();
+  bindActiveNavResize();
+
+  // ==================================
+  // 4️⃣ Các xử lý layout khác
+  // ==================================
   applyHeaderOffset();
   window.addEventListener("resize", applyHeaderOffset);
 
   enableNavDragScroll();
+
   const navMenu = document.getElementById("nav-menu");
   if (navMenu) {
     updateNavFade();
+
     navMenu.addEventListener("scroll", updateNavFade, { passive: true });
     window.addEventListener("resize", updateNavFade);
   }
-  renderMenu(document.getElementById("headerMenu"), "header");
-  renderMenu(document.getElementById("bottomMenu"), "bottom");
+
   bindTemplateNav();
   bindMobileViewportFix();
 
-  // 🔥 BẮT BUỘC: sync icon dark/light sau khi render layout
-  bindRightSidenavAutoClose(); // ✅ THÊM DÒNG NÀY
+  // ==================================
+  // 5️⃣ Sync theme + sidenav
+  // ==================================
+  bindRightSidenavAutoClose();
   if (window.updateThemeIcon) {
     window.updateThemeIcon();
   }
+
+  // ==================================
+  // 🔥 6️⃣ SYNC ACTIVE NAV LẦN ĐẦU (QUAN TRỌNG NHẤT)
+  // ==================================
+  const currentPath = window.location.hash?.replace("#", "") || "/";
+
+  const matchedItem = MENU_ITEMS.find((item) => item.path === currentPath);
+
+  if (matchedItem) {
+    updateActiveNav(matchedItem.path);
+  }
+
+  // ==================================
+  // 🔥 7️⃣ Force re-calc sau khi layout + font ổn định
+  // ==================================
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      if (__currentActivePath) {
+        updateActiveNav(__currentActivePath);
+      }
+    });
+  });
+
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(() => {
+      if (__currentActivePath) {
+        updateActiveNav(__currentActivePath);
+      }
+    });
+  }
+
   layoutLoaded = true;
 }
+// ==================================
+// Recalculate active nav line on resize
+// ==================================
 
 // ==================================
 // Render menu items
@@ -67,11 +124,24 @@ function renderMenu(listEl, type = "header") {
     return `
       <li class="nav__item">
         <a href="${item.href}" data-tab="${item.key}" class="nav__link">
-          ${item.label}
+          <span class="nav__name">${item.label}</span>
         </a>
       </li>
     `;
   }).join("");
+
+  // 🔥 THÊM underline 1 lần duy nhất
+  if (type === "header") {
+    const menuWrap = listEl.closest(".nav__menu");
+    if (menuWrap && !menuWrap.querySelector("#navActiveLine")) {
+      if (type === "header" && !listEl.querySelector("#navActiveLine")) {
+        listEl.insertAdjacentHTML(
+          "beforeend",
+          `<div class="nav__active-line" id="navActiveLine"></div>`,
+        );
+      }
+    }
+  }
 }
 
 // ==================================
@@ -80,26 +150,113 @@ function renderMenu(listEl, type = "header") {
 // ==================================
 import { MENU_ITEMS } from "../assets/js/menu.config.js";
 
+// ==================================
+// Update active nav based on MENU_ITEMS
+// ==================================
+
+// ==================================
+// Update active nav + move active line (HEADER)
+// ==================================
+
+let __currentActivePath = null;
 export function updateActiveNav(path) {
   const matchedItem = MENU_ITEMS.find((item) => item.path === path);
   if (!matchedItem) return;
 
-  const tab = matchedItem.key;
+  __currentActivePath = path;
 
+  // Xóa class cũ
   document
-    .querySelectorAll("[data-tab]")
+    .querySelectorAll(".nav__link[data-tab]")
     .forEach((el) => el.classList.remove("is-active"));
 
-  document.querySelectorAll(`[data-tab="${tab}"]`).forEach((el) => {
-    el.classList.add("is-active");
+  // Tìm link đang active ở Header
+  const activeLink = document.querySelector(
+    `.nav__menu--header .nav__link[data-tab="${matchedItem.key}"]`,
+  );
 
-    // auto scroll tab into view (chỉ khi cần)
-    el.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
+  const line = document.getElementById("navActiveLine");
+  if (!activeLink || !line) {
+    if (line) line.style.opacity = 0;
+    return;
+  }
+
+  activeLink.classList.add("is-active");
+
+  // === THAY ĐỔI QUAN TRỌNG TẠI ĐÂY ===
+  const paddingX = 12; // Khoảng cách thụt vào của line so với text
+
+  // Lấy thẻ <li> chứa thẻ <a> để lấy tọa độ gốc chính xác nhất
+  const parentLi = activeLink.parentElement;
+
+  // offsetLeft: Khoảng cách từ lề trái của <li> so với lề trái của <ul>
+  // Vì line nằm trong <ul>, nó sẽ dùng chung hệ tọa độ này.
+  const left = parentLi.offsetLeft + paddingX;
+  const width = parentLi.offsetWidth - paddingX * 2;
+
+  line.style.transform = `translateX(${left}px)`;
+  line.style.width = `${width}px`;
+  line.style.opacity = 1;
+}
+
+// ==================================
+// Handle breakpoint switch (MOBILE <-> DESKTOP)
+// ==================================
+const desktopMQ = window.matchMedia("(min-width: 769px)");
+
+desktopMQ.addEventListener("change", (e) => {
+  if (!__currentActivePath) return;
+
+  // Chỉ xử lý khi CHUYỂN SANG DESKTOP
+  if (e.matches) {
+    // chờ layout + font + clamp ổn định
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        updateActiveNav(__currentActivePath);
+      });
+    });
+  }
+});
+// ==================================
+// Recalculate active nav line on resize (REALTIME & STABLE)
+// ==================================
+function bindActiveNavResize() {
+  let t = null;
+
+  window.addEventListener("resize", () => {
+    if (!__currentActivePath) return;
+
+    const line = document.getElementById("navActiveLine");
+    if (line) line.classList.add("no-transition");
+
+    cancelAnimationFrame(t);
+    t = requestAnimationFrame(() => {
+      updateActiveNav(__currentActivePath);
+
+      clearTimeout(line?._t);
+      line._t = setTimeout(() => {
+        line.classList.remove("no-transition");
+      }, 80);
     });
   });
+}
+
+// ==================================
+// Observe header menu size change (REALTIME)
+// ==================================
+function bindHeaderMenuObserver() {
+  const menu = document.querySelector(".nav__menu--header");
+  if (!menu || !window.ResizeObserver) return;
+
+  const ro = new ResizeObserver(() => {
+    if (!__currentActivePath) return;
+
+    requestAnimationFrame(() => {
+      updateActiveNav(__currentActivePath);
+    });
+  });
+
+  ro.observe(menu);
 }
 
 // ==================================

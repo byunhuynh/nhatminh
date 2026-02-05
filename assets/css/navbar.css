@@ -184,6 +184,7 @@ body {
 /* =====================================================
    HEADER (FIXED TOP)
 ===================================================== */
+
 .header {
   position: fixed;
   top: 0;
@@ -196,16 +197,15 @@ body {
 }
 
 .nav {
-  display: grid;
-  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  grid-template-columns: auto 1fr auto;
-}
-.nav {
+  width: 100%;
+  height: 100%;
+
   padding-left: clamp(1rem, 3vw, 2rem);
   padding-right: clamp(1rem, 3vw, 2rem);
+
+  overflow: hidden; /* 🔥 chặn đẩy layout */
 }
 
 /* LOGO – NEVER SHRINK */
@@ -224,6 +224,8 @@ body {
 ===================================================== */
 .nav__list {
   list-style: none;
+  position: relative;
+  display: flex;
 }
 
 .nav__link {
@@ -232,12 +234,31 @@ body {
   font-weight: 600;
 }
 
-.nav__link.is-active {
+#navActiveLine {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background-color: var(--first-color);
+  transition:
+    transform 0.3s ease,
+    width 0.3s ease;
+  pointer-events: none; /* Tránh cản trở click chuột */
+  z-index: 10;
+}
+
+/* Khi đang resize hoặc drag, tắt transition để tránh cảm giác bị trễ (lag) */
+#navActiveLine.no-transition {
+  transition: none !important;
+}
+
+/* ================= ACTIVE TEXT (HEADER + BOTTOM) ================= */
+.nav__link.is-active .nav__name {
   background: var(--brand-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+
 .nav__link.is-active .nav__icon {
   background: var(--brand-gradient);
   -webkit-background-clip: text;
@@ -257,27 +278,40 @@ body {
   display: inline-flex;
   width: auto;
 }
+.nav__menu {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  cursor: grab;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge cũ */
+}
+.nav__menu:active {
+  cursor: grabbing;
+}
+.nav__menu::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}
 
 .nav__menu--header {
-  display: block;
+  flex: 1 1 auto;
+  min-width: 0; /* 🔥 bắt buộc */
+  overflow: hidden; /* chặn đẩy layout */
   position: relative;
-  overflow: hidden;
 }
-.nav__menu--header {
-  padding-left: clamp(0.75rem, 2vw, 1.5rem);
-  padding-right: clamp(0.75rem, 2vw, 1.5rem);
-}
-
-.nav__menu--header {
-  user-select: none;
-  -webkit-user-select: none;
-  flex: 0 1 auto;
-  min-width: 0; /* DÒNG QUAN TRỌNG NHẤT */
+.nav__active-line {
+  position: absolute;
+  bottom: 0; /* 🔥 nằm sát đáy header menu */
+  height: 3px;
+  background: var(--brand-gradient);
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 2;
 }
 
-.nav__menu--header {
-  justify-self: center; /* ⭐ CĂN GIỮA THẬT */
-  max-width: 100%;
+.nav__active-line.no-transition {
+  transition: none !important;
 }
 
 .nav__menu--header::before {
@@ -289,7 +323,7 @@ body {
   width: 24px;
   pointer-events: none;
   background: linear-gradient(to right, var(--container-color), transparent);
-  z-index: 2;
+  z-index: 1;
 }
 
 .nav__menu--header::after {
@@ -301,31 +335,27 @@ body {
   width: 24px;
   pointer-events: none;
   background: linear-gradient(to left, var(--container-color), transparent);
-  z-index: 2;
+  z-index: 1;
 }
-
 .nav__menu-wrap {
-  flex: 0 0 auto !important;
-  width: auto !important;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .nav__menu--header .nav__list {
   display: flex;
   align-items: center;
   gap: clamp(1.5rem, 3vw, 3.5rem);
-
-  overflow-x: auto;
-  overflow-y: hidden;
   white-space: nowrap;
+}
 
-  scrollbar-width: none; /* Firefox */
+.nav__menu--header .nav__list::-webkit-scrollbar {
+  display: none;
 }
 
 .nav__menu--header .nav__icon {
   display: none;
-}
-.nav__menu--header .nav__list::-webkit-scrollbar {
-  display: none; /* Chrome */
 }
 
 .nav__menu--header .nav__name {
@@ -341,15 +371,11 @@ body {
   user-drag: none;
 }
 
-.nav__menu--header .nav__link.is-active .nav__name::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 3px;
-  background: var(--brand-gradient);
-  border-radius: 999px;
+/* =====================================================
+   HEADER ACTIVE UNDERLINE – FIXED TO HEADER BOTTOM
+===================================================== */
+.nav__menu--header .nav__link {
+  position: relative; /* mốc neo */
 }
 
 /* =====================================================
@@ -363,12 +389,11 @@ body {
    ACTIONS RIGHT
 ===================================================== */
 .nav__actions {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: 1rem;
-  flex: 0 0 auto;
-  margin-left: auto;
+  margin-left: auto; /* 🔥 DÒNG QUYẾT ĐỊNH */
 }
 
 .menu-toggle {

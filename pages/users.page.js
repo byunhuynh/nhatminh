@@ -1,3 +1,4 @@
+//pages\users.page.js
 // =====================================================
 // USERS PAGE – SPA VERSION (SAFE UX IMPROVE)
 // File: Frontend/nhatminh/pages/users.page.js
@@ -169,6 +170,7 @@ function renderPage() {
               <input
                 id="full_name"
                 class="ui-input"
+                autocapitalize="words"
                 placeholder="vd: Nguyễn Văn A"
               />
             </div>
