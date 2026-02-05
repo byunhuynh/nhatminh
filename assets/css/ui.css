@@ -136,6 +136,14 @@ label {
   color: var(--text-main);
   font-size: 16px;
 }
+/* ==================================
+   FIX SELECT HEIGHT = INPUT HEIGHT
+================================== */
+.ui-select {
+  height: 2.75rem; /* BẰNG ui-input */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 
 .ui-input::placeholder {
   color: var(--text-muted);
@@ -381,6 +389,7 @@ label {
   position: relative;
   width: 100%;
   display: block; /* ❌ KHÔNG DÙNG FLEX */
+  margin-bottom: 1rem;
 }
 
 /* input */
@@ -389,6 +398,25 @@ label {
   box-sizing: border-box;
   padding-left: 2.5rem; /* chỗ icon trái */
   padding-right: 2.5rem; /* chỗ icon eye */
+}
+
+.ui-dropdown-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+.ui-dropdown-item:hover {
+  background: #e5f0ff;
+}
+
+/* ===============================
+ SELECT WITH LEFT ICON – FIX OVERLAP
+=============================== */
+.ui-input-icon .ui-select {
+  padding-left: 2.5rem; /* chừa chỗ icon trái */
+}
+
+.ui-select option[value=""] {
+  color: var(--text-muted);
 }
 
 /* icon bên trái */
@@ -434,6 +462,46 @@ label {
 
 #rememberToggle:hover i {
   transform: scale(1.05);
+}
+
+/* ===============================
+   Tạo nền cho dropdown (address-dropdown.js)
+   =============================== */
+/* ===============================
+   SEARCH DROPDOWN FIX
+=============================== */
+#province_dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 12rem;
+  overflow-y: auto;
+  background: var(--bg-input);
+  border: 1px solid var(--border-main);
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+}
+
+#province_dropdown.open {
+  display: block;
+}
+.ui-field:has(.ui-input:focus) #province_dropdown.open {
+  border-color: var(--border-focus);
+  box-shadow:
+    0 0 0 2px rgba(37, 99, 235, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.ui-dropdown-item {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.ui-dropdown-item:hover {
+  background: rgba(37, 99, 235, 0.1);
 }
 
 /* ==================================

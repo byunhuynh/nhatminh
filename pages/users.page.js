@@ -16,7 +16,6 @@ import {
   clearHint,
   scrollToField,
 } from "../ui/form-feedback.js";
-
 import {
   bindPasswordStrength,
   isStrongPassword,
@@ -134,6 +133,7 @@ export function renderUsers() {
 
   renderPage();
   bindUsernameRegenHover();
+
   initDobPicker();
   bindEvents();
 }
@@ -219,44 +219,57 @@ function renderPage() {
           </div>
           <!-- ================= ĐỊA CHỈ ================= -->
           <div class="md:col-span-2">
-            <label>Địa chỉ</label>
+            <label class="mb-2 block">Địa chỉ</label>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
 
-              <!-- TỈNH -->
-              <div class="ui-input-icon">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <select id="province" class="ui-select">
-                  <option value="">-- Tỉnh / Thành --</option>
-                </select>
+              <div class="ui-field relative">
+                <div class="ui-input-icon">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  <input
+                    id="province_input"
+                    class="ui-input"
+                    placeholder="Tỉnh / Thành"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <!-- DROPDOWN -->
+                <div
+                  id="province_dropdown"
+                  class="absolute z-20 mt-1 w-full max-h-48 overflow-y-auto rounded-md border bg-white shadow hidden"
+                ></div>
               </div>
 
-              <!-- HUYỆN -->
-              <div class="ui-input-icon">
-                <i class="fa-solid fa-map"></i>
-                <select id="district" class="ui-select" disabled>
-                  <option value="">-- Quận / Huyện --</option>
-                </select>
+              <div class="ui-field">
+                <div class="ui-input-icon">
+                  <i class="fa-solid fa-map"></i>
+                  <select id="district" class="ui-select" disabled>
+                    <option value="">-- Quận / Huyện --</option>
+                  </select>
+                </div>
               </div>
 
-              <!-- XÃ -->
-              <div class="ui-input-icon">
-                <i class="fa-solid fa-location-dot"></i>
-                <select id="ward" class="ui-select" disabled>
-                  <option value="">-- Phường / Xã --</option>
-                </select>
+              <div class="ui-field">
+                <div class="ui-input-icon">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <select id="ward" class="ui-select" disabled>
+                    <option value="">-- Phường / Xã --</option>
+                  </select>
+                </div>
               </div>
 
             </div>
 
-            <!-- ĐỊA CHỈ CHI TIẾT -->
-            <div class="ui-input-icon mt-3">
-              <i class="fa-solid fa-house"></i>
-              <input
-                id="address_detail"
-                class="ui-input"
-                placeholder="Số nhà, tên đường..."
-              />
+            <div class="ui-field mt-4">
+              <div class="ui-input-icon">
+                <i class="fa-solid fa-house"></i>
+                <input
+                  id="address_detail"
+                  class="ui-input"
+                  placeholder="Số nhà, tên đường..."
+                />
+              </div>
             </div>
           </div>
 
@@ -629,58 +642,38 @@ function bindEvents() {
   submitBtn.addEventListener("click", submitForm);
 }
 
-function bindAddressEvents() {
-  const province = document.getElementById("province");
+import { setupSearchDropdown } from "../ui/address-dropdown.js";
+
+async function bindAddressEvents() {
+  const provinceInput = document.getElementById("province_input");
+  const provinceDropdown = document.getElementById("province_dropdown");
   const district = document.getElementById("district");
   const ward = document.getElementById("ward");
 
-  if (!province || !district || !ward) return;
+  if (!provinceInput || !provinceDropdown) return;
 
-  // ===== LOAD PROVINCES =====
-  loadProvinces().then((list) => {
-    province.innerHTML = `
-      <option value="">-- Tỉnh / Thành --</option>
-      ${list
-        .map((p) => `<option value="${p.code}">${p.name}</option>`)
-        .join("")}
-    `;
-  });
+  // LOAD DATA Ở PAGE
+  const provinces = await loadProvinces();
 
-  // ===== ON PROVINCE CHANGE =====
-  province.addEventListener("change", async () => {
-    const code = province.value;
+  setupSearchDropdown({
+    inputEl: provinceInput,
+    dropdownEl: provinceDropdown,
+    data: provinces,
 
-    district.disabled = true;
-    ward.disabled = true;
+    async onSelect(province) {
+      district.disabled = true;
+      ward.disabled = true;
 
-    district.innerHTML = `<option value="">-- Quận / Huyện --</option>`;
-    ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
+      district.innerHTML = `<option value="">-- Quận / Huyện --</option>`;
+      ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
 
-    if (!code) return;
+      const districts = await loadDistricts(province.code);
 
-    const districts = await loadDistricts(code);
-
-    district.disabled = false;
-    district.innerHTML += districts
-      .map((d) => `<option value="${d.code}">${d.name}</option>`)
-      .join("");
-  });
-
-  // ===== ON DISTRICT CHANGE =====
-  district.addEventListener("change", async () => {
-    const code = district.value;
-
-    ward.disabled = true;
-    ward.innerHTML = `<option value="">-- Phường / Xã --</option>`;
-
-    if (!code) return;
-
-    const wards = await loadWards(code);
-
-    ward.disabled = false;
-    ward.innerHTML += wards
-      .map((w) => `<option value="${w.code}">${w.name}</option>`)
-      .join("");
+      district.disabled = false;
+      district.innerHTML += districts
+        .map((d) => `<option value="${d.code}">${d.name}</option>`)
+        .join("");
+    },
   });
 }
 
@@ -1176,5 +1169,44 @@ function initDobPicker() {
         input.value = "";
       }
     },
+  });
+}
+
+// ==================================
+// SEARCHABLE DROPDOWN CORE
+// ==================================
+function initSearchDropdown({ inputId, dropdownId, data }) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+
+  input.addEventListener("input", () => {
+    const keyword = input.value.toLowerCase().trim();
+    dropdown.innerHTML = "";
+
+    if (!keyword) {
+      dropdown.classList.add("hidden");
+      return;
+    }
+
+    const results = data.filter((item) =>
+      item.name.toLowerCase().includes(keyword),
+    );
+
+    results.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "ui-dropdown-item";
+      div.textContent = item.name;
+      div.onclick = () => {
+        input.value = item.name;
+        dropdown.classList.add("hidden");
+      };
+      dropdown.appendChild(div);
+    });
+
+    dropdown.classList.toggle("hidden", results.length === 0);
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!input.contains(e.target)) dropdown.classList.add("hidden");
   });
 }
