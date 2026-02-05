@@ -234,15 +234,17 @@ body {
   font-weight: 600;
 }
 
+/* 3. Tinh chỉnh Line nằm sát dưới cùng */
 #navActiveLine {
   position: absolute;
-  bottom: 0;
-  height: 2px;
-  background-color: var(--first-color);
+  bottom: -1px; /* Đè lên border-bottom của header cho đẹp */
+  height: 3px;
+  background: var(--brand-gradient);
+  border-radius: 999px 999px 0 0; /* Bo góc trên */
   transition:
-    transform 0.3s ease,
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
     width 0.3s ease;
-  pointer-events: none; /* Tránh cản trở click chuột */
+  pointer-events: none;
   z-index: 10;
 }
 
@@ -257,6 +259,17 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+
+  font-weight: 800; /* Tab đang chọn sẽ đậm nhất */
+
+  /* Thêm độ bóng nhẹ để chữ nổi bật hơn trên nền dark/light */
+  filter: drop-shadow(0 0 1px rgba(243, 108, 33, 0.2));
+}
+
+/* 3. Hover nhẹ để người dùng biết là có thể click */
+.nav__menu--header .nav__link:hover {
+  color: var(--text-title);
+  filter: brightness(1.2);
 }
 
 .nav__link.is-active .nav__icon {
@@ -274,19 +287,25 @@ body {
 /* =====================================================
    HEADER MENU (DESKTOP)
 ===================================================== */
-.nav__menu {
-  display: inline-flex;
-  width: auto;
-}
+/* Tìm và cập nhật class .nav__menu */
 .nav__menu {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   cursor: grab;
   scroll-behavior: smooth;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge cũ */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  /* Chặn bôi đen text khi kéo bằng chuột */
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Mốc tọa độ cho Line bên trong */
+  position: relative;
+  display: block;
 }
+
 .nav__menu:active {
   cursor: grabbing;
 }
@@ -294,11 +313,21 @@ body {
   display: none; /* Chrome / Safari */
 }
 
+.nav__menu a,
+.nav__menu img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* 4. Sửa lại container bao quanh menu để không bị cắt mất line */
 .nav__menu--header {
   flex: 1 1 auto;
-  min-width: 0; /* 🔥 bắt buộc */
-  overflow: hidden; /* chặn đẩy layout */
+  min-width: 0;
+  overflow: hidden;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Xóa overflow-y nếu có để Line có thể hiện ra sát mép */
 }
 .nav__active-line {
   position: absolute;
@@ -308,6 +337,26 @@ body {
   border-radius: 999px;
   pointer-events: none;
   z-index: 2;
+}
+
+/* 5. Vô hiệu hóa hiệu ứng gradient che 2 đầu nếu nó đè lên Line */
+.nav__menu--header::before,
+.nav__menu--header::after {
+  height: calc(100% - 4px); /* Trừa lại 4px đáy để Line luôn rõ nét */
+}
+
+/* 1. Đảm bảo toàn bộ hệ thống menu chiếm 100% chiều cao header */
+.nav__menu--header,
+.nav__menu--header .nav__menu,
+.nav__menu--header .nav__list {
+  height: 100%; /* Ép chiều cao bằng header (64px) */
+  display: flex;
+  align-items: stretch; /* Để các thẻ li cũng cao bằng cha */
+}
+/* 2. Căn giữa chữ trong menu theo chiều dọc mà không dùng padding top/bottom */
+.nav__menu--header .nav__item {
+  display: flex;
+  align-items: stretch;
 }
 
 .nav__active-line.no-transition {
@@ -364,18 +413,23 @@ body {
 }
 
 .nav__menu--header .nav__link {
-  padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
+  display: flex;
+  align-items: center; /* Căn giữa text theo chiều dọc */
+  padding: 0 clamp(0.75rem, 1.2vw, 1.5rem); /* Chỉ để padding trái phải */
+  height: 100%;
   white-space: nowrap;
-  flex: 0 0 auto;
-  -webkit-user-drag: none;
-  user-drag: none;
-}
+  position: relative;
 
-/* =====================================================
-   HEADER ACTIVE UNDERLINE – FIXED TO HEADER BOTTOM
-===================================================== */
-.nav__menu--header .nav__link {
-  position: relative; /* mốc neo */
+  font-weight: 700; /* Đổi từ 600 lên 700 hoặc 800 để in đậm rõ rệt */
+  font-size: clamp(
+    0.9rem,
+    0.5vw + 0.9rem,
+    1.15rem
+  ); /* Tinh chỉnh nhẹ kích thước cho cân đối */
+  letter-spacing: -0.01em; /* Giảm khoảng cách chữ một chút để text đậm nhìn gọn hơn */
+  transition:
+    color 0.3s ease,
+    filter 0.3s ease;
 }
 
 /* =====================================================

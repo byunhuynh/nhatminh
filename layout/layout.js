@@ -20,77 +20,60 @@ export async function loadLayoutOnce() {
     return;
   }
 
-  // ==================================
-  // 1️⃣ Inject layout TRƯỚC
-  // ==================================
+  // 1️⃣ Inject layout
   root.innerHTML = await res.text();
 
-  // ==================================
-  // 2️⃣ Render menu (DOM đã có)
-  // ==================================
+  // 2️⃣ Render menu (Header + Bottom)
   renderMenu(document.getElementById("headerMenu"), "header");
   renderMenu(document.getElementById("bottomMenu"), "bottom");
 
-  // ==================================
-  // 3️⃣ Bind observer + resize
-  // ==================================
+  // 3️⃣ Bind các trình theo dõi thay đổi kích thước
   bindHeaderMenuObserver();
   bindActiveNavResize();
 
-  // ==================================
-  // 4️⃣ Các xử lý layout khác
-  // ==================================
+  // 4️⃣ Các xử lý layout
   applyHeaderOffset();
   window.addEventListener("resize", applyHeaderOffset);
 
+  // 🔥 KÍCH HOẠT KÉO CHUỘT (DESKTOP)
   enableNavDragScroll();
 
-  const navMenu = document.getElementById("nav-menu");
+  const navMenu = document.querySelector(".nav__menu--header .nav__menu");
   if (navMenu) {
     updateNavFade();
-
     navMenu.addEventListener("scroll", updateNavFade, { passive: true });
     window.addEventListener("resize", updateNavFade);
+
+    // Lưu ý: Không cần thêm listener updateActiveNav khi scroll ở đây
+    // vì dùng offsetLeft giúp Line tự trôi theo cha.
   }
 
   bindTemplateNav();
   bindMobileViewportFix();
 
-  // ==================================
   // 5️⃣ Sync theme + sidenav
-  // ==================================
   bindRightSidenavAutoClose();
   if (window.updateThemeIcon) {
     window.updateThemeIcon();
   }
 
-  // ==================================
-  // 🔥 6️⃣ SYNC ACTIVE NAV LẦN ĐẦU (QUAN TRỌNG NHẤT)
-  // ==================================
+  // 6️⃣ SYNC ACTIVE NAV LẦN ĐẦU
   const currentPath = window.location.hash?.replace("#", "") || "/";
-
   const matchedItem = MENU_ITEMS.find((item) => item.path === currentPath);
-
   if (matchedItem) {
     updateActiveNav(matchedItem.path);
   }
 
-  // ==================================
-  // 🔥 7️⃣ Force re-calc sau khi layout + font ổn định
-  // ==================================
+  // 7️⃣ Đảm bảo vị trí Line chuẩn xác sau khi Layout ổn định
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      if (__currentActivePath) {
-        updateActiveNav(__currentActivePath);
-      }
+      if (__currentActivePath) updateActiveNav(__currentActivePath);
     });
   });
 
   if (document.fonts?.ready) {
     document.fonts.ready.then(() => {
-      if (__currentActivePath) {
-        updateActiveNav(__currentActivePath);
-      }
+      if (__currentActivePath) updateActiveNav(__currentActivePath);
     });
   }
 
@@ -159,18 +142,21 @@ import { MENU_ITEMS } from "../assets/js/menu.config.js";
 // ==================================
 
 let __currentActivePath = null;
+// ==================================
+// Update active nav + move active line (HEADER)
+// Bổ sung: Tự động cuộn tab active ra vùng hiển thị
+// ==================================
 export function updateActiveNav(path) {
   const matchedItem = MENU_ITEMS.find((item) => item.path === path);
   if (!matchedItem) return;
 
   __currentActivePath = path;
 
-  // Xóa class cũ
+  // Sync class active
   document
     .querySelectorAll(".nav__link[data-tab]")
     .forEach((el) => el.classList.remove("is-active"));
 
-  // Tìm link đang active ở Header
   const activeLink = document.querySelector(
     `.nav__menu--header .nav__link[data-tab="${matchedItem.key}"]`,
   );
@@ -183,22 +169,42 @@ export function updateActiveNav(path) {
 
   activeLink.classList.add("is-active");
 
-  // === THAY ĐỔI QUAN TRỌNG TẠI ĐÂY ===
-  const paddingX = 12; // Khoảng cách thụt vào của line so với text
-
-  // Lấy thẻ <li> chứa thẻ <a> để lấy tọa độ gốc chính xác nhất
+  const paddingX = 8;
   const parentLi = activeLink.parentElement;
 
-  // offsetLeft: Khoảng cách từ lề trái của <li> so với lề trái của <ul>
-  // Vì line nằm trong <ul>, nó sẽ dùng chung hệ tọa độ này.
+  // 1️⃣ Cập nhật vị trí Line (Tọa độ Local)
   const left = parentLi.offsetLeft + paddingX;
   const width = parentLi.offsetWidth - paddingX * 2;
 
   line.style.transform = `translateX(${left}px)`;
   line.style.width = `${width}px`;
   line.style.opacity = 1;
+
+  // 2️⃣ TỰ ĐỘNG CUỘN MENU (Mới bổ sung)
+  scrollActiveToCenter(parentLi);
 }
 
+// ==================================
+// Cuộn tab được chọn vào giữa vùng nhìn thấy
+// ==================================
+function scrollActiveToCenter(activeItem) {
+  const menu = document.querySelector(".nav__menu--header .nav__menu");
+  if (!menu || !activeItem) return;
+
+  // Tính toán vị trí tâm của menu
+  const menuWidth = menu.clientWidth;
+  const itemWidth = activeItem.offsetWidth;
+  const itemLeft = activeItem.offsetLeft;
+
+  // Vị trí cuộn mục tiêu = vị trí mục đó - (nửa chiều rộng menu) + (nửa chiều rộng mục đó)
+  // Điều này đưa mục active vào chính giữa menu.
+  const targetScroll = itemLeft - menuWidth / 2 + itemWidth / 2;
+
+  menu.scrollTo({
+    left: targetScroll,
+    behavior: "smooth",
+  });
+}
 // ==================================
 // Handle breakpoint switch (MOBILE <-> DESKTOP)
 // ==================================
@@ -441,36 +447,59 @@ function updateNavFade() {
 // ==================================
 // Drag to scroll navbar (desktop)
 // ==================================
+
 function enableNavDragScroll() {
-  const menu = document.getElementById("nav-menu");
+  const menu = document.querySelector(".nav__menu--header .nav__menu");
   if (!menu) return;
 
   let isDown = false;
-  let startX = 0;
-  let scrollStart = 0;
+  let startX;
+  let scrollLeft;
+  let moveDistance = 0; // Tính khoảng cách đã kéo
 
   menu.addEventListener("mousedown", (e) => {
-    // chỉ desktop
-    if (e.button !== 0) return;
-
+    if (e.button !== 0) return; // Chỉ nhận chuột trái
     isDown = true;
-    startX = e.pageX;
-    scrollStart = menu.scrollLeft;
+    moveDistance = 0; // Reset khi click xuống
     menu.classList.add("dragging");
+
+    startX = e.pageX - menu.offsetLeft;
+    scrollLeft = menu.scrollLeft;
+
+    // Tắt smooth để kéo dính theo chuột
+    menu.style.scrollBehavior = "auto";
   });
 
-  document.addEventListener("mouseup", () => {
+  // Sự kiện MouseUp trên toàn tài liệu để đảm bảo nhả chuột ra là dừng
+  window.addEventListener("mouseup", () => {
+    if (!isDown) return;
     isDown = false;
     menu.classList.remove("dragging");
+    menu.style.scrollBehavior = "smooth";
   });
 
-  document.addEventListener("mousemove", (e) => {
+  menu.addEventListener("mousemove", (e) => {
     if (!isDown) return;
     e.preventDefault();
 
-    const dx = e.pageX - startX;
-    menu.scrollLeft = scrollStart - dx;
+    const x = e.pageX - menu.offsetLeft;
+    const walk = x - startX;
+    moveDistance += Math.abs(walk); // Cộng dồn khoảng cách di chuyển
+    menu.scrollLeft = scrollLeft - walk;
   });
+
+  // 🔥 CHẶN CLICK KHI ĐANG DRAG
+  // Nếu di chuyển > 5px thì chặn sự kiện click vào link
+  menu.addEventListener(
+    "click",
+    (e) => {
+      if (moveDistance > 5) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    true,
+  ); // Dùng true để bắt ở Capture phase
 }
 
 // ==================================
