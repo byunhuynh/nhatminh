@@ -61,6 +61,50 @@ label {
   font-size: 0.875rem;
 }
 
+:root {
+  --header-height: 64px;
+}
+/* ================= RIGHT SIDENAV ================= */
+/* ================= MENU TRƯỢT BÊN PHẢI ================= */
+.right-sidenav {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  width: 320px;
+
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+}
+
+.right-sidenav-overlay {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  left: 0;
+
+  height: calc(100vh - 64px);
+}
+
+/* ==================================
+   Right nav icon animation
+   ================================== */
+#btnRightNav i {
+  transition:
+    transform 0.25s ease,
+    opacity 0.15s ease,
+    color 0.2s ease;
+}
+
+#btnRightNav i.fa-xmark {
+  color: #ec0404;
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+#btnRightNav i.fa-bars {
+  opacity: 1;
+}
+
 /* =====================================================
    CARD
 ===================================================== */
@@ -116,6 +160,24 @@ label {
 .dark .ui-select.error {
   border-color: #f87171 !important;
   box-shadow: 0 0 0 1px #f87171;
+}
+
+/* ================================
+ THEME TOGGLE ICON Mặt trăng / Mặt trời
+=====================*/
+:root {
+  --theme-icon-color: #ffd43b; /* moon */
+}
+
+.dark {
+  --theme-icon-color: #f36c21; /* sun */
+}
+
+.theme-toggle i {
+  font-size: 22px;
+  line-height: 1;
+  pointer-events: none;
+  color: var(--theme-icon-color);
 }
 
 /* ================================
@@ -589,5 +651,10 @@ label {
   select,
   button {
     font-size: 16px !important;
+  }
+  .nav__actions i {
+    font-size: 30px;
+    line-height: 1;
+    pointer-events: none;
   }
 }

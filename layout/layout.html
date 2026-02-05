@@ -164,39 +164,6 @@
     }
   }
 
-  /* ================= THEME TOGGLE (IN HEADER) ================= */
-  .theme-toggle {
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-  }
-
-  /* mobile: tránh sát mép */
-  @media (max-width: 640px) {
-    .theme-toggle {
-      right: 0.5rem;
-    }
-  }
-  /* ================= THEME TOGGLE SIZE ================= */
-  .theme-toggle {
-    font-size: 1.6rem; /* 🔥 tăng kích thước icon */
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 999px; /* tròn đẹp */
-  }
-
-  /* Mobile: to hơn chút cho dễ bấm */
-  @media (max-width: 640px) {
-    .theme-toggle {
-      font-size: 1.8rem;
-      width: 48px;
-      height: 48px;
-    }
-  }
-
   /* ===============================
  FLATPICKR THEME SYNC
 =============================== */
@@ -348,16 +315,18 @@
           id="themeToggle"
           onclick="toggleDarkMode()"
           class="theme-toggle"
+          aria-label="Toggle theme"
         >
-          🌙
+          <i class="fa-solid fa-moon"></i>
         </button>
 
         <button
+          id="btnRightNav"
           class="menu-toggle"
-          onclick="openNavRight()"
+          onclick="toggleNavRight()"
           aria-label="Open menu"
         >
-          ☰
+          <i class="fa-solid fa-bars"></i>
         </button>
       </div>
     </nav>

@@ -171,19 +171,63 @@ window.__applyScrollRebound = applyScrollRebound;
 // ==================================
 // RIGHT SIDENAV CONTROL
 // ==================================
+
+// ==================================
+// Mở Right Sidenav + đổi icon sang X
+// ==================================
 window.openNavRight = function () {
   document.getElementById("rightSidenav")?.classList.add("open");
   document.getElementById("rightSidenavOverlay")?.classList.add("show");
 
-  // khóa scroll nền
   document.body.style.overflow = "hidden";
+
+  const btn = document.getElementById("btnRightNav");
+  const icon = btn?.querySelector("i");
+
+  if (icon) {
+    icon.classList.remove("fa-bars"); // ✅ ĐÚNG
+    icon.classList.add("fa-xmark"); // hoặc fa-x
+  }
 };
 
+// ==================================
+// Đóng Right Sidenav + trả icon về bars
+// ==================================
 window.closeNavRight = function () {
   document.getElementById("rightSidenav")?.classList.remove("open");
   document.getElementById("rightSidenavOverlay")?.classList.remove("show");
 
   document.body.style.overflow = "";
+
+  const btn = document.getElementById("btnRightNav");
+  const icon = btn?.querySelector("i");
+
+  if (icon) {
+    icon.classList.remove("fa-xmark");
+    icon.classList.add("fa-bars");
+  }
+};
+
+// ==================================
+// Toggle Right Sidenav + Icon (bars <-> x)
+// ==================================
+window.toggleNavRight = function () {
+  const sidenav = document.getElementById("rightSidenav");
+  const overlay = document.getElementById("rightSidenavOverlay");
+  const btn = document.getElementById("btnRightNav");
+  const icon = btn?.querySelector("i");
+
+  if (!sidenav || !icon) return;
+
+  const isOpen = sidenav.classList.toggle("open");
+  overlay?.classList.toggle("show", isOpen);
+
+  // khóa / mở scroll nền
+  document.body.style.overflow = isOpen ? "hidden" : "";
+
+  // đổi icon
+  icon.classList.toggle("fa-bars", !isOpen);
+  icon.classList.toggle("fa-xmark", isOpen);
 };
 
 // gọi sau khi đã set user
