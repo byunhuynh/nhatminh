@@ -392,8 +392,6 @@ window.toggleNavRight = function () {
   icon.classList.toggle("fa-bars", !isOpen);
   icon.classList.toggle("fa-xmark", isOpen);
 };
-
-// gọi sau khi đã set user
 // ==================================
 // Fill user info in right sidenav
 // ==================================
@@ -404,12 +402,14 @@ window.fillSidenavUserInfo = function () {
 
   document.getElementById("sidenavFullName").textContent =
     full_name || username;
-
   document.getElementById("sidenavUsername").textContent = username;
 
-  document.getElementById("sidenavRole").textContent = roleToLabel(role);
+  // Sử dụng hàm applyRoleBadge từ ui/badge.js để đồng bộ màu sắc
+  const roleEl = document.getElementById("sidenavRole");
+  if (roleEl && window.applyRoleBadge) {
+    window.applyRoleBadge(roleEl, role);
+  }
 };
-
 // ==================================
 // Auto close right sidenav when click link
 // ==================================

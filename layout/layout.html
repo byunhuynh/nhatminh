@@ -4,25 +4,27 @@
  GLOBAL THEME VARIABLES (LIGHT)
 ===================================================== */
   :root {
-    --bg-page: #ffffff;
+    /* Đồng bộ với ui.css */
+    --bg-page: #f1f5f9;
+    --bg-card: #ffffff;
+    --bg-input: #f8fafc;
+    --bg-hover: #e2e8f0;
 
-    --bg-card: #f8fafc;
-    --bg-input: #ffffff;
-    --bg-hover: #f1f5f9;
-
-    --border-main: #e5e7eb;
-    --border-focus: #2563eb;
+    --border-main: #cbd5e1; /* hơi đậm hơn một chút để phân tách link */
+    --border-focus: #3b82f6;
 
     --text-title: #0f172a;
-    --text-main: #1f2937;
-    --text-soft: #374151;
-    --text-muted: #6b7280;
+    --text-main: #334155;
+    --text-soft: #475569;
+    --text-muted: #64748b;
 
     --primary: #2563eb;
     --primary-hover: #1d4ed8;
     --danger: #dc2626;
 
-    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    /* Đổ bóng Card rất nhẹ (Soft Shadow) */
+    --card-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
 
     --s-1: 4px;
     --s-2: 8px;
@@ -89,11 +91,13 @@
 ===================================================== */
   .ui-card {
     background: var(--bg-card);
-    border-radius: 1.25rem;
-    border: 1px solid var(--border-main);
+    border-radius: 1rem;
+    border: 1px solid rgba(203, 213, 225, 0.4); /* slate-300 với độ trong suốt */
     box-shadow: var(--card-shadow);
     padding: var(--s-5);
-    transition: transform 0.15s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .ui-card:hover {
@@ -113,6 +117,14 @@
     color: var(--text-main);
     font-size: 0.9rem;
   }
+
+  /* Cập nhật Input để không bị trắng quá so với Card */
+  .ui-input,
+  .ui-select {
+    background: var(--bg-input);
+    border: 1px solid #cbd5e1;
+  }
+  /* Chỉnh lại Header để nó "nổi" nhẹ trên nền xám */
 
   .ui-input:focus,
   .ui-select:focus {
@@ -334,34 +346,53 @@
   </header>
 
   <!-- ================= RIGHT SIDENAV ================= -->
+  <!-- 📄 layout/layout.html -->
   <div id="rightSidenav" class="right-sidenav">
-    <div class="right-sidenav__body">
-      <!-- USER INFO -->
-      <div class="right-sidenav__user">
+    <!-- PROFILE HEADER -->
+    <div class="right-sidenav__header-profile">
+      <div class="profile-avatar">
+        <i class="fa-solid fa-circle-user"></i>
+      </div>
+      <div class="profile-info">
         <div class="right-sidenav__name" id="sidenavFullName">—</div>
         <div class="right-sidenav__meta">
-          <span id="sidenavUsername">—</span>
-          •
-          <span id="sidenavRole">—</span>
+          <span class="meta-item"
+            ><i class="fa-solid fa-at"></i>
+            <span id="sidenavUsername">—</span></span
+          >
+          <div id="sidenavRole" class="ui-badge ui-badge-success mt-1">
+            Role
+          </div>
         </div>
       </div>
+    </div>
 
-      <hr class="right-sidenav__divider" />
+    <div class="right-sidenav__body">
+      <div class="menu-section">
+        <p class="menu-label">Tài khoản</p>
 
-      <!-- PROFILE -->
-      <a href="#/profile" class="right-sidenav__item"> 👤 Thông tin cá nhân </a>
+        <a href="#/profile" class="right-sidenav__item">
+          <div class="item-icon"><i class="fa-solid fa-user-gear"></i></div>
+          <span>Thông tin cá nhân</span>
+          <i class="fa-solid fa-chevron-right arrow-ext"></i>
+        </a>
 
-      <!-- CHANGE PASSWORD -->
-      <a href="#/change-password" class="right-sidenav__item">
-        🔐 Đổi mật khẩu
-      </a>
+        <a href="#/change-password" class="right-sidenav__item">
+          <div class="item-icon"><i class="fa-solid fa-key"></i></div>
+          <span>Đổi mật khẩu</span>
+          <i class="fa-solid fa-chevron-right arrow-ext"></i>
+        </a>
+      </div>
 
-      <hr class="right-sidenav__divider" />
-
-      <!-- LOGOUT -->
-      <button class="right-sidenav__item danger" onclick="logout()">
-        🚪 Đăng xuất
-      </button>
+      <div class="menu-section mt-auto">
+        <hr class="right-sidenav__divider" />
+        <button class="right-sidenav__item danger" onclick="logout()">
+          <div class="item-icon">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </div>
+          <span>Đăng xuất</span>
+        </button>
+      </div>
     </div>
   </div>
 

@@ -419,8 +419,9 @@ body {
   height: 100%;
   white-space: nowrap;
   position: relative;
+  font-
 
-  font-weight: 700; /* Đổi từ 600 lên 700 hoặc 800 để in đậm rõ rệt */
+  font-weight: 100; /* Đổi từ 600 lên 700 hoặc 800 để in đậm rõ rệt */
   font-size: clamp(
     0.9rem,
     0.5vw + 0.9rem,
@@ -431,6 +432,65 @@ body {
     color 0.3s ease,
     filter 0.3s ease;
 }
+
+
+
+
+
+
+
+
+
+
+/* 📄 assets/css/navbar.css */
+
+/* 1. Nhắm trực tiếp vào class chứa text nội dung */
+.nav__menu--header .nav__name {
+  /* Dùng mức đậm nhất của font Inter */
+  font-weight: 800; 
+  
+  /* Chống răng cưa để chữ đậm nhìn sắc nét */
+  -webkit-font-smoothing: antialiased;
+  
+  /* Nới rộng khoảng cách chữ một chút để không bị dính vào nhau khi quá đậm */
+  letter-spacing: 0.02em; 
+  
+  transition: all 0.3s ease;
+}
+
+/* 2. Hiệu ứng khi Active - Siêu đậm (Black weight) */
+.nav__link.is-active .nav__name {
+  font-weight: 900; /* Mức tối đa của font Inter */
+  
+  /* Kỹ thuật tạo hiệu ứng "Blob" (làm chữ dày hơn cả mức bold thông thường) */
+  /* Thêm một lớp viền mỏng cùng màu để làm chữ mập lên */
+  -webkit-text-stroke: 1.5px currentColor;
+  
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  
+  /* Thêm đổ bóng để chữ "nổi" lên khỏi nền */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 3. Đảm bảo thẻ link bao ngoài cho phép hiển thị độ đậm */
+.nav__menu--header .nav__link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+
+
+
+
+
+
+
+
+
 
 /* =====================================================
    BOTTOM NAV (MOBILE)
