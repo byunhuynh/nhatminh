@@ -30,6 +30,8 @@ export async function loadLayoutOnce() {
     navMenu.addEventListener("scroll", updateNavFade, { passive: true });
     window.addEventListener("resize", updateNavFade);
   }
+  renderMenu(document.getElementById("headerMenu"), "header");
+  renderMenu(document.getElementById("bottomMenu"), "bottom");
   bindTemplateNav();
   bindMobileViewportFix();
 
@@ -42,9 +44,69 @@ export async function loadLayoutOnce() {
 }
 
 // ==================================
-// Bind navigation SPA
+// Render menu items
 // ==================================
-function bindTemplateNav() {
+// ==================================
+// Render menu items
+// ==================================
+function renderMenu(listEl, type = "header") {
+  if (!listEl) return;
+
+  listEl.innerHTML = MENU_ITEMS.map((item) => {
+    if (type === "bottom") {
+      return `
+        <li class="nav__item">
+          <a href="${item.href}" data-tab="${item.key}" class="nav__link">
+            <i class="fa-solid ${item.icon} nav__icon"></i>
+            <span class="nav__name">${item.label}</span>
+          </a>
+        </li>
+      `;
+    }
+
+    return `
+      <li class="nav__item">
+        <a href="${item.href}" data-tab="${item.key}" class="nav__link">
+          ${item.label}
+        </a>
+      </li>
+    `;
+  }).join("");
+}
+
+// ==================================
+// Update active state for navbar (Top + Bottom)
+// Single active class: .is-active
+// ==================================
+import { MENU_ITEMS } from "/assets/js/menu.config.js";
+
+export function updateActiveNav(path) {
+  const matchedItem = MENU_ITEMS.find((item) => item.path === path);
+  if (!matchedItem) return;
+
+  const tab = matchedItem.key;
+
+  document
+    .querySelectorAll("[data-tab]")
+    .forEach((el) => el.classList.remove("is-active"));
+
+  document.querySelectorAll(`[data-tab="${tab}"]`).forEach((el) => {
+    el.classList.add("is-active");
+
+    // auto scroll tab into view (chỉ khi cần)
+    el.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  });
+}
+
+// ==================================
+// Bind click cho nav template
+// Lấy route từ MENU_ITEMS (single source of truth)
+// ==================================
+export function bindTemplateNav() {
   document.querySelectorAll(".nav__link").forEach((link) => {
     link.addEventListener("click", (e) => {
       const tab = link.dataset.tab;
@@ -52,59 +114,22 @@ function bindTemplateNav() {
 
       e.preventDefault();
 
-      const map = {
-        home: "/",
-        users: "/users",
-        profile: "/profile",
-        sales: "/sales", // ✅ NEW
-      };
+      // Tìm menu item theo key
+      const matchedItem = MENU_ITEMS.find((item) => item.key === tab);
+      if (!matchedItem) return;
 
-      navigate(map[tab]);
+      navigate(matchedItem.path);
     });
   });
 
+  // ==================================
   // Role permission: sales không thấy users
+  // ==================================
   if (store.user?.role === "sales") {
     document
       .querySelectorAll('[data-tab="users"]')
       .forEach((el) => el.parentElement.classList.add("hidden"));
   }
-}
-// ==================================
-// Update active state for navbar (Top + Bottom)
-// Single active class: .is-active
-// ==================================
-// ==================================
-// Update active state for navbar
-// Auto scroll active tab into view
-// ==================================
-export function updateActiveNav(path) {
-  const routeMap = {
-    "/": "home",
-    "/users": "users",
-    "/profile": "profile",
-    "/sales": "sales",
-  };
-
-  const tab = routeMap[path];
-  if (!tab) return;
-
-  document
-    .querySelectorAll("[data-tab]")
-    .forEach((el) => el.classList.remove("is-active"));
-
-  const actives = document.querySelectorAll(`[data-tab="${tab}"]`);
-
-  actives.forEach((el) => {
-    el.classList.add("is-active");
-
-    // 🔥 auto scroll tab into view
-    el.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  });
 }
 
 // ==================================
@@ -143,7 +168,6 @@ function applyScrollRebound() {
 
 window.__applyScrollRebound = applyScrollRebound;
 
-
 // ==================================
 // RIGHT SIDENAV CONTROL
 // ==================================
@@ -161,7 +185,6 @@ window.closeNavRight = function () {
 
   document.body.style.overflow = "";
 };
-
 
 // gọi sau khi đã set user
 // ==================================
@@ -195,7 +218,6 @@ function bindRightSidenavAutoClose() {
     window.closeNavRight?.();
   });
 }
-
 
 // ==================================
 // Update navbar fade indicators (STABLE)
