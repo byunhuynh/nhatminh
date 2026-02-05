@@ -242,6 +242,7 @@
     padding-top: var(--s-4); /* 🔥 khoảng trống đầu page */
 
     flex-direction: column;
+    padding-top: 4rem; /* = chiều cao .nav */
     padding-bottom: calc(4rem + env(safe-area-inset-bottom));
     padding-left: 1rem;
     padding-right: 1rem;
@@ -320,18 +321,6 @@
   .dark .flatpickr-next-month:hover {
     color: #93c5fd; /* xanh nhạt */
     opacity: 1;
-  }
-
-  /* ===============================
- MOBILE INPUT ZOOM FIX (CRITICAL)
- iOS zoom input nếu font-size < 16px
-=============================== */
-  @media (max-width: 768px) {
-    .ui-input,
-    .ui-select,
-    textarea {
-      font-size: 16px !important;
-    }
   }
 </style>
 

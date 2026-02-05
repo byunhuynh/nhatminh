@@ -252,11 +252,6 @@ body {
   .nav__logo-img {
     height: 40px;
   }
-
-  /* chừa chỗ cho bottom nav */
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
 }
 /* ================= DESKTOP NAV SPACING ================= */
 @media (min-width: 769px) {
@@ -368,12 +363,14 @@ body {
   }
 }
 /* ================= RIGHT SIDENAV ================= */
+
 .right-sidenav {
   position: fixed;
   top: 0;
   right: 0;
   width: 280px;
-  height: 100vh;
+  height: 100svh;
+  max-height: 100svh;
   background: var(--bg-card);
   border-left: 1px solid var(--border-main);
   z-index: 1200;
