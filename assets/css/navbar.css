@@ -1,3 +1,4 @@
+/*assets\css\navbar.css
 /* =====================================================
    GOOGLE FONTS
 ===================================================== */
@@ -198,14 +199,17 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+}
+.nav {
+  padding-left: clamp(1rem, 3vw, 2rem);
+  padding-right: clamp(1rem, 3vw, 2rem);
 }
 
-/* LOGO */
+/* LOGO – NEVER SHRINK */
 .nav__logo {
-  display: flex;
-  align-items: center;
-  padding-left: clamp(0.75rem, 2vw, 1.5rem);
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .nav__logo-img {
@@ -227,24 +231,94 @@ body {
 }
 
 .nav__link.is-active {
-  color: var(--first-color);
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nav__link.is-active .nav__icon {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.nav__link.is-active {
+  font-weight: 600;
+  filter: drop-shadow(0 0 4px rgba(243, 108, 33, 0.35));
 }
 
 /* =====================================================
    HEADER MENU (DESKTOP)
 ===================================================== */
+.nav__menu {
+  display: inline-flex;
+  width: auto;
+}
+
 .nav__menu--header {
   display: block;
+  position: relative;
+  overflow: hidden;
+}
+.nav__menu--header {
+  padding-left: clamp(0.75rem, 2vw, 1.5rem);
+  padding-right: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.nav__menu--header {
+  user-select: none;
+  -webkit-user-select: none;
+  flex: 0 1 auto;
+  min-width: 0; /* DÒNG QUAN TRỌNG NHẤT */
+}
+
+.nav__menu--header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  pointer-events: none;
+  background: linear-gradient(to right, var(--container-color), transparent);
+  z-index: 2;
+}
+
+.nav__menu--header::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  pointer-events: none;
+  background: linear-gradient(to left, var(--container-color), transparent);
+  z-index: 2;
+}
+
+.nav__menu-wrap {
+  flex: 0 0 auto !important;
+  width: auto !important;
 }
 
 .nav__menu--header .nav__list {
   display: flex;
   align-items: center;
   gap: clamp(1.5rem, 3vw, 3.5rem);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  scrollbar-width: none; /* Firefox */
 }
 
 .nav__menu--header .nav__icon {
   display: none;
+}
+.nav__menu--header .nav__list::-webkit-scrollbar {
+  display: none; /* Chrome */
 }
 
 .nav__menu--header .nav__name {
@@ -255,6 +329,9 @@ body {
 .nav__menu--header .nav__link {
   padding: clamp(0.5rem, 0.8vw, 0.9rem) clamp(0.75rem, 1.2vw, 1.5rem);
   white-space: nowrap;
+  flex: 0 0 auto;
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 
 .nav__menu--header .nav__link.is-active .nav__name::after {
@@ -264,7 +341,7 @@ body {
   right: 0;
   bottom: -6px;
   height: 3px;
-  background: var(--primary);
+  background: var(--brand-gradient);
   border-radius: 999px;
 }
 
@@ -283,6 +360,8 @@ body {
   align-items: center;
   gap: 8px;
   margin-right: 1rem;
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .menu-toggle {
@@ -317,6 +396,11 @@ body {
     overflow: hidden;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+  }
+  .nav__actions i {
+    font-size: 30px;
+    line-height: 1;
+    pointer-events: none;
   }
 
   .nav__actions button {

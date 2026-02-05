@@ -1,4 +1,91 @@
 /* =====================================================
+   FONTS – GLOBAL REGISTER
+===================================================== */
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lobster";
+  src: url("../fonts/Lobster.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =====================================================
+   GLOBAL FONT DEFAULT
+===================================================== */
+html,
+body {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+/* Inter nhìn đẹp hơn với tracking rất nhẹ */
+body {
+  letter-spacing: -0.01em;
+}
+
+/* =====================================================
+   FONT UTILITIES (OPT-IN)
+===================================================== */
+.font-inter {
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+.font-lobster {
+  font-family: "Lobster", cursive;
+}
+
+/* =====================================================
+   BRAND GRADIENT
+===================================================== */
+:root {
+  --brand-gradient: linear-gradient(
+    90deg,
+    #f36c21 0%,
+    #e85f1d 30%,
+    #b44d18 65%,
+    #9f4616 100%
+  );
+}
+
+/* =====================================================
+   TEXT GRADIENT – NHẬT MINH BRAND
+===================================================== */
+.text-gradient {
+  background: linear-gradient(90deg, #f36c21 0%, #e85f1d 40%, #9f4616 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient {
+  letter-spacing: 0.03em;
+}
+
+/* =====================================================
    🌈 THEME VARIABLES
 ===================================================== */
 :root {
@@ -618,6 +705,18 @@ label {
   display: none !important;
 }
 
+/* =====================================================
+   TOASTIFY – RESPONSIVE & SYNC UI
+===================================================== */
+.toastify {
+  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+  padding: clamp(10px, 3vw, 14px) clamp(14px, 4vw, 20px);
+  border-radius: 0.75rem;
+
+  max-width: min(92vw, 420px);
+  line-height: 1.4;
+}
+
 /* ======================================================
    FLATPICKR – UNIFIED THEME (LIGHT / DARK)
    ====================================================== */
@@ -826,10 +925,5 @@ label {
   select,
   button {
     font-size: 16px !important;
-  }
-  .nav__actions i {
-    font-size: 30px;
-    line-height: 1;
-    pointer-events: none;
   }
 }
