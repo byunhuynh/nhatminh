@@ -633,6 +633,52 @@ label {
   cursor: pointer;
 }
 
+/* =====================================================
+   DROPDOWN INDICATOR (CARET DOWN)
+===================================================== */
+
+/* Định vị icon nằm bên phải input */
+.ui-dropdown-indicator {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  pointer-events: none; /* Quan trọng: để click xuyên qua vào input */
+  transition:
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.2s ease;
+}
+
+/* Hiệu ứng khi Dropdown đang mở (dựa vào class dropdown-focus từ JS) */
+.ui-field.dropdown-focus .ui-dropdown-indicator {
+  transform: translateY(-50%) rotate(180deg); /* Xoay ngược lên */
+  color: var(--primary); /* Đổi màu sang màu chủ đạo */
+}
+
+/* Đảm bảo padding-right của input đủ rộng để không đè chữ lên icon */
+.ui-input-icon:has(.ui-dropdown-indicator) .ui-input {
+  padding-right: 2.25rem;
+}
+
+/* Ẩn indicator khi input bị disabled (để người dùng không nhầm là bấm được) */
+.ui-input:disabled ~ .ui-dropdown-indicator {
+  opacity: 0.3;
+}
+
+/* 📄 assets/css/ui.css */
+.ui-input[readonly] {
+  cursor: pointer;
+  background-color: var(--bg-input); /* Giữ màu nền như input thường */
+}
+
+/* Đảm bảo icon caret xoay đúng khi focus vào field */
+.ui-field:focus-within .ui-dropdown-indicator {
+  transform: translateY(-50%) rotate(180deg);
+  color: var(--primary);
+}
+
 .ui-dropdown-panel li:hover {
   background: var(--bg-hover);
 }
@@ -791,6 +837,28 @@ label {
   /* Elevation */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   z-index: 100;
+  scrollbar-width: thin; /* Firefox: Thanh cuộn nhỏ */
+  scrollbar-color: var(--border-main) transparent; /* Firefox: Màu thumb và track */
+}
+/* Tùy chỉnh cho Chrome, Safari, Edge (Webkit) */
+.ui-search-dropdown::-webkit-scrollbar {
+  width: 6px; /* Độ rộng thanh cuộn */
+}
+.ui-search-dropdown::-webkit-scrollbar-track {
+  background: transparent; /* Nền của thanh cuộn trong suốt để lộ màu nền dropdown */
+  border-radius: 0 0 0.5rem 0; /* Bo góc khớp với dropdown */
+}
+.ui-search-dropdown::-webkit-scrollbar-thumb {
+  background-color: var(
+    --border-main
+  ); /* Màu của thanh trượt dùng biến màu viền */
+  border-radius: 20px; /* Bo tròn thanh trượt */
+  border: 2px solid transparent; /* Tạo khoảng trống nhẹ quanh thanh trượt */
+}
+.ui-search-dropdown::-webkit-scrollbar-thumb:hover {
+  background-color: var(
+    --text-muted
+  ); /* Khi di chuột vào thanh trượt sẽ đậm hơn */
 }
 
 /* Mở dropdown */
@@ -803,15 +871,25 @@ label {
 ===================================================== */
 
 .ui-search-dropdown .ui-dropdown-item {
-  padding: 0.5rem 0.75rem;
-  cursor: pointer;
-  user-select: none;
+  padding: 0.65rem 0.85rem;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
 }
 
+/* Hover item đồng bộ với theme */
 .ui-search-dropdown .ui-dropdown-item:hover {
-  background: rgba(37, 99, 235, 0.1);
+  background-color: var(--bg-hover);
+  color: var(--primary);
 }
-
+/* Đồng bộ Border cho Dark Mode */
+.dark .ui-search-dropdown {
+  background-color: var(--bg-card);
+  border-color: var(--border-main);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
 /* =====================================================
    FOCUS SYNC – INPUT ↔ DROPDOWN
 ===================================================== */

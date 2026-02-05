@@ -19,8 +19,14 @@ export function setupSearchDropdown({
   function openDropdown() {
     if (isOpen) return;
     dropdownEl.classList.add("open");
-    inputEl.closest(".ui-field")?.classList.add("dropdown-focus");
+    const field = inputEl.closest(".ui-field");
+    field?.classList.add("dropdown-focus");
     isOpen = true;
+
+    // Bổ sung: Cuộn nhẹ để thấy trọn vẹn dropdown nếu trang dài
+    setTimeout(() => {
+      dropdownEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 100);
   }
 
   function closeDropdown() {

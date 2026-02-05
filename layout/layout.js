@@ -146,42 +146,52 @@ let __currentActivePath = null;
 // Update active nav + move active line (HEADER)
 // Bổ sung: Tự động cuộn tab active ra vùng hiển thị
 // ==================================
+// ==================================
+// Update active nav cho cả Header và Bottom Menu
+// Đảm bảo đồng bộ trạng thái active trên mọi thiết bị
+// ==================================
 export function updateActiveNav(path) {
   const matchedItem = MENU_ITEMS.find((item) => item.path === path);
   if (!matchedItem) return;
 
   __currentActivePath = path;
 
-  // Sync class active
+  // 1️⃣ Xóa class active cũ của TẤT CẢ các link (Header + Bottom)
   document
     .querySelectorAll(".nav__link[data-tab]")
     .forEach((el) => el.classList.remove("is-active"));
 
-  const activeLink = document.querySelector(
-    `.nav__menu--header .nav__link[data-tab="${matchedItem.key}"]`,
+  // 2️⃣ Tìm TẤT CẢ các link ứng với tab hiện tại
+  const activeLinks = document.querySelectorAll(
+    `.nav__link[data-tab="${matchedItem.key}"]`,
   );
 
+  // 3️⃣ Gắn class active cho chúng
+  activeLinks.forEach((link) => link.classList.add("is-active"));
+
+  // 4️⃣ XỬ LÝ RIÊNG CHO ACTIVE LINE (CHỈ CÓ Ở HEADER)
+  const headerActiveLink = document.querySelector(
+    `.nav__menu--header .nav__link[data-tab="${matchedItem.key}"]`,
+  );
   const line = document.getElementById("navActiveLine");
-  if (!activeLink || !line) {
+
+  if (!headerActiveLink || !line) {
     if (line) line.style.opacity = 0;
-    return;
+  } else {
+    const paddingX = 8;
+    const parentLi = headerActiveLink.parentElement;
+    const left = parentLi.offsetLeft + paddingX;
+    const width = parentLi.offsetWidth - paddingX * 2;
+
+    line.style.transform = `translateX(${left}px)`;
+    line.style.width = `${width}px`;
+    line.style.opacity = 1;
+
+    // Tự động cuộn tab active ra giữa (nếu có hàm này)
+    if (typeof scrollActiveToCenter === "function") {
+      scrollActiveToCenter(parentLi);
+    }
   }
-
-  activeLink.classList.add("is-active");
-
-  const paddingX = 8;
-  const parentLi = activeLink.parentElement;
-
-  // 1️⃣ Cập nhật vị trí Line (Tọa độ Local)
-  const left = parentLi.offsetLeft + paddingX;
-  const width = parentLi.offsetWidth - paddingX * 2;
-
-  line.style.transform = `translateX(${left}px)`;
-  line.style.width = `${width}px`;
-  line.style.opacity = 1;
-
-  // 2️⃣ TỰ ĐỘNG CUỘN MENU (Mới bổ sung)
-  scrollActiveToCenter(parentLi);
 }
 
 // ==================================

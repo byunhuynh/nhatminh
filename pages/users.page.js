@@ -175,6 +175,16 @@ function renderPage() {
               />
             </div>
           </div>
+         
+          <div class="ui-field relative">
+            <label>Giới tính *</label>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-venus-mars"></i>
+              <input id="gender_input" class="ui-input" placeholder="Chọn giới tính" readonly />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+            </div>
+            <div id="gender_dropdown" class="ui-search-dropdown"></div>
+          </div>
 
           <!-- NGÀY SINH -->
           <div>
@@ -188,6 +198,14 @@ function renderPage() {
                 placeholder="DD/MM/YYYY"
                 autocomplete="off"
               />
+            </div>
+          </div>
+          
+          <div>
+            <label>Số CCCD *</label>
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-id-card-clip"></i>
+              <input id="identity_card" class="ui-input" placeholder="Nhập 12 số CCCD" maxlength="12" />
             </div>
           </div>
 
@@ -228,13 +246,9 @@ function renderPage() {
               <!-- ============ TỈNH / THÀNH ============ -->
               <div class="ui-field relative">
                 <div class="ui-input-icon">
-                  <i class="fa-solid fa-map-location-dot"></i>
-                  <input
-                    id="province_input"
-                    class="ui-input"
-                    placeholder="Tỉnh / Thành"
-                    autocomplete="off"
-                  />
+                  <i class="fa-solid fa-map-location-dot"></i> <!-- Icon trái -->
+                  <input id="province_input" class="ui-input" placeholder="Tỉnh / Thành" autocomplete="off" />
+                  <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i> <!-- 🔥 Icon phải mới -->
                 </div>
                 <div id="province_dropdown" class="ui-search-dropdown"></div>
               </div>
@@ -243,13 +257,8 @@ function renderPage() {
               <div class="ui-field relative">
                 <div class="ui-input-icon">
                   <i class="fa-solid fa-map"></i>
-                  <input
-                    id="district_input"
-                    class="ui-input"
-                    placeholder="Quận / Huyện"
-                    autocomplete="off"
-                    disabled
-                  />
+                  <input id="district_input" class="ui-input" placeholder="Quận / Huyện" autocomplete="off" disabled />
+                  <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i> <!-- 🔥 Icon phải mới -->
                 </div>
                 <div id="district_dropdown" class="ui-search-dropdown"></div>
               </div>
@@ -258,13 +267,8 @@ function renderPage() {
               <div class="ui-field relative">
                 <div class="ui-input-icon">
                   <i class="fa-solid fa-location-dot"></i>
-                  <input
-                    id="ward_input"
-                    class="ui-input"
-                    placeholder="Phường / Xã"
-                    autocomplete="off"
-                    disabled
-                  />
+                  <input id="ward_input" class="ui-input" placeholder="Phường / Xã" autocomplete="off" disabled />
+                  <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i> <!-- 🔥 Icon phải mới -->
                 </div>
                 <div id="ward_dropdown" class="ui-search-dropdown"></div>
               </div>
@@ -378,24 +382,26 @@ function renderPage() {
             <div id="passwordConfirmHint" class="ui-hint mt-1"></div>
           </div>
 
-          <!-- ROLE -->
-          <div>
+          
+          <div class="ui-field relative">
             <label>Vai trò *</label>
             <div class="ui-input-icon">
               <i class="fa-solid fa-user-tag"></i>
-              <select id="role" class="ui-select">
-                ${renderRoleOptions()}
-              </select>
+              <input id="role_input" class="ui-input" placeholder="Chọn vai trò" readonly />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
             </div>
+            <div id="role_dropdown" class="ui-search-dropdown"></div>
           </div>
 
           <!-- MANAGER -->
-          <div id="managerWrapper" class="hidden">
+          <div id="managerWrapper" class="ui-field relative hidden">
             <label>Quản lý trực tiếp</label>
             <div class="ui-input-icon">
               <i class="fa-solid fa-user-tie"></i>
-              <select id="manager_id" class="ui-select"></select>
+              <input id="manager_input" class="ui-input" placeholder="Chọn quản lý" readonly />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
             </div>
+            <div id="manager_dropdown" class="ui-search-dropdown"></div>
           </div>
 
         </div>
@@ -443,6 +449,53 @@ function renderRoleOptions() {
 // =====================================================
 // EVENTS
 // =====================================================
+
+// 2. Hàm lấy danh sách Role hợp lệ (Dựa trên quy tắc AI.md)
+function getAvailableRoles() {
+  const myRole = currentUser.role;
+  const allRoles = [
+    { name: "Giám đốc kinh doanh", value: "director" },
+    { name: "Giám sát kinh doanh", value: "supervisor" },
+    { name: "Nhân viên kinh doanh", value: "sales" },
+  ];
+
+  if (myRole === "admin") return allRoles;
+  if (myRole === "director")
+    return allRoles.filter((r) => r.value !== "director");
+  if (myRole === "supervisor")
+    return allRoles.filter((r) => r.value === "sales");
+  return [];
+}
+
+// 3. Khởi tạo các dropdown trong bindEvents()
+function bindCustomSelects() {
+  // --- Dropdown Giới tính ---
+  setupSearchDropdown({
+    inputEl: document.getElementById("gender_input"),
+    dropdownEl: document.getElementById("gender_dropdown"),
+    data: GENDER_DATA,
+    onSelect: (item) => {
+      document.getElementById("gender_input").dataset.value = item.value;
+      updateSubmitState(); // Kiểm tra nút tạo tài khoản
+    },
+  });
+
+  // --- Dropdown Vai trò ---
+  setupSearchDropdown({
+    inputEl: document.getElementById("role_input"),
+    dropdownEl: document.getElementById("role_dropdown"),
+    data: getAvailableRoles(),
+    onSelect: (item) => {
+      const input = document.getElementById("role_input");
+      input.dataset.value = item.value;
+
+      // Gọi logic xử lý Manager khi role thay đổi
+      handleRoleChangeLogic(item.value);
+      updateSubmitState();
+    },
+  });
+}
+
 function bindEvents() {
   const fullName = document.getElementById("full_name");
   const username = document.getElementById("username");
@@ -453,6 +506,21 @@ function bindEvents() {
   const submitBtn = document.getElementById("submitBtn");
 
   document.getElementById("role").addEventListener("change", onRoleChange);
+  document.getElementById("identity_card").addEventListener("input", (e) => {
+    const value = e.target.value;
+    const hint = e.target.parentElement.nextElementSibling; // nếu bạn có hint
+    if (!/^\d{12}$/.test(value)) {
+      showError(e.target, null, "CCCD phải đúng 12 chữ số");
+    } else {
+      showOk(e.target, null);
+    }
+  });
+
+  // 1. Khai báo dữ liệu mẫu
+  const GENDER_DATA = [
+    { name: "Nam", value: "male" },
+    { name: "Nữ", value: "female" },
+  ];
 
   // ===============================
   // FULL NAME – auto capitalize
@@ -776,55 +844,49 @@ function updatePasswordStrength(pw) {
 // =====================================================
 // ROLE CHANGE → MANAGER
 // =====================================================
-async function onRoleChange(e) {
-  const role = e.target.value;
+
+// 4. Logic xử lý Manager (thay thế onRoleChange cũ)
+async function handleRoleChangeLogic(targetRole) {
   const wrapper = document.getElementById("managerWrapper");
-  const select = document.getElementById("manager_id");
+  const mInput = document.getElementById("manager_input");
+  const mDropdown = document.getElementById("manager_dropdown");
+  const myRole = currentUser.role;
 
-  select.innerHTML = "";
-  managersCache = [];
+  mInput.value = "";
+  delete mInput.dataset.value;
 
-  if (!role || role === "director") {
+  // Nếu tạo Supervisor/Sales và mình là cấp trên trực tiếp (theo AI.md)
+  if (
+    (myRole === "director" && targetRole === "supervisor") ||
+    (myRole === "supervisor" && targetRole === "sales")
+  ) {
     wrapper.classList.add("hidden");
+    mInput.value = currentUser.full_name;
+    mInput.dataset.value = currentUser.id;
     return;
   }
 
-  if (currentUser.role === "supervisor" && role === "sales") {
-    wrapper.classList.add("hidden");
-    select.innerHTML = `<option value="${currentUser.id}" selected></option>`;
-    return;
+  // Nếu cần chọn Manager (Admin tạo, hoặc Director tạo Sales)
+  const res = await authFetch(API + `/users/managers?role=${targetRole}`);
+  if (!res || !res.ok) return;
+
+  const managers = await res.json();
+  if (managers.length > 0) {
+    wrapper.classList.remove("hidden");
+    setupSearchDropdown({
+      inputEl: mInput,
+      dropdownEl: mDropdown,
+      data: managers.map((m) => ({
+        name: `${m.full_name} (${roleToLabel(m.role)})`,
+        value: m.id,
+      })),
+      onSelect: (item) => {
+        mInput.dataset.value = item.value;
+        updateSubmitState();
+      },
+    });
   }
-
-  const res = await authFetch(API + `/users/managers?role=${role}`);
-  if (!res || !res.ok) {
-    wrapper.classList.add("hidden");
-    return;
-  }
-
-  managersCache = await res.json();
-
-  if (managersCache.length <= 1) {
-    wrapper.classList.add("hidden");
-    if (managersCache[0]) {
-      select.innerHTML = `<option value="${managersCache[0].id}" selected></option>`;
-    }
-    return;
-  }
-
-  wrapper.classList.remove("hidden");
-  select.innerHTML = `
-    <option value="">-- chọn quản lý --</option>
-    ${managersCache
-      .map(
-        (m) =>
-          `<option value="${m.id}">
-            ${m.full_name} (${roleToLabel(m.role)})
-          </option>`,
-      )
-      .join("")}
-  `;
 }
-
 // =====================================================
 // CHECK USERNAME
 // =====================================================
@@ -884,13 +946,15 @@ function validateUsernameBasic(username) {
 // =====================================================
 async function submitForm() {
   const data = {
-    username: username.value.trim(),
+    username: document.getElementById("username").value.trim(),
     password: password.value,
-    full_name: full_name.value,
+    full_name: document.getElementById("full_name").value,
+    gender: document.getElementById("gender_input").dataset.value, // Lấy từ dataset
+    identity_card: document.getElementById("identity_card").value.trim(),
     phone: phone.value,
     email: email.value,
-    role: role.value,
-    manager_id: manager_id?.value || null,
+    role: document.getElementById("role_input").dataset.value, // Lấy từ dataset
+    manager_id: document.getElementById("manager_input").dataset.value || null,
   };
 
   // ===============================
