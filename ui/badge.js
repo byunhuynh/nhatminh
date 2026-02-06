@@ -6,6 +6,7 @@
 const ROLE_LABELS = {
   sales: "Nhân viên kinh doanh",
   supervisor: "Giám sát kinh doanh",
+  regional_director: "Giám đốc khu vực", // 🔥 Mới
   director: "Giám đốc kinh doanh",
   admin: "Quản trị hệ thống",
 };
@@ -13,6 +14,7 @@ const ROLE_LABELS = {
 // ==================================
 // Convert role code → human label
 // ==================================
+
 function roleToLabel(role) {
   return ROLE_LABELS[role] || role;
 }
@@ -22,7 +24,6 @@ function roleToLabel(role) {
 // ==================================
 function applyRoleBadge(el, role) {
   if (!el) return;
-
   el.textContent = roleToLabel(role);
   el.className =
     "ui-badge " + (role === "admin" ? "ui-badge-danger" : "ui-badge-success");

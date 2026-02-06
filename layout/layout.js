@@ -280,29 +280,36 @@ function bindHeaderMenuObserver() {
 // Lấy route từ MENU_ITEMS (single source of truth)
 // ==================================
 export function bindTemplateNav() {
+  const myRole = store.user?.role;
   document.querySelectorAll(".nav__link").forEach((link) => {
+    const tab = link.dataset.tab;
+    const parent = link.parentElement;
+
+    // Phân quyền hiển thị Menu
+    if (tab === "users" && myRole === "sales") {
+      parent.classList.add("hidden");
+    }
+
+    // Chỉ Admin mới thấy quản lý sản phẩm (ví dụ)
+    if (tab === "products" && myRole === "sales") {
+      // Nhân viên vẫn có thể thấy nhưng có thể bị giới hạn tính năng sửa
+    }
+
     link.addEventListener("click", (e) => {
-      const tab = link.dataset.tab;
-      if (!tab) return;
-
       e.preventDefault();
-
-      // Tìm menu item theo key
       const matchedItem = MENU_ITEMS.find((item) => item.key === tab);
-      if (!matchedItem) return;
-
-      navigate(matchedItem.path);
+      if (matchedItem) navigate(matchedItem.path);
     });
   });
+}
 
-  // ==================================
-  // Role permission: sales không thấy users
-  // ==================================
-  if (store.user?.role === "sales") {
-    document
-      .querySelectorAll('[data-tab="users"]')
-      .forEach((el) => el.parentElement.classList.add("hidden"));
-  }
+// ==================================
+// Role permission: sales không thấy users
+// ==================================
+if (store.user?.role === "sales") {
+  document
+    .querySelectorAll('[data-tab="users"]')
+    .forEach((el) => el.parentElement.classList.add("hidden"));
 }
 
 // ==================================

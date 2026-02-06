@@ -11,35 +11,24 @@ export const MENU_ITEMS = [
     icon: "fa-house",
   },
   {
-    key: "sales",
-    path: "/sales",
-    href: "#/sales",
-    label: "Bán hàng",
-    icon: "fa-cart-shopping",
+    key: "dms",
+    path: "/dms",
+    href: "#/dms",
+    label: "Tuyến & Điểm bán",
+    icon: "fa-route",
+  },
+  {
+    key: "products",
+    path: "/products",
+    href: "#/products",
+    label: "Sản phẩm",
+    icon: "fa-box-open",
   },
   {
     key: "users",
     path: "/users",
     href: "#/users",
-    label: "Thêm nhân viên",
-    icon: "fa-user-plus",
-  },
-  {
-    key: "profile",
-    path: "/profile",
-    href: "#/profile",
-    label: "Tài khoản",
-    icon: "fa-user",
-  },
-
-  // ================================
-  // ĐỔI MẬT KHẨU
-  // ================================
-  {
-    key: "change-password",
-    path: "/change-password",
-    href: "#/change-password",
-    label: "Đổi mật khẩu",
-    icon: "fa-key",
+    label: "Nhân sự",
+    icon: "fa-users-gear",
   },
 ];

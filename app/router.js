@@ -5,21 +5,20 @@
 import { renderHome, unmountHome } from "../pages/home.page.js";
 import { renderUsers } from "../pages/users.page.js";
 import { renderProfile } from "../pages/profile.page.js";
+import { renderProducts } from "../pages/products.page.js"; // 🔥 Mới
+import { renderDms } from "../pages/dms.page.js"; // 🔥 Mới
 import { updateActiveNav } from "../layout/layout.js";
-import { renderSales } from "../pages/sales.page.js";
-import { renderChangePassword } from "../pages/change-password.page.js";
+import { renderOrderForm } from "../pages/order-form.page.js";
 
 let currentUnmount = null;
 
 const routes = {
-  "/": {
-    render: renderHome,
-    unmount: unmountHome,
-  },
+  "/": { render: renderHome, unmount: unmountHome },
   "/users": { render: renderUsers },
   "/profile": { render: renderProfile },
-  "/sales": { render: renderSales },
-  "/change-password": { render: renderChangePassword },
+  "/products": { render: renderProducts },
+  "/dms": { render: renderDms },
+  "/order-create": { render: renderOrderForm }, // 🔥 Mới: Trang lên đơn
 };
 
 export function navigate(path) {
