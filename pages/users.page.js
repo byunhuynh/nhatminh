@@ -21,6 +21,8 @@ import {
   bindPasswordStrength,
   isStrongPassword,
 } from "../ui/password-strength.js";
+
+import { ROLE_ORDER } from "../app/constants/roles.js";
 // =====================================================
 // STATE
 // =====================================================
@@ -118,6 +120,11 @@ async function loadWards(districtCode) {
 // RENDER ENTRY (SPA)
 // =====================================================
 export function renderUsers() {
+  if (!store.user) {
+    console.warn("[renderUsers] store.user chưa sẵn sàng");
+    return;
+  }
+
   currentUser = store.user;
 
   // ===============================
@@ -134,8 +141,8 @@ export function renderUsers() {
 
   renderPage();
   bindUsernameRegenHover();
-
   initDobPicker();
+  bindCustomSelects();
   bindEvents();
 }
 
@@ -218,6 +225,7 @@ function renderPage() {
                 id="phone"
                 class="ui-input"
                 placeholder="vd: 0901234567"
+                maxlength="10"
               />
             </div>
             <div id="phoneHint" class="ui-hint mt-1"></div>
@@ -451,11 +459,17 @@ function renderRoleOptions() {
 // =====================================================
 
 // 2. Hàm lấy danh sách Role hợp lệ (Dựa trên quy tắc AI.md)
+
 function getAvailableRoles() {
+  if (!currentUser || !currentUser.role) {
+    console.warn("[getAvailableRoles] currentUser chưa sẵn sàng");
+    return []; // KHÔNG đoán, KHÔNG crash
+  }
+
   const myRole = currentUser.role;
   const allRoles = [
     { name: "Giám đốc kinh doanh", value: "director" },
-    { name: "Giám đốc khu vực", value: "regional_director" },
+    { name: "Giám đốc kinh doanh khu vực", value: "regional_director" },
     { name: "Giám sát kinh doanh", value: "supervisor" },
     { name: "Nhân viên kinh doanh", value: "sales" },
   ];
@@ -467,8 +481,19 @@ function getAvailableRoles() {
   return allRoles.filter((r) => ROLE_ORDER.indexOf(r.value) < myIdx);
 }
 
+// 1. Khai báo dữ liệu mẫu
+const GENDER_DATA = [
+  { name: "Nam", value: "male" },
+  { name: "Nữ", value: "female" },
+];
+
 // 3. Khởi tạo các dropdown trong bindEvents()
 function bindCustomSelects() {
+  if (!currentUser) {
+    console.warn("[bindCustomSelects] currentUser chưa sẵn sàng");
+    return;
+  }
+
   // --- Dropdown Giới tính ---
   setupSearchDropdown({
     inputEl: document.getElementById("gender_input"),
@@ -496,6 +521,25 @@ function bindCustomSelects() {
   });
 }
 
+// 3. Khởi tạo các dropdown trong bindEvents()
+function reset_manager_dropdown() {
+  if (!currentUser) {
+    console.warn("[bindCustomSelects] currentUser chưa sẵn sàng");
+    return;
+  }
+
+  // --- Dropdown Giới tính ---
+  setupSearchDropdown({
+    inputEl: document.getElementById("gender_input"),
+    dropdownEl: document.getElementById("gender_dropdown"),
+    data: GENDER_DATA,
+    onSelect: (item) => {
+      document.getElementById("gender_input").dataset.value = item.value;
+      updateSubmitState(); // Kiểm tra nút tạo tài khoản
+    },
+  });
+}
+
 function bindEvents() {
   const fullName = document.getElementById("full_name");
   const username = document.getElementById("username");
@@ -514,12 +558,6 @@ function bindEvents() {
       showOk(e.target, null);
     }
   });
-
-  // 1. Khai báo dữ liệu mẫu
-  const GENDER_DATA = [
-    { name: "Nam", value: "male" },
-    { name: "Nữ", value: "female" },
-  ];
 
   // ===============================
   // FULL NAME – auto capitalize
@@ -715,6 +753,7 @@ function bindEvents() {
       el?.addEventListener("change", updateSubmitState);
     },
   );
+
   updateSubmitState();
   bindAddressEvents();
 
@@ -844,34 +883,71 @@ function updatePasswordStrength(pw) {
 // ROLE CHANGE → MANAGER
 // =====================================================
 
-// 4. Logic xử lý Manager (thay thế onRoleChange cũ)
+// =====================================================
+// ROLE CHANGE → MANAGER (FIX STALE DROPDOWN)
+// =====================================================
+
 async function handleRoleChangeLogic(targetRole) {
   const wrapper = document.getElementById("managerWrapper");
   const mInput = document.getElementById("manager_input");
   const mDropdown = document.getElementById("manager_dropdown");
-  const myRole = currentUser.role;
 
+  // 1. Lưu lại ID manager hiện tại trước khi reset để so sánh
+  const previousManagerId = mInput.dataset.value || null;
+
+  // 2. Reset UI về trạng thái mặc định (Tạm ẩn và xóa text)
+  wrapper.classList.add("hidden");
   mInput.value = "";
-  delete mInput.dataset.value;
+  mDropdown.innerHTML = "";
+  // Lưu ý: Không delete dataset.value ngay ở đây, hãy để logic bên dưới quyết định
 
-  // Nếu tạo Supervisor/Sales và mình là cấp trên trực tiếp (theo AI.md)
-  if (
-    (myRole === "director" && targetRole === "supervisor") ||
-    (myRole === "supervisor" && targetRole === "sales")
-  ) {
-    wrapper.classList.add("hidden");
-    mInput.value = currentUser.full_name;
-    mInput.dataset.value = currentUser.id;
+  // Nếu không chọn role, thoát luôn
+  if (!targetRole) {
+    delete mInput.dataset.value;
+    updateSubmitState();
     return;
   }
 
-  // Nếu cần chọn Manager (Admin tạo, hoặc Director tạo Sales)
-  const res = await authFetch(API + `/users/managers?role=${targetRole}`);
-  if (!res || !res.ok) return;
+  try {
+    // 3. Fetch danh sách manager mới dựa trên role đã chọn
+    const res = await authFetch(API + `/users/managers?role=${targetRole}`);
+    if (!res || !res.ok) {
+      delete mInput.dataset.value;
+      updateSubmitState();
+      return;
+    }
 
-  const managers = await res.json();
-  if (managers.length > 0) {
-    wrapper.classList.remove("hidden");
+    const managers = await res.json();
+
+    // 4. Nếu KHÔNG có manager nào (VD: Admin tạo Director thì có thể không cần manager)
+    if (!managers || managers.length === 0) {
+      delete mInput.dataset.value;
+      updateSubmitState();
+      return; // wrapper vẫn đang hidden
+    }
+
+    // 5. Kiểm tra xem manager cũ có còn nằm trong danh sách mới không
+    const stillValid = managers.find(
+      (m) => String(m.id) === String(previousManagerId),
+    );
+
+    if (stillValid) {
+      // Nếu vẫn hợp lệ -> Giữ nguyên, hiển thị lại wrapper
+      mInput.value = stillValid.full_name;
+      mInput.dataset.value = stillValid.id;
+      wrapper.classList.remove("hidden");
+    } else if (managers.length === 1) {
+      // Nếu chỉ có 1 manager duy nhất -> Tự động chọn luôn
+      mInput.value = managers[0].full_name;
+      mInput.dataset.value = managers[0].id;
+      wrapper.classList.remove("hidden"); // Hiện ra để user biết ai là manager
+    } else {
+      // Nếu có nhiều manager -> Xóa chọn cũ, hiện dropdown cho user chọn lại
+      delete mInput.dataset.value;
+      wrapper.classList.remove("hidden");
+    }
+
+    // 6. Cập nhật dữ liệu cho Dropdown (Dù là chọn hay chưa chọn cũng nạp data)
     setupSearchDropdown({
       inputEl: mInput,
       dropdownEl: mDropdown,
@@ -879,13 +955,19 @@ async function handleRoleChangeLogic(targetRole) {
         name: `${m.full_name} (${roleToLabel(m.role)})`,
         value: m.id,
       })),
-      onSelect: (item) => {
+      onSelect(item) {
         mInput.dataset.value = item.value;
         updateSubmitState();
       },
     });
+  } catch (err) {
+    console.error("Lỗi khi tải danh sách quản lý:", err);
+    delete mInput.dataset.value;
   }
+
+  updateSubmitState();
 }
+
 // =====================================================
 // CHECK USERNAME
 // =====================================================
@@ -1070,21 +1152,43 @@ function updateSubmitState() {
 // =====================================================
 // CHECK REQUIRED FIELDS FILLED
 // =====================================================
+// =====================================================
+// CHECK REQUIRED FIELDS FILLED (FIXED)
+// =====================================================
 function isFormFilled() {
-  const requiredIds = [
-    "full_name",
-    "username",
-    "password",
-    "password_confirm",
-    "role",
-    "manager_id",
-  ];
+  const fullName = document.getElementById("full_name");
+  const username = document.getElementById("username");
+  const password = document.getElementById("password");
+  const passwordConfirm = document.getElementById("password_confirm");
 
-  return requiredIds.every((id) => {
-    const el = document.getElementById(id);
-    if (!el) return false;
-    return el.value && el.value.trim() !== "";
-  });
+  const roleInput = document.getElementById("role_input");
+  const managerInput = document.getElementById("manager_input");
+  const managerWrapper = document.getElementById("managerWrapper");
+
+  // field cơ bản
+  if (
+    !fullName?.value.trim() ||
+    !username?.value.trim() ||
+    !password?.value ||
+    !passwordConfirm?.value
+  ) {
+    return false;
+  }
+
+  // role dùng dropdown → check dataset
+  if (!roleInput?.dataset.value) {
+    return false;
+  }
+
+  // manager chỉ bắt buộc khi wrapper đang hiển thị
+  if (
+    !managerWrapper.classList.contains("hidden") &&
+    !managerInput?.dataset.value
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 // =====================================================
