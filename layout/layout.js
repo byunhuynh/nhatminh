@@ -285,14 +285,14 @@ export function bindTemplateNav() {
     const tab = link.dataset.tab;
     const parent = link.parentElement;
 
-    // Phân quyền hiển thị Menu
+    // 1. Chỉ cấp trên mới thấy Quản lý nhân sự
     if (tab === "users" && myRole === "sales") {
       parent.classList.add("hidden");
     }
 
-    // Chỉ Admin mới thấy quản lý sản phẩm (ví dụ)
-    if (tab === "products" && myRole === "sales") {
-      // Nhân viên vẫn có thể thấy nhưng có thể bị giới hạn tính năng sửa
+    // 2. Chỉ cấp trên mới thấy Báo cáo doanh số tổng hợp (Recursive)
+    if (tab === "sales" && myRole === "sales") {
+      parent.classList.add("hidden");
     }
 
     link.addEventListener("click", (e) => {

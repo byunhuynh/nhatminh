@@ -1,7 +1,3 @@
-// ==================================
-// MENU CONFIG – SINGLE SOURCE OF TRUTH
-// ==================================
-// assets/js/menu.config.js
 export const MENU_ITEMS = [
   {
     key: "home",
@@ -16,6 +12,13 @@ export const MENU_ITEMS = [
     href: "#/dms",
     label: "Tuyến & Điểm bán",
     icon: "fa-route",
+  },
+  {
+    key: "sales", // 🔥 Thêm Menu này
+    path: "/sales",
+    href: "#/sales",
+    label: "Doanh số nhóm",
+    icon: "fa-chart-pie",
   },
   {
     key: "products",
