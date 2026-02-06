@@ -1,0 +1,194 @@
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input);
+}
+
+/* Icon & Password Toggle */
+.ui-input-icon {
+  position: relative;
+  width: 100%;
+}
+.ui-input-icon > i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.ui-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* =====================================================
+   INPUT / SELECT / TEXTAREA
+===================================================== */
+.ui-input,
+.ui-select,
+.ui-textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-main);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 16px;
+}
+
+/* ==================================
+   FIX SELECT HEIGHT = INPUT HEIGHT
+================================== */
+.ui-select {
+  height: 2.75rem; /* BẰNG ui-input */
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+}
+
+/* ==================================
+   Input select
+================================== */
+/*
+.ui-select .ui-input {
+  padding-right: 36px; 
+*/
+
+.ui-input::placeholder {
+  color: var(--text-muted);
+}
+
+.ui-input:focus,
+.ui-select:focus,
+.ui-textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+/* ERROR STATE */
+.ui-input.error,
+.ui-select.error {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444;
+}
+
+.dark .ui-input.error,
+.dark .ui-select.error {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 1px #f87171;
+}
+
+/* ================================
+   FIX CHROME AUTOFILL STYLE
+================================ */
+
+/* Light mode */
+.ui-input:-webkit-autofill,
+.ui-input:-webkit-autofill:hover,
+.ui-input:-webkit-autofill:focus,
+.ui-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Dark mode */
+.dark .ui-input:-webkit-autofill,
+.dark .ui-input:-webkit-autofill:hover,
+.dark .ui-input:-webkit-autofill:focus,
+.dark .ui-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
+}
+/* Ẩn indicator khi input bị disabled (để người dùng không nhầm là bấm được) */
+.ui-input:disabled ~ .ui-dropdown-indicator {
+  opacity: 0.3;
+}
+/* 📄 assets/css/ui.css */
+.ui-input[readonly] {
+  cursor: pointer;
+  background-color: var(--bg-input); /* Giữ màu nền như input thường */
+}
+
+/* =====================================================
+ INPUT WITH ICON + PASSWORD TOGGLE (FINAL FIX)
+===================================================== */
+
+/* container */
+.ui-input-icon {
+  position: relative;
+  width: 100%;
+}
+
+/* input */
+.ui-input-icon .ui-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding-left: 2.5rem; /* chỗ icon trái */
+  padding-right: 2.5rem; /* chỗ icon eye */
+}
+
+/* ===============================
+ PASSWORD TOGGLE (EYE ICON)
+=============================== */
+.ui-password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.ui-password-toggle:hover {
+  color: var(--text-main);
+}
+
+.ui-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ui-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.ui-error {
+  font-size: 0.75rem;
+  color: var(--danger);
+}
+
+.ui-error:not(.hidden) {
+  display: block;
+}
+
+.ui-select option[value=""] {
+  color: var(--text-muted);
+}
+.ui-select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 12px; /* BẮT BUỘC dùng right */
+  transform: translateY(-50%);
+  pointer-events: none;
+
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #666;
+}

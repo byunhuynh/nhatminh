@@ -1,0 +1,27 @@
+/* Toastify */
+.toastify { ... }
+.toastify .toast-close { display: none !important; }
+
+/* Flatpickr */
+.flatpickr-calendar { ... }
+.dark .flatpickr-calendar { ... }
+
+/* ==================================
+   Toastify – hide close icon
+================================== */
+.toastify .toast-close {
+  display: none !important;
+}
+
+/* =====================================================
+   TOASTIFY – RESPONSIVE & SYNC UI
+===================================================== */
+.toastify {
+  font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+  padding: clamp(10px, 3vw, 14px) clamp(14px, 4vw, 20px);
+  border-radius: 0.75rem;
+
+  max-width: min(92vw, 420px);
+  line-height: 1.4;
+}
+

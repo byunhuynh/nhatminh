@@ -1,27 +1,18 @@
 // ==================================
 // Role badge mapping & render helper
-// (GLOBAL SCRIPT – NOT ES MODULE)
 // ==================================
-
 const ROLE_LABELS = {
   sales: "Nhân viên kinh doanh",
   supervisor: "Giám sát kinh doanh",
-  regional_director: "Giám đốc khu vực", // 🔥 Mới
+  regional_director: "Giám đốc khu vực", // 🔥 Thêm dòng này
   director: "Giám đốc kinh doanh",
   admin: "Quản trị hệ thống",
 };
-
-// ==================================
-// Convert role code → human label
-// ==================================
 
 function roleToLabel(role) {
   return ROLE_LABELS[role] || role;
 }
 
-// ==================================
-// Apply role badge to element
-// ==================================
 function applyRoleBadge(el, role) {
   if (!el) return;
   el.textContent = roleToLabel(role);
@@ -29,9 +20,6 @@ function applyRoleBadge(el, role) {
     "ui-badge " + (role === "admin" ? "ui-badge-danger" : "ui-badge-success");
 }
 
-// ==================================
-// Expose GLOBAL (BẮT BUỘC)
-// ==================================
 window.ROLE_LABELS = ROLE_LABELS;
 window.roleToLabel = roleToLabel;
 window.applyRoleBadge = applyRoleBadge;

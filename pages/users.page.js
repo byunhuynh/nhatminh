@@ -455,16 +455,16 @@ function getAvailableRoles() {
   const myRole = currentUser.role;
   const allRoles = [
     { name: "Giám đốc kinh doanh", value: "director" },
+    { name: "Giám đốc khu vực", value: "regional_director" },
     { name: "Giám sát kinh doanh", value: "supervisor" },
     { name: "Nhân viên kinh doanh", value: "sales" },
   ];
 
   if (myRole === "admin") return allRoles;
-  if (myRole === "director")
-    return allRoles.filter((r) => r.value !== "director");
-  if (myRole === "supervisor")
-    return allRoles.filter((r) => r.value === "sales");
-  return [];
+
+  // Rule: Chỉ tạo được cấp thấp hơn mình
+  const myIdx = ROLE_ORDER.indexOf(myRole);
+  return allRoles.filter((r) => ROLE_ORDER.indexOf(r.value) < myIdx);
 }
 
 // 3. Khởi tạo các dropdown trong bindEvents()
@@ -505,7 +505,6 @@ function bindEvents() {
   const phone = document.getElementById("phone");
   const submitBtn = document.getElementById("submitBtn");
 
-  document.getElementById("role").addEventListener("change", onRoleChange);
   document.getElementById("identity_card").addEventListener("input", (e) => {
     const value = e.target.value;
     const hint = e.target.parentElement.nextElementSibling; // nếu bạn có hint

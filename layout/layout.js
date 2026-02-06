@@ -281,18 +281,17 @@ function bindHeaderMenuObserver() {
 // ==================================
 export function bindTemplateNav() {
   const myRole = store.user?.role;
+
   document.querySelectorAll(".nav__link").forEach((link) => {
-    const tab = link.dataset.tab;
+    const tab = link.dataset.tab; // Lấy key từ data-tab
     const parent = link.parentElement;
 
-    // 1. Chỉ cấp trên mới thấy Quản lý nhân sự
-    if (tab === "users" && myRole === "sales") {
-      parent.classList.add("hidden");
-    }
-
-    // 2. Chỉ cấp trên mới thấy Báo cáo doanh số tổng hợp (Recursive)
-    if (tab === "sales" && myRole === "sales") {
-      parent.classList.add("hidden");
+    // PHÂN QUYỀN ZERO TRUST TRÊN UI
+    if (myRole === "sales") {
+      // Sales không được xem Nhân sự và Báo cáo tổng
+      if (tab === "users" || tab === "sales_report") {
+        parent.classList.add("hidden");
+      }
     }
 
     link.addEventListener("click", (e) => {

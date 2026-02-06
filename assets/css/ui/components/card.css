@@ -1,0 +1,33 @@
+:root {
+  --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.dark {
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.ui-card {
+  background: var(--bg-card);
+  border-radius: 1rem;
+  box-shadow: var(--card-shadow);
+}
+
+/* Đặc thù cho trang Login */
+.ui-login-card {
+  width: min(94vw, 640px);
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .ui-login-card {
+    width: 640px;
+    padding: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ui-login-card {
+    width: 680px;
+    padding: 2.5rem;
+  }
+}

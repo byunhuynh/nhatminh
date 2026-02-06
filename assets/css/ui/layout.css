@@ -1,0 +1,8 @@
+.right-sidenav {
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-main);
+  display: flex;
+  flex-direction: column;
+}
+.right-sidenav__item { ... }
+.right-sidenav-overlay { ... }

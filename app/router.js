@@ -1,14 +1,14 @@
-// app/router.js
 // ==================================
-// SPA Router dùng hash (#)
+// SPA Router – DMS UPDATED
 // ==================================
 import { renderHome, unmountHome } from "../pages/home.page.js";
 import { renderUsers } from "../pages/users.page.js";
 import { renderProfile } from "../pages/profile.page.js";
-import { renderProducts } from "../pages/products.page.js"; // 🔥 Mới
-import { renderDms } from "../pages/dms.page.js"; // 🔥 Mới
-import { updateActiveNav } from "../layout/layout.js";
+import { renderProducts } from "../pages/products.page.js";
+import { renderDms } from "../pages/dms.page.js";
+import { renderSales } from "../pages/sales.page.js";
 import { renderOrderForm } from "../pages/order-form.page.js";
+import { updateActiveNav } from "../layout/layout.js";
 
 let currentUnmount = null;
 
@@ -18,7 +18,8 @@ const routes = {
   "/profile": { render: renderProfile },
   "/products": { render: renderProducts },
   "/dms": { render: renderDms },
-  "/order-create": { render: renderOrderForm }, // 🔥 Mới: Trang lên đơn
+  "/sales-report": { render: renderSales }, // ✅ Đã sửa dấu comment
+  "/order-create": { render: renderOrderForm }, // ✅ Đã sửa dấu comment
 };
 
 export function navigate(path) {
@@ -31,13 +32,12 @@ export function renderRoute() {
   const route = routes[path];
 
   if (!route) {
+    console.warn("Route not found:", path);
     navigate("/");
     return;
   }
 
-  // ===============================
-  // UNMOUNT PAGE CŨ (SPA SAFE)
-  // ===============================
+  // UNMOUNT PAGE CŨ
   if (typeof currentUnmount === "function") {
     currentUnmount();
     currentUnmount = null;

@@ -1,11 +1,5 @@
 export const MENU_ITEMS = [
-  {
-    key: "home",
-    path: "/",
-    href: "#/",
-    label: "Trang chủ",
-    icon: "fa-house",
-  },
+  { key: "home", path: "/", href: "#/", label: "Trang chủ", icon: "fa-house" },
   {
     key: "dms",
     path: "/dms",
@@ -14,11 +8,11 @@ export const MENU_ITEMS = [
     icon: "fa-route",
   },
   {
-    key: "sales", // 🔥 Thêm Menu này
-    path: "/sales",
-    href: "#/sales",
+    key: "sales_report",
+    path: "/sales-report",
+    href: "#/sales-report",
     label: "Doanh số nhóm",
-    icon: "fa-chart-pie",
+    icon: "fa-chart-line",
   },
   {
     key: "products",

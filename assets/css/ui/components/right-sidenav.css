@@ -1,0 +1,174 @@
+/* ================= RIGHT SIDENAV ================= */
+/* --- Cải tiến tổng thể Sidebar --- */
+.right-sidenav {
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid var(--border-main);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+/* --- Header Profile --- */
+.right-sidenav__header-profile {
+  padding: 2rem 1.5rem;
+  background: linear-gradient(to bottom, rgba(243, 108, 33, 0.05), transparent);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.profile-avatar {
+  font-size: 4rem;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.right-sidenav__name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-title);
+  margin-bottom: 4px;
+}
+
+.right-sidenav__meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.meta-item i {
+  font-size: 0.75rem;
+  margin-right: 4px;
+}
+
+/* --- Menu Items --- */
+.menu-section {
+  padding: 0 12px;
+}
+
+.menu-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 1.5rem 0 0.5rem 1rem;
+  letter-spacing: 0.05em;
+}
+
+.right-sidenav__item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  color: var(--text-main);
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.item-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-hover);
+  border-radius: 10px;
+  margin-right: 12px;
+  font-size: 1.1rem;
+  color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+.arrow-ext {
+  margin-left: auto;
+  font-size: 0.8rem;
+  opacity: 0.3;
+  transition: transform 0.2s ease;
+}
+
+/* Hover effects */
+.right-sidenav__item:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+  transform: translateX(-4px);
+}
+
+.right-sidenav__item:hover .item-icon {
+  background: var(--primary);
+  color: white;
+}
+
+.right-sidenav__item:hover .arrow-ext {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* Logout Button Special */
+.right-sidenav__item.danger {
+  color: var(--danger);
+  margin-top: 1rem;
+}
+
+.right-sidenav__item.danger .item-icon {
+  color: var(--danger);
+}
+
+.right-sidenav__item.danger:hover {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--danger);
+}
+
+.right-sidenav__item.danger:hover .item-icon {
+  background: var(--danger);
+  color: white;
+}
+
+.right-sidenav__divider {
+  border: 0;
+  border-top: 1px solid var(--border-main);
+  margin: 12px 1.5rem;
+  opacity: 0.5;
+}
+
+.right-sidenav-overlay {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  left: 0;
+
+  height: calc(100vh - 64px);
+}
+
+/* ==================================
+   Right nav icon animation
+   ================================== */
+#btnRightNav i {
+  transition:
+    transform 0.25s ease,
+    opacity 0.15s ease,
+    color 0.2s ease;
+}
+
+#btnRightNav i.fa-xmark {
+  color: #ec0404;
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+#btnRightNav i.fa-bars {
+  opacity: 1;
+}
+
+#rememberToggle.active i {
+  color: var(--primary);
+}
+
+#rememberToggle:not(.active) i {
+  color: #94a3b8; /* slate-400 */
+}
