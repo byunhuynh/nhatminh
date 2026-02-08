@@ -157,210 +157,148 @@ function renderPage() {
 
   page.innerHTML = `
    <div class="ui-page max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="ui-grid-auto">
+  <div class="ui-grid-auto">
 
-      <!-- ================= THÔNG TIN CÁ NHÂN ================= -->
-      <div class="ui-card ui-card-glow">
-        <div class="ui-title mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-id-card"></i>
-          <span>Thông tin cá nhân</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          <!-- HỌ TÊN -->
-          <div>
-            <label>Họ tên *</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-user"></i>
-              <input id="full_name" class="ui-input" autocapitalize="words" placeholder="vd: Nguyễn Văn A" />
-            </div>
-          </div>
-
-          <!-- GIỚI TÍNH -->
-          <div class="ui-field relative">
-            <label>Giới tính *</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-venus-mars"></i>
-              <input id="gender_input" class="ui-input" placeholder="Chọn giới tính" readonly />
-              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
-            </div>
-            <div id="gender_dropdown" class="ui-search-dropdown"></div>
-          </div>
-
-          <!-- NGÀY SINH -->
-          <div>
-            <label>Ngày sinh</label>
-            <div class="ui-input-icon">
-              <i class="fa-regular fa-calendar"></i>
-              <input id="dob" type="text" class="ui-input cursor-pointer" placeholder="DD/MM/YYYY" autocomplete="off" />
-            </div>
-          </div>
-
-          <!-- CCCD -->
-          <div>
-            <label>Số CCCD</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-id-card-clip"></i>
-              <input id="identity_card" class="ui-input" placeholder="Nhập 12 số CCCD" maxlength="12" />
-            </div>
-          </div>
-
-          <!-- ĐIỆN THOẠI -->
-          <div>
-            <label>Số điện thoại</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-phone"></i>
-              <input id="phone" class="ui-input" placeholder="vd: 0901234567" maxlength="10" />
-            </div>
-            <div id="phoneHint" class="ui-hint mt-1"></div>
-          </div>
-
-          <!-- EMAIL -->
-          <div>
-            <label>Email</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-envelope"></i>
-              <input id="email" type="email" class="ui-input" placeholder="vd: nguyenvana@example.com" />
-            </div>
-            <div id="emailHint" class="ui-hint mt-1"></div>
-          </div>
-
-        </div>
+    <!-- ================= THÔNG TIN CHUNG CỦA TUYẾN ================= -->
+    <div class="ui-card ui-card-glow">
+      <div class="ui-title mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-route"></i>
+        <span>Thông tin tuyến bán hàng</span>
       </div>
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-     
-      
-      
-
-      <!-- ================= TÀI KHOẢN ================= -->
-      <div class="ui-card ui-card-glow">
-        <div class="ui-title mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-user-lock"></i>
-          <span>Thông tin tài khoản</span>
+        <!-- TÊN TUYẾN -->
+        <div>
+          <label>Tên tuyến *</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-signature"></i>
+            <input id="route_name" class="ui-input" placeholder="vd: Tuyến Quận 1 - Thứ 2" />
+          </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          <!-- USERNAME -->
-          <div>
-            <label>Tài khoản *</label>
-
-            <div class="ui-input-icon ui-input-password">
-              <!-- icon trái -->
-              <i class="fa-solid fa-at"></i>
-
-              <input
-                id="username"
-                class="ui-input"
-                placeholder="vd: a.nv001"
-              />
-
-              <!-- icon phải: regenerate -->
-              <button
-                id="regenUsernameBtn"
-                type="button"
-                class="ui-password-toggle"
-                title="Tạo lại username"
-              >
-                <i class="fa-solid fa-rotate"></i>
-              </button>
-            </div>
-
-            <div id="usernameHint" class="ui-hint mt-1"></div>
+        <!-- MÃ TUYẾN -->
+        <div>
+          <label>Mã tuyến *</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-barcode"></i>
+            <input id="route_code" class="ui-input" placeholder="vd: T2-Q1-001" />
           </div>
-
-
-          <!-- PASSWORD -->
-          <div>
-            <label>Mật khẩu *</label>
-            <div class="ui-input-icon ui-input-password">
-              <i class="fa-solid fa-lock"></i>
-              <input
-                id="password"
-                type="password"
-                class="ui-input"
-                placeholder="Ít nhất 8 ký tự"
-              />
-            </div>
-          </div>
-
-          <!-- PASSWORD STRENGTH -->
-          <div id="passwordStrength" class="hidden md:col-span-2 mt-2">
-            <div class="flex gap-1">
-              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
-              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
-              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
-              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
-              <div class="h-2 flex-1 rounded bg-slate-200" data-bar></div>
-            </div>
-            <div class="mt-2 text-sm">
-              Level:
-              <span id="passwordLevel" class="font-semibold">Empty</span>
-            </div>
-            <ul class="mt-3 space-y-1 text-sm">
-              <li data-rule="length">❌ Ít nhất 8 ký tự</li>
-              <li data-rule="lower">❌ Có chữ thường</li>
-              <li data-rule="upper">❌ Có chữ hoa</li>
-              <li data-rule="number">❌ Có số</li>
-              <li data-rule="special">❌ Có ký tự đặc biệt</li>
-            </ul>
-          </div>
-
-          <!-- CONFIRM PASSWORD -->
-          <div>
-            <label>Nhập lại mật khẩu *</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-lock"></i>
-              <input
-                id="password_confirm"
-                type="password"
-                class="ui-input"
-                placeholder="Nhập lại mật khẩu"
-              />
-            </div>
-            <div id="passwordConfirmHint" class="ui-hint mt-1"></div>
-          </div>
-
-          
-          <div class="ui-field relative">
-            <label>Vai trò *</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-user-tag"></i>
-              <input id="role_input" class="ui-input" placeholder="Chọn vai trò" readonly />
-              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
-            </div>
-            <div id="role_dropdown" class="ui-search-dropdown"></div>
-          </div>
-
-          <!-- MANAGER -->
-          <div id="managerWrapper" class="ui-field relative hidden">
-            <label>Quản lý trực tiếp</label>
-            <div class="ui-input-icon">
-              <i class="fa-solid fa-user-tie"></i>
-              <input id="manager_input" class="ui-input" placeholder="Chọn quản lý" readonly />
-              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
-            </div>
-            <div id="manager_dropdown" class="ui-search-dropdown"></div>
-          </div>
-
         </div>
-        </br>  
 
-        <div class="mt-6">
-          <button
-            id="submitBtn"
-            class="ui-btn ui-btn-primary w-full flex items-center justify-center gap-2"
-          >
-            <i class="fa-solid fa-user-plus"></i>
-            <span>Tạo tài khoản</span>
-          </button>
+        <!-- NHÂN VIÊN PHỤ TRÁCH -->
+        <div class="ui-field relative">
+          <label>Nhân viên bán hàng (Sales) *</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-user-tie"></i>
+            <input id="sales_rep_input" class="ui-input" placeholder="Chọn nhân viên" readonly />
+            <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+          </div>
+          <div id="sales_rep_dropdown" class="ui-search-dropdown"></div>
         </div>
+
+        <!-- TẦN SUẤT -->
+        <div class="ui-field relative">
+          <label>Tần suất ghé thăm *</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <input id="frequency_input" class="ui-input" placeholder="Chọn tần suất (F1, F2...)" readonly />
+            <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+          </div>
+          <div id="frequency_dropdown" class="ui-search-dropdown"></div>
+        </div>
+
       </div>
-
     </div>
+
+    <!-- ================= LỊCH TRÌNH TRONG TUẦN ================= -->
+    <div class="ui-card ui-card-glow">
+      <div class="ui-title mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-calendar-week"></i>
+        <span>Lịch trình ghé thăm</span>
+      </div>
+
+      <p class="text-sm text-slate-500 mb-4">Chọn các ngày trong tuần thực hiện tuyến này:</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3">
+        <!-- Thứ 2 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Mon" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 2</span>
+        </label>
+        <!-- Thứ 3 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Tue" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 3</span>
+        </label>
+        <!-- Thứ 4 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Wed" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 4</span>
+        </label>
+        <!-- Thứ 5 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Thu" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 5</span>
+        </label>
+        <!-- Thứ 6 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Fri" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 6</span>
+        </label>
+        <!-- Thứ 7 -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Sat" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Thứ 7</span>
+        </label>
+        <!-- CN -->
+        <label class="flex flex-col items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors has-[:checked]:bg-blue-50 has-[:checked]:border-blue-500">
+          <input type="checkbox" name="route_days" value="Sun" class="mb-2 w-4 h-4 text-blue-600" />
+          <span class="text-sm font-medium">Chủ Nhật</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ================= KHU VỰC VÀ GHI CHÚ ================= -->
+    <div class="ui-card ui-card-glow">
+      <div class="ui-title mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-map-location-dot"></i>
+        <span>Phạm vi áp dụng</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- KHU VỰC (Dropdown giống Tỉnh/Thành) -->
+        <div class="ui-field relative">
+          <label>Khu vực / Địa bàn</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-map"></i>
+            <input id="area_input" class="ui-input" placeholder="Chọn khu vực áp dụng" readonly />
+            <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+          </div>
+          <div id="area_dropdown" class="ui-search-dropdown"></div>
+        </div>
+
+        <!-- MÔ TẢ -->
+        <div>
+          <label>Ghi chú tuyến</label>
+          <div class="ui-input-icon">
+            <i class="fa-solid fa-comment-dots"></i>
+            <input id="description" class="ui-input" placeholder="Lộ trình chi tiết hoặc lưu ý..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- NÚT TẠO -->
+      <div class="mt-8">
+        <button id="submitBtn" class="ui-btn ui-btn-primary w-full flex items-center justify-center gap-2">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span>Tạo tuyến bán hàng</span>
+        </button>
+      </div>
+    </div>
+
   </div>
+</div>
 `;
 }
 

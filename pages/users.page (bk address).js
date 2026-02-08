@@ -199,7 +199,7 @@ function renderPage() {
 
           <!-- CCCD -->
           <div>
-            <label>Số CCCD</label>
+            <label>Số CCCD *</label>
             <div class="ui-input-icon">
               <i class="fa-solid fa-id-card-clip"></i>
               <input id="identity_card" class="ui-input" placeholder="Nhập 12 số CCCD" maxlength="12" />
@@ -231,7 +231,55 @@ function renderPage() {
 
 
      
-      
+      <!-- ================= ĐỊA CHỈ ================= -->
+      <div class="ui-card ui-card-glow">
+        <div class="ui-title mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Địa chỉ</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+
+          <!-- TỈNH / THÀNH -->
+          <div class="ui-field relative">
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-map-location-dot"></i>
+              <input id="province_input" class="ui-input" placeholder="Tỉnh / Thành" autocomplete="off" />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+            </div>
+            <div id="province_dropdown" class="ui-search-dropdown"></div>
+          </div>
+
+          <!-- QUẬN / HUYỆN -->
+          <div class="ui-field relative">
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-map"></i>
+              <input id="district_input" class="ui-input" placeholder="Quận / Huyện" autocomplete="off" disabled />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+            </div>
+            <div id="district_dropdown" class="ui-search-dropdown"></div>
+          </div>
+
+          <!-- PHƯỜNG / XÃ -->
+          <div class="ui-field relative">
+            <div class="ui-input-icon">
+              <i class="fa-solid fa-location-dot"></i>
+              <input id="ward_input" class="ui-input" placeholder="Phường / Xã" autocomplete="off" disabled />
+              <i class="fa-solid fa-caret-down ui-dropdown-indicator"></i>
+            </div>
+            <div id="ward_dropdown" class="ui-search-dropdown"></div>
+          </div>
+
+          <!-- ĐỊA CHỈ CHI TIẾT -->
+          <div class="md:col-span-3">
+            <div class="ui-input-icon mt-2">
+              <i class="fa-solid fa-house"></i>
+              <input id="address_detail" class="ui-input" placeholder="Số nhà, tên đường..." />
+            </div>
+          </div>
+
+        </div>
+      </div>
       
 
       <!-- ================= TÀI KHOẢN ================= -->
@@ -245,7 +293,7 @@ function renderPage() {
 
           <!-- USERNAME -->
           <div>
-            <label>Tài khoản *</label>
+            <label>Username *</label>
 
             <div class="ui-input-icon ui-input-password">
               <!-- icon trái -->
@@ -312,7 +360,7 @@ function renderPage() {
           <div>
             <label>Nhập lại mật khẩu *</label>
             <div class="ui-input-icon">
-              <i class="fa-solid fa-lock"></i>
+              <i class="fa-solid fa-shield-keyhole"></i>
               <input
                 id="password_confirm"
                 type="password"
@@ -346,7 +394,6 @@ function renderPage() {
           </div>
 
         </div>
-        </br>  
 
         <div class="mt-6">
           <button
