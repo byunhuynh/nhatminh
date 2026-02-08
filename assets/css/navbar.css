@@ -254,13 +254,14 @@ body {
 }
 
 /* ================= ACTIVE TEXT (HEADER + BOTTOM) ================= */
+
 .nav__link.is-active .nav__name {
-  background: var(--brand-gradient);
+  //*background: var(--brand-gradient);*/ //*tắt màu trên bottom;*/
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 
-  font-weight: 800; /* Tab đang chọn sẽ đậm nhất */
+  font-weight: 500; /* Tab đang chọn sẽ đậm nhất */
 
   /* Thêm độ bóng nhẹ để chữ nổi bật hơn trên nền dark/light */
   filter: drop-shadow(0 0 1px rgba(243, 108, 33, 0.2));
@@ -280,7 +281,7 @@ body {
 }
 
 .nav__link.is-active {
-  font-weight: 600;
+  font-weight: 500;
   filter: drop-shadow(0 0 4px rgba(243, 108, 33, 0.35));
 }
 
