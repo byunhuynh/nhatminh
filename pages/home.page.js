@@ -165,7 +165,7 @@ export function renderHome() {
           <div class="space-y-3">
             <a href="tel:0901234567" class="flex items-center gap-3 bg-white/20 p-3 rounded-xl hover:bg-white/30 transition-all">
               <i class="fa-solid fa-phone-volume"></i>
-              <span class="text-sm font-semibold">Hotline: 090.123.4567</span>
+              <span class="text-sm font-semibold">Hotline: 0947.940.391</span>
             </a>
             <button class="w-full py-3 bg-white text-orange-600 rounded-xl font-bold shadow-lg hover:bg-orange-50 active:scale-95 transition-all">
               Gửi yêu cầu hỗ trợ
